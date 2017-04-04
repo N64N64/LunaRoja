@@ -11,15 +11,21 @@ emu:hook(Red.sym.PrintText_NoCreatingTextBox, function()
         return
     end
 
-    local rom = emu:rom(bank, hl)
+    local translation = Red.GetTranslation(bank, hl)
 
-    if rom[0] == 0x17 then
-        local addr = rom[2] * 0x100 + rom[1]
-        local bank = rom[3]
-        local rom = emu:rom(bank, addr)
-        local str = convert_str(rom + 1)
+    if translation then
+        update_labels(translation)
+    else
+        local rom = emu:rom(bank, hl)
 
-        update_labels(str)
+        if rom[0] == 0x17 then
+            local addr = rom[2] * 0x100 + rom[1]
+            local bank = rom[3]
+            local rom = emu:rom(bank, addr)
+            local str = convert_str(rom + 1)
+
+            update_labels(str)
+        end
     end
 end)
 

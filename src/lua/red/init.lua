@@ -14,6 +14,7 @@ local function init()
     require 'red.string'
     require 'red.pic'
     require 'red.dex'
+    require 'red.translate'
 
     Toggler.OnUpdate.red = function()
         Red:reset()
