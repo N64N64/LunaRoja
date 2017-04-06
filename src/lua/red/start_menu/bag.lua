@@ -15,7 +15,7 @@ function get_item_name(item)
         if item.id < 0xc9 then
             local i = item.id - 0xc4
             str = 'HM '..(i + 1)
-            id = Red.rom.HiddenMachines[i]
+            id = Red.rom.TechnicalMachines[50 + i]
         else
             local i = item.id - 0xc9
             str = 'TM '..(i + 1)

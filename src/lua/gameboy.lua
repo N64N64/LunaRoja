@@ -25,6 +25,7 @@ function Gameboy:new(rompath)
     do
         local t = string.split(rompath, '%.')
         t[#t] = nil
+        self.rombasepath = table.concat(t, '.')
         savepath = table.concat(t, '.')..'.sav'
     end
     local savefile = ffi.mgba.VFileOpen(savepath, bit.bor(O_CREAT, O_RDWR))

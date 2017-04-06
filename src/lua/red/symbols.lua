@@ -1,4 +1,8 @@
-local f = io.open(PATH..'/res/pokered.sym')
+local f = io.open(emu.rombasepath..'.sym')
+
+if not f then
+    error('You must place your symfile in '..emu.rombasepath..'.sym')
+end
 
 local symbols = {}
 
@@ -11,7 +15,6 @@ for line in f:lines() do
     end
 end
 f:close()
-
 
 local wram = {}
 

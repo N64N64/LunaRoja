@@ -1,20 +1,5 @@
 # Lua Red
 
-## Features
-
-* Full-screen overworld
-* Bag editor
-* Cheats
-* Fixed overworld bike sprite
-* In-game Lua console
-
-## Planned Features
-
-* Map editor
-* Party/box editor
-* Sprite/tile editor
-* Actually useful Pokedex (like viewing learnsets)
-
 ## Supported platforms
 
 * 3DS
@@ -26,6 +11,8 @@
 [#luared](https://kiwiirc.com/client/irc.freenode.net?channel=#luared) on freenode
 
 ## Building
+
+For both platforms, you must supply your own symfile and ROM and place them in the `rom` directory (create it if it does not exist). The symfile must have the same basename as the rom. So, for example, if your ROM was named `example.gb`, your symfile must be named `example.sym`.
 
 ### 3DS
 
