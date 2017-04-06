@@ -120,7 +120,7 @@ function Console.blinker:draw()
         self.on = not self.on
     end
     if self.on then
-        C.draw_set_color(0x00, 0xff, 0x00)
+        ffi.luared.draw_set_color(0x00, 0xff, 0x00)
         local charwidth = #self.input.text == 0 and 0 or self.input.width/#self.input.text
         local x, y = charwidth*self.pos, (#self.backlog + 1)*Console.lineheight
         Screen.top:line(x, y, x, y + Console.lineheight)

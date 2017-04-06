@@ -65,14 +65,14 @@ function Bitmap:draw(scr, x, y, tx, ty, width, height)
     width = width or self.width
     height = height or self.height
 
-    C.rotatecopy(
+    ffi.luared.rotatecopy(
         scr.pix, scr.height, scr.width, 3, x, y,
         self.pix, width, height, self.channels or 3, tx, ty
     )
 end
 
 function Bitmap:fastdraw(scr, x, y)
-    C.fastcopy(
+    ffi.luared.fastcopy(
         scr.pix, scr.height, scr.width, x, y,
         self.pix, self.width, self.height
     )
@@ -111,7 +111,7 @@ end
 
 function Bitmap:prerotate()
     local pix = ffi.new('uint8_t[?]', self.width*self.height*3)
-    C.rotatecopy(
+    ffi.luared.rotatecopy(
         pix, self.height, self.width, 3, 0, 0,
         self.pix, self.width, self.height, 3, 0, 0
     )
@@ -121,7 +121,7 @@ end
 
 function Bitmap:makebgr()
     if PLATFORM == '3ds' then
-        C.makebgr(self.pix, self.width, self.height, self.channels)
+        ffi.luared.makebgr(self.pix, self.width, self.height, self.channels)
     end
 end
 

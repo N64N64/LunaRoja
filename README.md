@@ -3,8 +3,7 @@
 ## Supported platforms
 
 * 3DS
-* macOS
-* Linux
+* macOS / Linux / Windows
 
 ## IRC chat
 
@@ -24,9 +23,9 @@ For both platforms, you must supply your own symfile and ROM and place them in t
 
 Then, copy `build/luared.3dsx`, `build/luared.smdh`, the `lua` folder, and the `res` folder to the `/3ds/luared` folder on your SD card.
 
-### macOS / Linux
+### macOS / Linux / Windows
 
-1. Compile [this mGBA edit](https://github.com/N64N64/mgba) and then copy libmgba.so (or libmgba.dylib if you're on macOS) to `deps/lib/love/` in this repo. Create the directories if they don't exist.
+1. Compile [this mGBA edit](https://github.com/N64N64/mgba) and then copy libmgba.dll or libmgba.so or libmgba.dylib (depending on your OS) to `deps/lib/love/` in this repo. Create the directories if they don't exist.
 2. Install LuaJIT
 3. Install [LÖVE](https://love2d.org/) (0.10.2 or newer)
 4. Install [aite](http://github.com/rweichler/aite)

@@ -7,7 +7,7 @@ require('plat.'..PLATFORM..'.screen')
 
 function Screen:pixel(x, y, r, g, b, a)
     if true then
-        C.draw_pixel(self.pix, self.width, self.height, x, y)
+        ffi.luared.draw_pixel(self.pix, self.width, self.height, x, y)
         return
     end
 
@@ -36,7 +36,7 @@ end
 
 function Screen:line(x1, y1, x2, y2, r, g, b, a)
     if true then
-        C.draw_line(self.pix, self.width, self.height, x1, y1, x2, y2)
+        ffi.luared.draw_line(self.pix, self.width, self.height, x1, y1, x2, y2)
         return
     end
     local distx = x2 - x1
@@ -58,7 +58,7 @@ function Screen:line(x1, y1, x2, y2, r, g, b, a)
 end
 
 function Screen:rect(x, y, width, height)
-    C.draw_rect(self.pix, self.width, self.height, x, y, width, height)
+    ffi.luared.draw_rect(self.pix, self.width, self.height, x, y, width, height)
 end
 
 return Screen

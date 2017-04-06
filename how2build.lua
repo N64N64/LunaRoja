@@ -92,10 +92,6 @@ _G['3ds'] = function()
 end
 
 function love()
-    if not(ffi.os == 'OSX' or ffi.os == 'Linux') then
-        print('Sorry, only macOS and Linux are supported currently.')
-        return
-    end
     local b = builder()
     b.compiler = 'gcc'
     b.src = table.merge(

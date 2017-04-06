@@ -21,9 +21,9 @@ end
 
 function Screen.endframe()
     -- need to manually copy the pixelbuffer in one by one D:
-    C.lovecopy(ffi.cast('uint8_t *', Screen.top.lovedata:getPointer()), Screen.top.pix, Screen.top.width*Screen.top.height)
+    ffi.luared.lovecopy(ffi.cast('uint8_t *', Screen.top.lovedata:getPointer()), Screen.top.pix, Screen.top.width*Screen.top.height)
     Screen.top.love:refresh()
 
-    C.lovecopy(ffi.cast('uint8_t *', Screen.bottom.lovedata:getPointer()), Screen.bottom.pix, Screen.bottom.width*Screen.bottom.height)
+    ffi.luared.lovecopy(ffi.cast('uint8_t *', Screen.bottom.lovedata:getPointer()), Screen.bottom.pix, Screen.bottom.width*Screen.bottom.height)
     Screen.bottom.love:refresh()
 end

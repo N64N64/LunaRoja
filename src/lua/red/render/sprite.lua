@@ -42,7 +42,7 @@ function getspritefromrom(id, raw)
 
     local finalpix = ffi.new('uint8_t[?]', ffi.sizeof(pix))
     for i=0,height/spriteheight-1 do
-        C.rotatecopy(
+        ffi.luared.rotatecopy(
             finalpix + i*width*spriteheight*3, spriteheight, width, 3, 0, 0,
             pix + i*width*spriteheight*3, width, spriteheight, 3, 0, 0
         )
@@ -165,7 +165,7 @@ function Red:render_sprites(framebuffer)
                 y = (yblk-dy)*16 - 4 + math.floor(spritey[i]/2) - playery + Red.Camera.y
             end
 
-            C.fastcopyaf(
+            ffi.luared.fastcopyaf(
                 bufpix, bufheight, bufwidth, x, y + 16 - spritemap.spriteheight,
                 spritemap.pix + offset*spritemap.width*spritemap.spriteheight*3, spritemap.spriteheight, spritemap.width, SPRITE_INVIS_COLOR, should_flip
             )

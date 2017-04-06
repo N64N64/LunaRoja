@@ -28,6 +28,9 @@ function Gameboy:new(rompath)
         self.rombasepath = table.concat(t, '.')
         savepath = table.concat(t, '.')..'.sav'
     end
+    if ffi.os == 'Windows' then
+        print("WARNING: saves don't work on Windows!")
+    end
     local savefile = ffi.mgba.VFileOpen(savepath, bit.bor(O_CREAT, O_RDWR))
     if savefile == ffi.NULL then
         error('savefile is NULL')

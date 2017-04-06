@@ -86,7 +86,7 @@ function Keyboard:render()
     local numcols = #layout[1]
     local colwidth = scr.width/numcols
 
-    C.draw_set_color(unpack(self.color))
+    ffi.luared.draw_set_color(unpack(self.color))
 
     for ri, row in ipairs(layout) do
         local y = scr.height * (ri-1)/numrows
@@ -103,7 +103,7 @@ function Keyboard:render()
                     label.background_color = self.color
                     label:paint()
                 end
-                C.draw_set_color(unpack(self.background_color))
+                ffi.luared.draw_set_color(unpack(self.background_color))
             elseif not(label.color == self.color) then
                 label.color = self.color
                 label.background_color = self.background_color

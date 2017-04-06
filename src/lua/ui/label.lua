@@ -36,7 +36,10 @@ function UI.Label:paint()
         bmap.pix, bmap.width, bmap.height, 3, 0, 0,
         pix, self.width, self.height, 1, 0, 0
     )
-    C.free(pix)
+    if not(ffi.os == 'Windows') then
+        -- this crashes Windows. TODO dont leak memory
+        C.free(pix)
+    end
     self.bmap = bmap
 end
 
