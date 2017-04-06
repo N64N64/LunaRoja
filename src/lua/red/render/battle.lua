@@ -78,19 +78,6 @@ function getbmon(rom)
     local self = Red
     local pic = Red.Pic:new(rom)
     local bpp = pic:decompress()
-    local pix = ffi.new('uint8_t[?]', pic.width*pic.height*3)
-    for i=0,(pic.width/Red.Tilesize)*(pic.height/Red.Tilesize)-1 do
-        BPP_CONV(pix, bpp + i*16, i, pic.width/Red.Tilesize, nil, nil, true)
-    end
 
-    local bmap = Bitmap:new{
-        pix = pix,
-        width = pic.width,
-        height = pic.height,
-        channels = 3
-    }
-    bmap:prerotate()
-    bmap:makebgr()
-
-    return bmap
+    return BPP(bpp, pic.width, pic.height, 'transpose')
 end

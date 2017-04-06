@@ -1,7 +1,10 @@
 function love.load()
     PLATFORM = 'love'
-    PATH='.'
-    LUAPATH = 'src/lua'
+    PATH = love.filesystem.getSource()
+    while string.sub(PATH, #PATH, #PATH) == '/' do
+        PATH = string.sub(PATH, 1, #PATH - 1)
+    end
+    LUAPATH = PATH..'/src/lua'
     package.path = LUAPATH..'/?.lua;'
                  ..LUAPATH..'/?/init.lua;'
                  ..package.path

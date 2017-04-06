@@ -6,7 +6,49 @@ local switcharoo = {
 
 local invis_color = {SPRITE_INVIS_COLOR, SPRITE_INVIS_COLOR, SPRITE_INVIS_COLOR}
 
-function BPP_CONV(pix, bpp, i, width, is_sprite, make_ff_invis_anyway, transpose)
+local step -- forward decl
+
+function BPP(getbpp, width, height, ...)
+    local is_sprite, make_ff_invis_anyway, transpose, raw
+    for _,v in ipairs{...} do
+        if v == 'is_sprite' then
+            is_sprite = true
+        elseif v == 'make_ff_invis_anyway' then
+            make_ff_invis_anyway = true
+        elseif v == 'transpose' then
+            transpose = true
+        elseif v == 'raw' then
+            raw = true
+        end
+    end
+
+    if not(type(getbpp) == 'function') then
+        local ptr = getbpp
+        getbpp = function(i)
+            return ptr + i*16
+        end
+    end
+
+    local pix = ffi.new('uint8_t[?]', width*height*3)
+
+    for i=0,(width/Red.Tilesize)*(height/Red.Tilesize)-1 do
+        step(pix, getbpp(i), i, width/Red.Tilesize, is_sprite, make_ff_invis_anyway, transpose)
+    end
+
+    if raw then return pix end
+
+    local bmap = Bitmap:new{
+        pix = pix,
+        width = width,
+        height = height,
+        channels = 3,
+    }
+    bmap:prerotate()
+    bmap:makebgr()
+    return bmap
+end
+
+function step(pix, bpp, i, width, is_sprite, make_ff_invis_anyway, transpose)
     local yy = Red.Tilesize*math.floor(i/width)
     local xx = Red.Tilesize*math.floor(i%width)
     if transpose then

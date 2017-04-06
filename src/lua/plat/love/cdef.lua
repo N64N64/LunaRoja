@@ -8,8 +8,8 @@ elseif ffi.os == 'OSX' then
 else
     error('Unknown platform')
 end
-ffi.mgba = ffi.load('deps/lib/love/libmgba.'..ext, true)
-ffi.luared = ffi.load('build/love/luared.'..ext, true)
+ffi.mgba = ffi.load(PATH..'/deps/lib/love/libmgba.'..ext, true)
+ffi.luared = ffi.load(PATH..'/build/love/luared.'..ext, true)
 
 O_CREAT = 0x0200
 O_RDWR = 2

@@ -37,7 +37,7 @@ function render()
             debug_label.text = text
             debug_label:paint()
         end
-        debug_label:render(Screen.bottom)
+        debug_label:render(Screen.top)
     end
     firstrun = false
 

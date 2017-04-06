@@ -1,3 +1,3 @@
 -- love2d
 
-dofile 'src/lua/plat/love/init.lua'
+dofile(love.filesystem.getSource()..'/src/lua/plat/love/init.lua')

@@ -129,21 +129,10 @@ function gettilefromrom(tileset, tile)
     local bst = emu:rom(header[0], tile*16 + header[1] + header[2] * 0x100)
     -- ptr to .2bpp
     local bpp = emu:rom(header[0], header[3] + header[4] * 0x100)
-    local pix = ffi.new('uint8_t[?]', 32*32*3)
 
-    for i=0,16-1 do
-        BPP_CONV(pix, bpp + bst[i]*16, i, 4)
-    end
-
-    local bmap = Bitmap:new{
-        pix = pix,
-        width = 32,
-        height = 32,
-        channels = 3,
-    }
-    bmap:prerotate()
-    bmap:makebgr()
-    return bmap
+    return BPP(function(i)
+        return bpp + bst[i]*16
+    end, 32, 32)
 end
 
 function Red:loadcustomtile(itileset, itile)

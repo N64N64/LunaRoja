@@ -25,12 +25,11 @@ function getspritefromrom(id, raw)
 
     local bpp, count = getspriteptr(id)
     local width = 16
-    local spriteheight = 16
     local height = count/2
-    local pix = ffi.new('uint8_t[?]', width*height*3)
-    for i=0,count/Red.Tilesize-1 do
-        BPP_CONV(pix, bpp + i*16, i, 2, not raw, true)
-    end
+
+    local spriteheight = 16
+
+    local pix = BPP(bpp, width, height, 'raw', 'make_ff_invis_anyway', not raw and 'is_sprite')
 
     if Red.CustomSprites[id] then
         local f = Red.CustomSprites[id].postprocess
