@@ -111,7 +111,7 @@ function Keyboard:render()
             end
             label:render(Screen.bottom, x + (colwidth - label.width)/2 + math.floor(math.random()*2), y + (rowheight - label.height)/2 + math.floor(math.random()*2))
             if isdown then
-                C.draw_set_color(unpack(self.color))
+                ffi.luared.draw_set_color(unpack(self.color))
             end
 
             local prevlabel = bitmaps[ri][ci - 1]
