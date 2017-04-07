@@ -90,7 +90,6 @@ function Keyboard:render()
 
     for ri, row in ipairs(layout) do
         local y = scr.height * (ri-1)/numrows
-        scr:line(0, y, scr.width-1, y)
         for ci, col in ipairs(row) do
             local x = scr.width * (ci-1)/numcols
 
@@ -113,15 +112,8 @@ function Keyboard:render()
             if isdown then
                 ffi.luared.draw_set_color(unpack(self.color))
             end
-
-            local prevlabel = bitmaps[ri][ci - 1]
-            if not(label.text == ' ' and prevlabel and prevlabel.text == ' ') then
-                scr:line(x, y, x, y + rowheight-1)
-            end
         end
     end
-    scr:line(scr.width-1, 0, scr.width-1, scr.height-1)
-    scr:line(0, scr.height-1, scr.width-1, scr.height-1)
 end
 
 local wastouching = false

@@ -3,6 +3,7 @@ for _,v in pairs(ls(PATH..'/rom') or {}) do
     if string.has_suffix(v, '.gbc') or string.has_suffix(v, '.gb') then
         ROOT['load ROM'][v] = function()
             emu = Gameboy:new(PATH..'/rom/'..v)
+            RENDER_CALLBACKS.lua_logo = nil
             Red:reset()
         end
     end
@@ -14,6 +15,7 @@ local debug_label = UI.Label:new()
 debug_label.fontsize = 12
 
 RENDER_CALLBACKS = {}
+RENDER_CALLBACKS.lua_logo = require 'art.lua_logo'
 
 function render()
     if emu and not firstrun then

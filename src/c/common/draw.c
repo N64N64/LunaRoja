@@ -241,14 +241,13 @@ void draw_set_color(uint8_t r, uint8_t g, uint8_t b)
 
 bool draw_pixel(uint8_t *fb, int fbwidth, int fbheight, float fx, float fy)
 {
-    if(fx < 0 || fx >= fbwidth || fy < 0 || fy > fbheight) {
+    int x = (int)(fx + 0.5);
+    int y = (int)(fy + 0.5);
+    if(x < 0 || x >= fbwidth || y < 0 || y > fbheight) {
         return false;
     }
 
-    int x = (int)(fx + 1);
-    int y = (int)(fy + 1);
-
-    int s = 3*(fbheight*x - y);
+    int s = 3*(fbheight*(x + 1) - (y + 1));
     for(int i = 0; i < 3; i++) {
         fb[s + i] = _color[i];
     }
@@ -305,4 +304,39 @@ void draw_line(uint8_t *fb, int fbwidth, int fbheight, float x1, float y1, float
         y += dy;
     }
     draw_pixel(fb, fbwidth, fbheight, x2, y2);
+}
+
+void draw_circle(uint8_t *fb, int fbwidth, int fbheight, float x0, float y0, float radius, bool should_outline)
+{
+    if(should_outline) {
+        float x = radius;
+        float y = 0;
+        float err = 0;
+        while (x >= y) {
+            draw_pixel(fb, fbwidth, fbheight, x0 + x, y0 + y);
+            draw_pixel(fb, fbwidth, fbheight, x0 + y, y0 + x);
+            draw_pixel(fb, fbwidth, fbheight, x0 - y, y0 + x);
+            draw_pixel(fb, fbwidth, fbheight, x0 - x, y0 + y);
+            draw_pixel(fb, fbwidth, fbheight, x0 - x, y0 - y);
+            draw_pixel(fb, fbwidth, fbheight, x0 - y, y0 - x);
+            draw_pixel(fb, fbwidth, fbheight, x0 + y, y0 - x);
+            draw_pixel(fb, fbwidth, fbheight, x0 + x, y0 - y);
+            if (err <= 0) {
+                y += 1;
+                err += 2*y + 1;
+            }
+            if (err > 0) {
+                x -= 1;
+                err -= 2*x + 1;
+            }
+        }
+    } else { // fill
+        for(int y = -radius; y <= radius; y++) {
+            for(int x = -radius; x <= radius; x++) {
+                if(x*x + y*y <= radius*radius) {
+                    draw_pixel(fb, fbwidth, fbheight, x0 + x, y0 + y);
+                }
+            }
+        }
+    }
 }

@@ -41,6 +41,7 @@ void scalecopy(uint8_t *out, uint8_t *in, int width, int height, float scale);
 void makebgr(uint8_t *pix, int width, int height, int channels);
 void draw_set_color(uint8_t r, uint8_t g, uint8_t b);
 bool draw_pixel(uint8_t *fb, int fbwidth, int fbheight, float fx, float fy);
+void draw_circle(uint8_t *fb, int fbwidth, int fbheight, float x0, float y0, float radius, bool should_outline);
 void draw_line(uint8_t *fb, int fbwidth, int fbheight, float x1, float y1, float x2, float y2);
 void draw_rect(uint8_t *fb, int fbwidth, int fbheight, float fx, float fy, float fwidth, float fheight);
 
@@ -160,6 +161,7 @@ void export_symbols(lua_State *L)
     export(makebgr);
     export(draw_set_color);
     export(draw_pixel);
+    export(draw_circle);
     export(draw_line);
     export(draw_rect);
     export(minstride_override);

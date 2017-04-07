@@ -6,7 +6,7 @@ Screen.bottom = setmetatable({}, mt)
 require('plat.'..PLATFORM..'.screen')
 
 function Screen:pixel(x, y, r, g, b, a)
-    if true then
+    if not USE_LUA_FALLBACK then
         ffi.luared.draw_pixel(self.pix, self.width, self.height, x, y)
         return
     end
@@ -35,7 +35,7 @@ function Screen:pixel(x, y, r, g, b, a)
 end
 
 function Screen:line(x1, y1, x2, y2, r, g, b, a)
-    if true then
+    if not USE_LUA_FALLBACK then
         ffi.luared.draw_line(self.pix, self.width, self.height, x1, y1, x2, y2)
         return
     end
@@ -55,6 +55,10 @@ function Screen:line(x1, y1, x2, y2, r, g, b, a)
         y = y + dy
     end
     self:pixel(x2, y2, r, g, b, a)
+end
+
+function Screen:circle(x, y, r, should_outline)
+    ffi.luared.draw_circle(self.pix, self.width, self.height, x, y, r, should_outline and true or false)
 end
 
 function Screen:rect(x, y, width, height)
