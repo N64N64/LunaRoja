@@ -2,7 +2,7 @@
 
 ## Supported platforms
 
-* 3DS
+* New 3DS
 * macOS / Linux / Windows
 
 ## IRC chat
@@ -13,7 +13,7 @@
 
 For both platforms, you must supply your own symfile and ROM and place them in the `rom` directory (create it if it does not exist). The symfile must have the same basename as the rom. So, for example, if your ROM was named `example.gb`, your symfile must be named `example.sym`.
 
-### 3DS
+### New 3DS
 
 1. Be on macOS or Linux
 2. Install LuaJIT
