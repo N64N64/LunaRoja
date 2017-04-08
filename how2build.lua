@@ -53,6 +53,7 @@ _G['3ds'] = function()
     b.compiler = 'gcc'
     b.src = table.merge(
         fs.find('src/c/common', '*.c'),
+        fs.find('deps/c/common', '*.c'),
         fs.find('src/c/3ds', '*.c')
     )
     b.build_dir = 'build/3ds'
@@ -95,7 +96,8 @@ function love()
     local b = builder()
     b.compiler = 'gcc'
     b.src = table.merge(
-        fs.find('src/c/common', '*.c')
+        fs.find('src/c/common', '*.c'),
+        fs.find('deps/c/common', '*.c')
     )
     b.build_dir = 'build/love'
     b.output = 'build/love/luared.'..builder.dylib_ext

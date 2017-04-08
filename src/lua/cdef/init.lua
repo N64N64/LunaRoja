@@ -42,6 +42,18 @@ int stbi_write_png(char const *filename, int w, int h, int comp, const void *dat
 typedef void stbi_write_func(void *context, void *data, int size);
 int stbi_write_png_to_func(stbi_write_func *func, void *context, int w, int h, int comp, const void  *data, int stride_in_bytes);
 
+// sha256
+
+typedef struct SHA256_CTX {
+    unsigned char data[64];
+    unsigned int datalen;
+    unsigned long long bitlen;
+    unsigned char state[8];
+} SHA256_CTX;
+void sha256_init(SHA256_CTX *ctx);
+void sha256_update(SHA256_CTX *ctx, const unsigned char data[], size_t len);
+void sha256_final(SHA256_CTX *ctx, unsigned char hash[]);
+
 // my stuff
 
 void lovecopy(uint8_t *out, uint8_t *in, int size);
