@@ -11,12 +11,27 @@ emu:hook(Red.sym.PrintText_NoCreatingTextBox, function()
         return
     end
 
-    local rom = emu:rom(bank, hl)
+    local romfile, rom
+
+    if not TRANSLATION_ROM then
+        rom = emu:rom(bank, hl)
+        romfile = emu.romfile
+    else
+        local sym = Red.sym[bank*0x10000 + hl]
+        if not sym then
+            error(string.format('could not lookup symbol for %.2x:%.4x', bank, hl))
+        end
+        rom = TRANSLATION_ROM.rom[sym.name]
+        if not rom then
+            error('could not lookup symbol for '..sym.name)
+        end
+        romfile = TRANSLATION_ROM
+    end
 
     if rom[0] == 0x17 then
         local addr = rom[2] * 0x100 + rom[1]
         local bank = rom[3]
-        local rom = emu:rom(bank, addr)
+        local rom = romfile:lookup(bank, addr)
         local str = convert_str(rom + 1)
 
         update_labels(str)

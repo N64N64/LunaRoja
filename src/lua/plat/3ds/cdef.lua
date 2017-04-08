@@ -5,6 +5,9 @@ end
 ffi.mgba = ffi.C
 ffi.luared = ffi.C
 
+SEEK_END = 2
+SEEK_SET = 0
+
 GFX_TOP = 0
 GFX_BOTTOM = 1
 GFX_LEFT = 0

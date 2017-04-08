@@ -20,3 +20,5 @@ else
 end
 
 O_RDWR = 2
+SEEK_END = 2
+SEEK_SET = 0

@@ -1,4 +1,7 @@
+// ghetto symbol table for LuaJIT ffi
+
 #include <stdint.h>
+#include <stdio.h>
 #include <stdbool.h>
 #include <malloc.h>
 #include <dirent.h>
@@ -124,6 +127,14 @@ void export_symbols(lua_State *L)
     export(strcmp);
     export(memcmp);
     export(strncmp);
+
+    export(fseek);
+    export(rewind);
+    export(fopen);
+    export(fread);
+    export(fclose);
+    export(ftell);
+
 #ifdef USE_MGBA
     export(romBuffer);
     export(romBufferSize);

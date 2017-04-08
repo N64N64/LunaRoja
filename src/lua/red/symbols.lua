@@ -1,21 +1,3 @@
-local f = io.open(emu.rombasepath..'.sym')
-
-if not f then
-    error('You must place your symfile in '..emu.rombasepath..'.sym')
-end
-
-local symbols = {}
-
-for line in f:lines() do
-    local bank, addr, name = string.match(line, '(%w%w)%:(%w%w%w%w) (.+)')
-    if bank and addr and name then
-        bank = tonumber(bank, 16)
-        addr = tonumber(addr, 16)
-        symbols[name] = {bank = bank, addr = addr}
-    end
-end
-f:close()
-
 local wram = {}
 
 wram.wTilesetCollisionPtr = 2
@@ -91,7 +73,7 @@ end
 
 local mt = {}
 mt.__index = function(t, k)
-    local sym = symbols[k]
+    local sym = emu.romfile.sym[k]
     local ptr = emu.wram + sym.addr
 
     local info = wram[k]
@@ -139,7 +121,7 @@ mt.__index = function(t, k)
 end
 
 mt.__newindex = function(t, k, v)
-    local sym = symbols[k]
+    local sym = emu.romfile.sym[k]
     local ptr = emu.wram + sym.addr
 
     local info = wram[k]
@@ -333,14 +315,6 @@ ffi.metatype('struct box', struct_mt)
 ffi.metatype('struct party', struct_mt)
 ffi.metatype('struct battle', struct_mt)
 
-Red.sym = symbols
+Red.sym = emu.romfile.sym
 Red.wram = setmetatable({}, mt)
-Red.rom = setmetatable({}, {
-    __index = function(t, k)
-        local sym = symbols[k]
-        return emu:rom(sym.bank, sym.addr)
-    end,
-    __newindex = function()
-        error('not allowed')
-    end,
-})
+Red.rom = emu.romfile.rom

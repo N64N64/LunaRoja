@@ -25,7 +25,6 @@ function Gameboy:new(rompath)
     do
         local t = string.split(rompath, '%.')
         t[#t] = nil
-        self.rombasepath = table.concat(t, '.')
         savepath = table.concat(t, '.')..'.sav'
     end
     if ffi.os == 'Windows' then
@@ -38,12 +37,14 @@ function Gameboy:new(rompath)
     ffi.mgba._GBCoreLoadSave(core, savefile)
     ffi.mgba._GBCoreReset(core)
 
+    self.rompath = rompath
     self.core = core
     self.pix = pix
     self.width, self.height = size[0], size[1]
     self.gb = ffi.cast('struct GB *', self.core.board)
     self.wram = self.gb.memory.wram - 0xc000
     self.romptr = self.gb.memory.rom
+    self.romfile = Rom:new(self.rompath, self.romptr)
 
     return self
 end
@@ -94,8 +95,7 @@ function Gameboy:render(scr, x, y)
 end
 
 function Gameboy:rom(bank, addr)
-    assert(addr < 0x8000)
-    return self.romptr + bit.band(addr, 0x4000 - 1) + bank * 0x4000
+    return self.romfile:lookup(bank, addr)
 end
 
 function Gameboy:resetrom()
