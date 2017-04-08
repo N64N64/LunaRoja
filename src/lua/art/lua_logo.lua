@@ -8,7 +8,7 @@ local dist_to_moon = scale/math.sin(math.pi/4)
 local period = 25.6 -- seconds it takes for moon to orbit
 local angle = 0
 
-LUA_COLOR = {0x45, 0x05, 0x17}
+LUA_COLOR = {0x8a, 0x0a, 0x2e}
 
 return function()
     angle = angle + DT*2*math.pi/period
@@ -26,7 +26,7 @@ return function()
     Screen.top:circle(moonx, moony, scale*moon_radius)
 
     -- crater
-    ffi.luared.draw_set_color(r/10, g/10, b/10)
+    ffi.luared.draw_set_color(r/5, g/5, b/5)
     Screen.top:circle(x + scale*(1-2*moon_radius), y - scale*(1-2*moon_radius), scale*moon_radius)
 
 end

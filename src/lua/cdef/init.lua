@@ -56,5 +56,6 @@ void draw_line(uint8_t *fb, int fbwidth, int fbheight, float x1, float y1, float
 void * font_create(const char *path);
 void font_dimensions(void *font, const char *text, int size, int *outwidth, int *outheight);
 uint8_t * font_render(void *font, const char *text, int size, int *outwidth, int *outheight);
+bool untargz(const char *filename, const char *outfolder);
 
 ]]

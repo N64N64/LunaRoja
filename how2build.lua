@@ -108,6 +108,9 @@ function love()
     b.library_dirs = {
         'deps/lib/love',
     }
+    b.libraries = {
+        'z',
+    }
     if mgba then
         b.defines = {
             'USE_MGBA',
