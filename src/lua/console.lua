@@ -5,6 +5,7 @@ Console.history = {}
 Console.backlog = {}
 
 Console.input = UI.Label:new('', Console.lineheight)
+Console.input.font = Font.Monospace
 Console.input:paint()
 
 Console.mode = {
@@ -19,6 +20,7 @@ Console.mode = {
 
 local button = PLATFORM == '3ds' and 'B' or 'ESC'
 local header = UI.Label:new('Lua console! Press '..button..' to return to game', Console.lineheight, {0x86, 0x86, 0xff})
+header.font = Font.Monospace
 header:paint()
 
 function Console:keycallback(key)
@@ -34,6 +36,7 @@ function Console:keycallback(key)
     elseif key == '\n' then
         if self.input.text == 'help' and _G.help == nil then
             local msg = UI.Label:new('Type some Lua code. Here\'s an example: 2 + 2', Console.lineheight)
+            msg.font = Font.Monospace
             msg.color = header.color
             msg:paint()
             table.insert(self.history, self.input.text)
@@ -58,6 +61,7 @@ function Console:keycallback(key)
             if not success then print(result) end
             if returning or not(result == nil) then
                 local result = UI.Label:new(tostring(result), Console.lineheight)
+                result.font = Font.Monospace
                 result.color = success and {0x00, 0xff, 0x00} or {0xff, 0x00, 0x00}
                 result:paint()
                 table.insert(self.backlog, result)
@@ -67,6 +71,7 @@ function Console:keycallback(key)
             table.remove(self.backlog, 1)
         end
         self.input = UI.Label:new('', Console.lineheight)
+        self.input.font = Font.Monospace
         self.input:paint()
         self.blinker.pos = 0
         self.history_idx = nil
@@ -113,7 +118,7 @@ Console.blinker.interval = 0.6
 Console.blinker.time = 0
 Console.blinker.on = true
 Console.blinker.pos = 0
-function Console.blinker:draw()
+function Console.blinker:draw(x0, y0)
     self.time = self.time + DT
     while self.time > self.interval do
         self.time = self.time - self.interval
@@ -122,7 +127,7 @@ function Console.blinker:draw()
     if self.on then
         ffi.luared.draw_set_color(0x00, 0xff, 0x00)
         local charwidth = #self.input.text == 0 and 0 or self.input.width/#self.input.text
-        local x, y = charwidth*self.pos, (#self.backlog + 1)*Console.lineheight
+        local x, y = charwidth*self.pos + x0, (#self.backlog + 1)*Console.lineheight + y0
         Screen.top:line(x, y, x, y + Console.lineheight)
     end
 end
@@ -198,14 +203,16 @@ function Console:render()
         end
     end
 
-    header:render(Screen.top, 0, 0)
+    local xpad = 3
+
+    header:render(Screen.top, xpad, 0)
     for i,v in ipairs(self.backlog) do
-        v:render(Screen.top, 0, i*Console.lineheight)
+        v:render(Screen.top, xpad, i*Console.lineheight)
     end
 
-    self.input:render(Screen.top, 0, (#self.backlog + 1)*Console.lineheight)
+    self.input:render(Screen.top, xpad, (#self.backlog + 1)*Console.lineheight)
 
-    self.blinker:draw()
+    self.blinker:draw(xpad, 0)
 end
 
 return Console

@@ -12,7 +12,6 @@ end
 Screen.init()
 
 local debug_label = UI.Label:new()
-debug_label.fontsize = 12
 
 RENDER_CALLBACKS = {}
 RENDER_CALLBACKS.lua_logo = require 'art.lua_logo'
@@ -39,7 +38,7 @@ function render()
             debug_label.text = text
             debug_label:paint()
         end
-        debug_label:render(Screen.top)
+        debug_label:render(Screen.bottom, Screen.bottom.width - debug_label.width, Screen.bottom.height - debug_label.fontsize)
     end
     firstrun = false
 

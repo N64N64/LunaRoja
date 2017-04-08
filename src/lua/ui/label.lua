@@ -8,7 +8,7 @@ function UI.Label:new(text, fontsize, color)
     self.text = text
     self.color = color or {0xff, 0xff, 0xff}
     self.background_color = {0x00, 0x00, 0x00}
-    self.font = 'res/hack.ttf'
+    self.font = Font.Default
     self.fontsize = fontsize or 14
     return self
 end
@@ -19,7 +19,7 @@ function UI.Label:paint()
 
     local cfont = C_FONTS[self.font]
     if not cfont then
-        cfont = ffi.luared.font_create(PATH..'/'..self.font)
+        cfont = ffi.luared.font_create(PATH..'/res/font/'..self.font)
         if cfont == ffi.NULL then error('wtf') end
         C_FONTS[self.font] = cfont
     end

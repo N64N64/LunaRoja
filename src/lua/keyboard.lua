@@ -158,7 +158,9 @@ function Keyboard:update()
     elseif not Mouse.isheld and wastouching then
         if keyx == touchx and keyy == touchy then
             local char = layout[touchy][touchx]
-            self:callcallbacks(char)
+            if char then
+                self:callcallbacks(char)
+            end
         end
         keyx, keyy, touchx, touchy = nil, nil, nil, nil
     end

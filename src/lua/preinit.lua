@@ -6,6 +6,9 @@ require 'config'
 require 'cdef'
 require 'util'
 
+require 'font'
+require 'bitmap'
+
 require 'object'
 UI = {}
 require 'ui.view'
@@ -17,7 +20,6 @@ require 'button'
 require 'mouse'
 require 'mode'
 
-require 'bitmap'
 require 'keyboard'
 require 'gameboy'
 require 'console'
