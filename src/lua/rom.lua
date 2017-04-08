@@ -47,7 +47,7 @@ function Rom:new(path, romptr)
     self.rom = setmetatable({}, {
         __index = function(t, k)
             local sym = self.sym[k]
-            return self:lookup(sym.bank, sym.addr)
+            return sym and self:lookup(sym.bank, sym.addr)
         end,
         __newindex = function()
             error('not allowed')
