@@ -23,6 +23,23 @@ local header = UI.Label:new('Lua console! Press '..button..' to return to game',
 header.font = Font.Monospace
 header:paint()
 
+local override = {}
+override.help = function(self)
+    local msg = UI.Label:new('Type some Lua code. Here\'s an example: 2 + 2', Console.lineheight)
+    msg.font = Font.Monospace
+    msg.color = header.color
+    msg:paint()
+    table.insert(self.history, self.input.text)
+    table.insert(self.backlog, self.input)
+    table.insert(self.backlog, msg)
+
+    return true
+end
+
+override.quit = function()
+    SHOULD_QUIT = true
+end
+
 function Console:keycallback(key)
     if key == '\b' then
         local front = string.sub(self.input.text, 1, math.max(0, self.blinker.pos - 1))
@@ -34,14 +51,8 @@ function Console:keycallback(key)
             self.blinker.pos = 0
         end
     elseif key == '\n' then
-        if self.input.text == 'help' and _G.help == nil then
-            local msg = UI.Label:new('Type some Lua code. Here\'s an example: 2 + 2', Console.lineheight)
-            msg.font = Font.Monospace
-            msg.color = header.color
-            msg:paint()
-            table.insert(self.history, self.input.text)
-            table.insert(self.backlog, self.input)
-            table.insert(self.backlog, msg)
+        if not _G[self.input.text] and override[self.input.text] and override[self.input.text](self) then
+            -- skip
         else
             local returning = not(string.match(self.input.text, '(%s*)') == self.input.text)
             local f, err = load('return '..self.input.text) -- first try returning result
