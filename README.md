@@ -1,5 +1,3 @@
-# Lua Red
-
 ## Supported platforms
 
 * New 3DS
