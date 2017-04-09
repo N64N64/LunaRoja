@@ -5,7 +5,7 @@ function Net.Server:new(port)
     local self = super.new(self)
 
     self.connfds = {}
-    self.port = 27716
+    self.port = port
 
     local hostname = ffi.new('char[200]')
     C.gethostname(hostname, ffi.sizeof(hostname))
