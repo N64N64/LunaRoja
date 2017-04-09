@@ -4,10 +4,8 @@ Net.Server = Object.new(super)
 function Net.Server:new(port)
     local self = super.new(self)
 
-    self.s = ffi.new('struct lr_server')
-    self.s.listenfd = -1
-    self.s.connfd = -1
-    self.s.port = 27716
+    self.connfds = {}
+    self.port = 27716
 
     local hostname = ffi.new('char[200]')
     C.gethostname(hostname, ffi.sizeof(hostname))
@@ -16,41 +14,49 @@ function Net.Server:new(port)
     return self
 end
 
+function Net.Server:start()
+    local listenfd = C.server_start(self.port)
+    if listenfd ~= -1 then
+        self.listenfd = listenfd
+    end
+end
+
 function Net.Server:disconnect()
     C.closesocket(self.s.connfd)
     self.s.connfd = -1
     self.disconnected = true
 end
 
+local function runcode(s)
+    local f, err = load(s)
+    if not f then
+        return 'err: '..err
+    end
+    local success, result = pcall(f)
+    if not success then
+        return 'err: '..result
+    end
+    return result
+end
+
 local buf = ffi.new('char[512]')
 function Net.Server:run()
-    if self.s.connfd == -1 then
-        C.server_start(self.s)
-        print('get')
-    elseif not self.disconnected then
-        C.recv(self.s.connfd, buf, ffi.sizeof(buf), 0)
-        local len = 0
-        for i=0,ffi.sizeof(buf)-1 do
-            if buf[i] == string.byte('\n') then
-                len = i
-                break
-            end
+    if not self.listenfd then return end
+
+    if #self.connfds == 0 then
+        local connfd = C.server_listen(self.listenfd)
+        if connfd >= 0 then
+            print('got connection')
+            table.insert(self.connfds, connfd)
         end
-        local f, err = load(ffi.string(buf, len))
-        if f then
-            local success, result = pcall(f)
-            if not success then
-                result = 'err: '..result
+    elseif not self.disconnected then
+        for _,connfd in ipairs(self.connfds) do
+            local len = C.recv(connfd, buf, ffi.sizeof(buf), 0)
+            if len ~= -1 then
+                print(runcode(ffi.string(buf, len)))
             end
-            print(result)
-        else
-            print('lerr: '..err)
         end
     end
-
-    print(self.hostname..':'..self.s.port)
-    print('  connfd: '..self.s.connfd)
-    print('listenfd: '..self.s.listenfd)
 end
 
 return Net.Server

@@ -17,7 +17,7 @@ ffi.cdef[[
 void printf(const char *fmt, ...);
 void * memcpy(void *, void *, size_t);
 void *memset(void *s, int c, size_t n);
-size_t recv(int sockfd, void *buf, size_t len, int flags);
+int recv(int sockfd, void *buf, size_t len, int flags);
 int strncmp ( const char * str1, const char * str2, size_t num );
 int memcmp ( const void * ptr1, const void * ptr2, size_t num );
 void free(void *);
@@ -54,13 +54,9 @@ void sha256_final(SHA256_CTX *ctx, unsigned char hash[]);
 
 // my stuff
 
-struct lr_server {
-    int listenfd;
-    int connfd;
-    int port;
-};
+int server_start(int port);
+int server_listen(int listenfd);
 
-void server_start(struct lr_server *self);
 int closesocket(int fd);
 int gethostname(const char *, size_t);
 
