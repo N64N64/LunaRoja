@@ -1,6 +1,13 @@
 --freetype lightweight ffi binding (no garbage collection due to freetype's object ownership model)
 local ffi = require'ffi'
 require'cdef/freetype_h'
+local C = C
+if ffi.os == 'Windows' then
+    -- i was really happy that i could just use
+    -- the freetype that was loaded with LOVE,
+    -- but alas, I forgot Windows sucks.
+    C = ffi.load(PATH..'/deps/lib/love/freetype6.dll')
+end
 --C = ffi.load'freetype' -- not necessary because 3DS is static, and desktop love2d alrady imports it
 local M = setmetatable({C = C}, {__index = C})
 

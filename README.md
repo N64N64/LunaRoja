@@ -28,8 +28,9 @@ Then, copy `build/luared.3dsx`, `build/luared.smdh`, the `lua` folder, and the `
 1. Compile [this mGBA edit](https://github.com/N64N64/mgba) and then copy libmgba.dll or libmgba.so or libmgba.dylib (depending on your OS) to `deps/lib/love/` in this repo. Create the directories if they don't exist.
 2. Install LuaJIT
 3. Install zlib
-4. Install [LÖVE](https://love2d.org/) (0.10.2 or newer)
-5. Install [aite](http://github.com/rweichler/aite)
-6. Run `aite love`
+4. Windows: Put [this .dll](https://github.com/N64N64/mgba/releases/download/1/freetype6.dll) in `deps\lib\love`
+5. Install [LÖVE](https://love2d.org/) (0.10.2 or newer)
+6. Install [aite](http://github.com/rweichler/aite)
+7. Run `aite love`
 
 Open the LÖVE executable with the repo directory to run it.

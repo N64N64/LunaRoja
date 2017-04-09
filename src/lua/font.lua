@@ -90,7 +90,7 @@ function Font:paint(text, size)
         elseif size - y + height > outheight or size - y < 0 then
             error('bad y coords')
         else
-            C.dumbcopy(
+            ffi.luared.dumbcopy(
                 outpix, outwidth, outheight, x0 + x, size - y,
                 pix, width, height, 1
             )
