@@ -2,6 +2,8 @@ ffi = require 'ffi'
 C = ffi.C
 bit = require 'bit'
 
+require 'object'
+
 require 'config'
 require 'cdef'
 require 'util'
@@ -9,7 +11,6 @@ require 'util'
 require 'font'
 require 'bitmap'
 
-require 'object'
 UI = {}
 require 'ui.view'
 require 'ui.label'

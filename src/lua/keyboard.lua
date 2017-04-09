@@ -39,14 +39,14 @@ local function setup(layout, bitmaps)
             t[i] = string.sub(str, i, i)
             local key
             if t[i] == '\b' then
-                key = UI.Label:new('<-', 20)
+                key = UI.Label:new('<-', 15)
             elseif t[i] == '\t' then
-                key = UI.Label:new('CAPS', 12)
+                key = UI.Label:new('CAPS', 10)
                 caps_label = key
             elseif t[i] == '\n' then
-                key = UI.Label:new('enter', 10)
+                key = UI.Label:new('enter', 8)
             else
-                key = UI.Label:new(t[i], 30)
+                key = UI.Label:new(t[i], 20)
             end
             key.color = Keyboard.color
             key.background_color = Keyboard.background_color

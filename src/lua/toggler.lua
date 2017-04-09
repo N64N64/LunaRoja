@@ -1,6 +1,6 @@
 Toggler = {}
 
-local FONTSIZE = 16
+local FONTSIZE = 14
 
 local intptr = ffi.new('int[2]')
 function Toggler:render()

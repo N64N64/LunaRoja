@@ -44,6 +44,7 @@ _G['3ds'] = function()
     fs.mkdir('deps/lib/3ds')
     downloadlibs{
         {'deps/lib/3ds/libluajit.a', 'https://github.com/N64N64/mgba/releases/download/1/libluajit.a'},
+        {'deps/lib/3ds/libfreetype.a', 'https://github.com/N64N64/mgba/releases/download/1/libfreetype.a'},
         {'deps/lib/3ds/libmgba.a', 'https://github.com/N64N64/mgba/releases/download/1/libmgba.a'},
         {'deps/lib/3ds/libpng16.a', 'https://github.com/N64N64/mgba/releases/download/1/libpng16.a'},
         {'deps/lib/3ds/libzlibstatic.a', 'https://github.com/N64N64/mgba/releases/download/1/libzlibstatic.a'},

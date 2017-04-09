@@ -74,7 +74,7 @@ end
 function Bitmap:fastdraw(scr, x, y)
     ffi.luared.fastcopy(
         scr.pix, scr.height, scr.width, x, y,
-        self.pix, self.width, self.height
+        self.pix, self.width, self.height, 3
     )
 end
 
