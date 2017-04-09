@@ -33,10 +33,10 @@ int main(int argc, char **argv)
 {
     //FSUSER_OpenArchive(&sdmcArchive, ARCHIVE_SDMC, fsMakePath(PATH_EMPTY, ""));
 
-    //u32 *SOCU_buffer = (u32*)memalign(SOCU_ALIGN, SOCU_BUFFERSIZE);
-    //if(socInit(SOCU_buffer, SOCU_BUFFERSIZE) != 0) {
-    //    return 1;
-    //}
+    u32 *SOCU_buffer = (u32*)memalign(SOCU_ALIGN, SOCU_BUFFERSIZE);
+    if(socInit(SOCU_buffer, SOCU_BUFFERSIZE) != 0) {
+        return 1;
+    }
 
     srvInit();
     aptInit();
@@ -86,7 +86,7 @@ int main(int argc, char **argv)
         }
     }
     gfxExit();
-    //socExit();
+    socExit();
     srvExit();
     aptExit();
     hidExit();

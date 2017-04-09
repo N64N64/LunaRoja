@@ -11,6 +11,9 @@ require 'util'
 require 'font'
 require 'bitmap'
 
+Net = {}
+require 'net.server'
+
 UI = {}
 require 'ui.view'
 require 'ui.label'

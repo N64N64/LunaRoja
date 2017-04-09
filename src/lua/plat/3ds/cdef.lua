@@ -57,10 +57,6 @@ extern uint32_t __linear_heap_size;
 
 // my stuff
 
-int server_getconnection(int port);
-int _listenfd;
-int closesocket(int fd);
-int gethostname(const char *, size_t);
 bool lua_initted_gfx;
 bool lua_exited_gfx;
 

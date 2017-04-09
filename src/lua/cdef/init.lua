@@ -54,6 +54,16 @@ void sha256_final(SHA256_CTX *ctx, unsigned char hash[]);
 
 // my stuff
 
+struct lr_server {
+    int listenfd;
+    int connfd;
+    int port;
+};
+
+void server_start(struct lr_server *self);
+int closesocket(int fd);
+int gethostname(const char *, size_t);
+
 bool lovecopy(uint8_t *out, uint8_t *in, int size);
 bool dumbcopy(uint8_t *out, int outw, int outh, int outx, int outy,
                uint8_t *in, int  inw, int inh, int stride);

@@ -104,11 +104,10 @@
                                                 \
     export(lua_initted_gfx);                    \
                                                 \
-    export(server_getconnection);               \
+    export(server_start);                       \
     export(recv);                               \
     export(closesocket);                        \
     export(gethostname);                        \
-    export(_listenfd);                          \
                                                 \
     export(stbi_load);                          \
     export(stbi_failure_reason);                \
