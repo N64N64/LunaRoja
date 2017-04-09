@@ -8,8 +8,6 @@ if jit.status() then
     function PC_HOOK(...)
         return ffi.mgba.PC_HOOK(...)
     end
-elseif not PC_HOOK then
-    error('PC_HOOK not predefined')
 end
 
 ffi.cdef[[

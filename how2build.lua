@@ -69,21 +69,16 @@ _G['3ds'] = function()
     b.library_dirs = {
         'deps/lib/3ds',
     }
+    b.libraries = {
+        'luajit',
+        'freetype',
+        'zlibstatic',
+        'png16',
+    }
     if mgba then
-        b.libraries = {
-            'luajit',
-            'mgba',
-            'freetype',
-            'zlibstatic',
-            'png16',
-        }
+        table.insert(b.libraries, 'mgba')
         b.defines = {
             'USE_MGBA',
-        }
-    else
-        b.libraries = {
-            'luajit',
-            'freetype',
         }
     end
     b.ldflags = '-Wl,--whole-archive,--allow-multiple-definition'
