@@ -3,7 +3,7 @@
 ## Supported platforms
 
 * New 3DS
-* macOS / Linux / Windows
+* Mac / Linux / Windows
 
 ## IRC chat
 
@@ -15,7 +15,7 @@ For both platforms, you must supply your own symfile and ROM and place them in t
 
 ### New 3DS
 
-1. Be on macOS or Linux
+1. Be on Mac or Linux
 2. Install LuaJIT
 3. Install devkitARM and ctrulib
 4. Install [aite](http://github.com/rweichler/aite)
@@ -23,7 +23,7 @@ For both platforms, you must supply your own symfile and ROM and place them in t
 
 Then, copy `build/luared.3dsx`, `build/luared.smdh`, the `lua` folder, and the `res` folder to the `/3ds/luared` folder on your SD card.
 
-### macOS / Linux / Windows
+### Mac / Linux / Windows
 
 1. Compile [this mGBA edit](https://github.com/N64N64/mgba) and then copy libmgba.dll or libmgba.so or libmgba.dylib (depending on your OS) to `deps/lib/love/` in this repo. Create the directories if they don't exist.
 2. Install LuaJIT
