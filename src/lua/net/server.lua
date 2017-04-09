@@ -41,7 +41,7 @@ end
 
 local buf = ffi.new('char[512]')
 function Net.Server:run()
-    if not self.listenfd then return end
+    if not self.listenfd then error('not listening') end
 
     if #self.connfds == 0 then
         local connfd = C.server_listen(self.listenfd)
@@ -50,10 +50,17 @@ function Net.Server:run()
             table.insert(self.connfds, connfd)
         end
     elseif not self.disconnected then
-        for _,connfd in ipairs(self.connfds) do
+        local i = 0
+        while i < #self.connfds do
+            i = i + 1
+            local connfd = self.connfds[i]
             local len = C.recv(connfd, buf, ffi.sizeof(buf), 0)
-            if len ~= -1 then
-                print(runcode(ffi.string(buf, len)))
+            if len == 0 then
+                table.remove(self.connfds, i)
+                i = i - 1
+            elseif len ~= -1 then
+                local s = tostring(runcode(ffi.string(buf, len)))
+                C.send(connfd, s..'\n', #s + 1, 0)
             end
         end
     end

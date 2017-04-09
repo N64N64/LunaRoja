@@ -105,7 +105,9 @@
     export(lua_initted_gfx);                    \
                                                 \
     export(server_start);                       \
+    export(server_listen);                      \
     export(recv);                               \
+    export(send);                               \
     export(closesocket);                        \
     export(gethostname);                        \
                                                 \

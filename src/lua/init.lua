@@ -110,3 +110,8 @@ function MAIN_LOOP()
     Screen.endframe()
 end
 
+local f = io.open(LUAPATH..'/autorun.lua')
+if f then
+    f:close()
+    require 'autorun'
+end

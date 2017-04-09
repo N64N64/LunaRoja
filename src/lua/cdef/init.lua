@@ -18,6 +18,7 @@ void printf(const char *fmt, ...);
 void * memcpy(void *, void *, size_t);
 void *memset(void *s, int c, size_t n);
 int recv(int sockfd, void *buf, size_t len, int flags);
+int send(int sockfd, const void *msg, int len, int flags);
 int strncmp ( const char * str1, const char * str2, size_t num );
 int memcmp ( const void * ptr1, const void * ptr2, size_t num );
 void free(void *);

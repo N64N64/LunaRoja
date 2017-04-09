@@ -1,3 +1,4 @@
 build
 rom
 deps/lib
+src/lua/autorun.lua

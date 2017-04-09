@@ -62,7 +62,7 @@ function Font:paint(text, size)
             outwidth = outwidth + minusx
         end
         if i == len - 1 then
-            outwidth = outwidth + math.abs(x) + width
+            outwidth = outwidth + math.max(advance, math.abs(x) + width)
         else
             outwidth = outwidth + advance
         end
