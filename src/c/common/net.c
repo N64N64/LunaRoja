@@ -44,6 +44,44 @@ int server_start(int port)
     return listenfd;
 }
 
+int client_start(const char *ip, const char *port)
+{
+    struct addrinfo hints, *res;
+
+    // first, load up address structs with getaddrinfo():
+
+    memset(&hints, 0, sizeof hints);
+    hints.ai_family = AF_INET;  // use IPv4 or IPv6, whichever
+    hints.ai_socktype = SOCK_STREAM;
+
+    // we could put "80" instead on "http" on the next line:
+    getaddrinfo(ip, port, &hints, &res);
+
+    // make a socket:
+
+    int connfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+    set_nonblocking(connfd);
+
+    // connect it to the address and port we passed in to getaddrinfo():
+
+    connect(connfd, res->ai_addr, res->ai_addrlen);
+
+    return connfd;
+}
+
+bool client_is_connected(int fd)
+{
+    // http://stackoverflow.com/questions/2597608/c-socket-connection-timeout
+    // apparently this doesnt work in windows
+
+    int status;
+    socklen_t len = sizeof(status);
+
+    getsockopt(fd, SOL_SOCKET, SO_ERROR, &status, &len);
+
+    return status == 0;
+}
+
 int server_listen(int listenfd)
 {
     int connfd = accept(listenfd, (struct sockaddr*)NULL, NULL);

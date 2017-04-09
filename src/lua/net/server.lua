@@ -1,4 +1,4 @@
-local super = Object
+local super = require 'net.base'
 Net.Server = Object.new(super)
 
 function Net.Server:new(port)
@@ -15,16 +15,27 @@ function Net.Server:new(port)
 end
 
 function Net.Server:start()
+    if self.listenfd then
+        error('server already started')
+    end
+
     local listenfd = C.server_start(self.port)
     if listenfd ~= -1 then
         self.listenfd = listenfd
+    else
+        error('couldnt start server')
     end
 end
 
-function Net.Server:disconnect()
-    C.closesocket(self.s.connfd)
-    self.s.connfd = -1
-    self.disconnected = true
+function Net.Server:stop()
+    for _,connfd in ipairs(self.connfds) do
+        C.closesocket(connfd)
+    end
+    self.connfds = {}
+    if self.listenfd then
+        C.closesocket(self.listenfd)
+        self.listenfd = nil
+    end
 end
 
 local function runcode(s)
@@ -43,25 +54,29 @@ local buf = ffi.new('char[512]')
 function Net.Server:run()
     if not self.listenfd then error('not listening') end
 
-    if #self.connfds == 0 then
-        local connfd = C.server_listen(self.listenfd)
-        if connfd >= 0 then
-            print('got connection')
-            table.insert(self.connfds, connfd)
-        end
-    elseif not self.disconnected then
-        local i = 0
-        while i < #self.connfds do
-            i = i + 1
-            local connfd = self.connfds[i]
-            local len = C.recv(connfd, buf, ffi.sizeof(buf), 0)
-            if len == 0 then
-                table.remove(self.connfds, i)
-                i = i - 1
-            elseif len ~= -1 then
-                local s = tostring(runcode(ffi.string(buf, len)))
-                C.send(connfd, s..'\n', #s + 1, 0)
-            end
+    -- get new connections
+    local connfd = C.server_listen(self.listenfd)
+    if connfd >= 0 then
+        print('got connection')
+        table.insert(self.connfds, connfd)
+    end
+
+    -- listen on existing connections
+    local i = 0
+    while i < #self.connfds do
+        i = i + 1
+        local connfd = self.connfds[i]
+        local data = self:recv(connfd)
+        if data == false then
+            -- disconnected
+            print('disconnected')
+            table.remove(self.connfds, i)
+            i = i - 1
+        elseif data then
+            print('got some shit')
+            local s = tostring(runcode(data))
+            self:send(connfd, s)
+            print(s)
         end
     end
 end

@@ -16,6 +16,8 @@ local debug_label = UI.Label:new()
 RENDER_CALLBACKS = {}
 RENDER_CALLBACKS.lua_logo = require 'art.lua_logo'
 
+UPDATE_CALLBACKS = {}
+
 function render()
     if emu and not firstrun then
         emu:run()
@@ -93,6 +95,10 @@ function MAIN_LOOP()
             wants_to_exit = false
             return
         end
+    end
+
+    for k,v in pairs(UPDATE_CALLBACKS) do
+        v()
     end
 
     Screen.startframe()

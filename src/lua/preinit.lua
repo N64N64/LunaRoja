@@ -13,6 +13,7 @@ require 'bitmap'
 
 Net = {}
 require 'net.server'
+require 'net.client'
 
 UI = {}
 require 'ui.view'
