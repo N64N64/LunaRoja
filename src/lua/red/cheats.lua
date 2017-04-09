@@ -6,6 +6,10 @@ function Red:patch_cheats()
         rom[1] = 0x00
         rom[2] = 0x00
     end
+    if cheats.skip_follow_oak then
+        local rom = emu:patcher(self.sym.PalletTownScript0)
+        rom[0] = 0xc9 -- ret
+    end
     if cheats.walk_thru_walls then
         local rom = emu:patcher(self.sym.CollisionCheckOnLand)
         rom[0] = 0xa7 -- and a

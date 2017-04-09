@@ -4,6 +4,7 @@ end
 
 ffi.mgba = ffi.C
 ffi.luared = ffi.C
+ffi.freetype = ffi.C
 
 SEEK_END = 2
 SEEK_SET = 0

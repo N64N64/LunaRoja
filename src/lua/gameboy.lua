@@ -34,14 +34,13 @@ function Gameboy:new(rompath)
     ffi.mgba._GBCoreLoadSave(core, savefile)
     ffi.mgba._GBCoreReset(core)
 
-    self.rompath = rompath
     self.core = core
     self.pix = pix
     self.width, self.height = size[0], size[1]
     self.gb = ffi.cast('struct GB *', self.core.board)
     self.wram = self.gb.memory.wram - 0xc000
-    self.romptr = self.gb.memory.rom
-    self.romfile = Rom:new(self.rompath, self.romptr)
+    self.hram = self.gb.memory.hram - 0xff80
+    self.romfile = Rom:new(rompath, self.gb.memory.rom)
 
     return self
 end

@@ -292,8 +292,7 @@ local struct_mt = {
         if ffi.offsetof(t, k..'_16_0') then
             return t[k..'_16_0'] * 0x100 + t[k..'_16_1']
         elseif ffi.offsetof(t, k..'_24_0') then
-            error('not yet implemented')
---          return t[k..'_24_0'] + t[k..'_24_1'] * 0x100 + t[k..'_24_2'] * 0x10000
+            return t[k..'_24_0'] * 0x10000 + t[k..'_24_1'] * 0x100 + t[k..'_24_2']
         else
             error('bad key')
         end
@@ -305,7 +304,12 @@ local struct_mt = {
             t[k..'_16_0'] = high
             t[k..'_16_1'] = low
         elseif ffi.offsetof(t, k..'_24_0') then
-            error('not yet implemented')
+            local high = math.floor(v / 0x10000)
+            local mid = math.floor(v / 0x100) - high * 0x100
+            local low = v - mid * 0x100 - high * 0x10000
+            t[k..'_24_0'] = high
+            t[k..'_24_1'] = mid
+            t[k..'_24_2'] = low
         else
             error('bad key')
         end

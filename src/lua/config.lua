@@ -19,6 +19,7 @@ cheats.repel = false
 cheats.skip_intro = true
 cheats.bike = false
 cheats.always_win = false
+cheats.skip_follow_oak = false
 
 config = {}
 config.render_mgba = true

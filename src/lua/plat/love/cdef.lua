@@ -8,6 +8,14 @@ else -- default to something like Linux or BSD
 end
 ffi.mgba = ffi.load(PATH..'/deps/lib/love/libmgba.'..ext, true)
 ffi.luared = ffi.load(PATH..'/build/love/luared.'..ext, true)
+if ffi.os == 'Windows' then
+    -- i was really happy that i could just use
+    -- the freetype that was loaded with LOVE,
+    -- but alas, I forgot Windows sucks.
+    ffi.freetype = ffi.load(PATH..'/deps/lib/love/freetype6.dll')
+else
+    ffi.freetype = C
+end
 
 if ffi.os == 'Linux' then
     O_CREAT = 0x40
