@@ -111,7 +111,9 @@ end
 if PLATFORM == 'love' then
     local dirs = {}
     dirs.up = true; dirs.down = true; dirs.left = true; dirs.right = true
-    HOOK(love, 'keypressed', function(key)
+    local orig
+    orig = HOOK(love, 'keypressed', function(key)
+        orig(key)
         if not(Mode.idx == 'console') then 
             if key == 'escape' then
                 Mode:changeto('console')
@@ -129,7 +131,9 @@ if PLATFORM == 'love' then
             Console[key](Console)
         end
     end)
-    HOOK(love, 'textinput', function(key)
+    local orig
+    orig = HOOK(love, 'textinput', function(key)
+        orig(key)
         if not(Mode.idx == 'console') then return end
         Console:keycallback(key)
         love.keyboard.setKeyRepeat(true)

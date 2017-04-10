@@ -1,6 +1,3 @@
-local spritex = {}
-local spritey = {}
-
 local function getspriteptr(id)
     local self = Red
 
@@ -65,8 +62,67 @@ function getspritefromrom(id, raw)
     return bmap
 end
 
+function Red:render_sprite(bmap, x, y, xplayer, yplayer, dir, anim)
+    dir = dir or 0
+    anim = anim or 0
+
+    local offset
+    local should_flip = false
+    if dir == 0 then -- down
+        if anim == 1 then
+            offset = 3
+        elseif anim == 3 then
+            should_flip = true
+            offset = 3
+        else
+            offset = 0
+        end
+    elseif dir == 4 then -- up
+        if anim == 1 then
+            offset = 4
+        elseif anim == 3 then
+            should_flip = true
+            offset = 4
+        else
+            offset = 1
+        end
+    elseif dir == 8 then -- left
+        if anim == 0 or anim == 2 then
+            offset = 2
+        else
+            offset = 5
+        end
+    elseif dir == 0xc then -- right
+        should_flip = true
+        if anim == 0 or anim == 2 then
+            offset = 2
+        else
+            offset = 5
+        end
+    end
+
+    -- this should be the right way to do it
+    -- but ball/omanyte/clipboard/etc overflows
+    -- when it "turns"
+    offset = math.min(offset, bmap.height/16 - 1)
+    -- so this hack becomes necessary
+    if 2*bmap.height == 0x40 then
+        offset = 0
+        should_flip = false
+    end
+
+    y = y - 4 + (16 - bmap.spriteheight)
+
+    ffi.luared.fastcopyaf(
+        Screen.top.pix, Screen.top.height, Screen.top.width, x - xplayer + Red.Camera.x, y - yplayer + Red.Camera.y,
+        bmap.pix + offset*bmap.width*bmap.spriteheight*3, bmap.spriteheight, bmap.width, SPRITE_INVIS_COLOR, should_flip
+    )
+end
+
+local spritex = {}
+local spritey = {}
 local hidden_sprites = {}
-function Red:render_sprites(framebuffer)
+function Red:render_sprites()
     local bufpix, bufheight, bufwidth = Screen.top.pix, Screen.top.height, Screen.top.width
     for i=0,self.wram.wNumSprites do
         hidden_sprites[i] = false
@@ -92,47 +148,18 @@ function Red:render_sprites(framebuffer)
         local pictureid = s1.PictureID
         if not(pictureid == 0) and (is_player or (xblk >= 0 and yblk >= 0)) and (config.show_hidden_sprites or not(s1.SpriteImageIdx == 0xff) or not hidden_sprites[i]) then
             local dx, dy
-            local offset
-            local dir = s1.FacingDirection
-            local anim = s1.AnimFrameCounter
-            local should_flip = false
-            if dir == 0 then
-                dx, dy = 0, 1
-                if anim == 1 then
-                    offset = 3
-                elseif anim == 3 then
-                    should_flip = true
-                    offset = 3
-                else
-                    offset = 0
-                end
-            elseif dir == 4 then
-                dx, dy = 0, -1
-                if anim == 1 then
-                    offset = 4
-                elseif anim == 3 then
-                    should_flip = true
-                    offset = 4
-                else
-                    offset = 1
-                end
-            elseif dir == 8 then
-                dx, dy = -1, 0
-                if anim == 0 or anim == 2 then
-                    offset = 2
-                else
-                    offset = 5
-                end
-            else--if dir == 0xc then
-                dx, dy = 1, 0
-                should_flip = true
-                if anim == 0 or anim == 2 then
-                    offset = 2
-                else
-                    offset = 5
-                end
-            end
+
             if s1.MovementStatus == 3 then
+                local dir = s1.FacingDirection
+                if dir == 0 then -- down
+                    dx, dy = 0, 1
+                elseif dir == 4 then -- up
+                    dx, dy = 0, -1
+                elseif dir == 8 then -- left
+                    dx, dy = -1, 0
+                elseif dir == 0xc then -- right
+                    dx, dy = 1, 0
+                end
                 spritex[i] = math.max(-32, math.min(32, dx + (spritex[i] or 0)))
                 spritey[i] = math.max(-32, math.min(32, dy + (spritey[i] or 0)))
             else
@@ -146,29 +173,17 @@ function Red:render_sprites(framebuffer)
             end
 
             local spritemap = getspritefromrom(pictureid)
-            -- this should be the right way to do it
-            -- but ball/omanyte/clipboard/etc overflows
-            -- when it "turns"
-            offset = math.min(offset, spritemap.height/16 - 1)
-            -- so this hack becomes necessary
-            if 2*spritemap.height == 0x40 then
-                offset = 0
-                should_flip = false
-            end
 
             local x, y
             if is_player then
-                x = Red.Camera.x
-                y = Red.Camera.y - 4
+                x = playerx
+                y = playery
             else
-                x = (xblk-dx)*16 + math.floor(spritex[i]/2) - playerx + Red.Camera.x
-                y = (yblk-dy)*16 - 4 + math.floor(spritey[i]/2) - playery + Red.Camera.y
+                x = (xblk-dx)*16 + math.floor(spritex[i]/2)
+                y = (yblk-dy)*16 + math.floor(spritey[i]/2)
             end
 
-            ffi.luared.fastcopyaf(
-                bufpix, bufheight, bufwidth, x, y + 16 - spritemap.spriteheight,
-                spritemap.pix + offset*spritemap.width*spritemap.spriteheight*3, spritemap.spriteheight, spritemap.width, SPRITE_INVIS_COLOR, should_flip
-            )
+            self:render_sprite(spritemap, x, y, playerx, playery, s1.FacingDirection, s1.AnimFrameCounter)
         end
     end
 end

@@ -44,6 +44,7 @@ int server_start(int port)
     return listenfd;
 }
 
+// this doesnt work on 3DS
 int client_start(const char *ip, const char *port)
 {
     struct addrinfo hints, *res;

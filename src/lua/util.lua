@@ -10,8 +10,8 @@ function HOOK(tbl, fname, f)
     local oldf = tbl[fname] or function() end
     tbl[fname] = function(...)
         f(...)
-        oldf(...)
     end
+    return oldf
 end
 
 function io.readbin(path)

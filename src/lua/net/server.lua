@@ -73,10 +73,8 @@ function Net.Server:run()
             table.remove(self.clients, i)
             i = i - 1
         elseif data then
-            print('got some shit')
-            local s = tostring(runcode(data))
-            client:send(s)
-            print(s)
+            client.backlog = client.backlog or {}
+            table.insert(client.backlog, data)
         end
     end
 end
