@@ -106,6 +106,8 @@
                                                 \
     export(server_start);                       \
     export(server_listen);                      \
+    export(client_start);                       \
+    export(client_is_connected);                \
     export(recv);                               \
     export(send);                               \
     export(closesocket);                        \
