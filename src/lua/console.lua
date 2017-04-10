@@ -69,7 +69,19 @@ function Console:keycallback(key)
             end
             table.insert(self.history, self.input.text)
             table.insert(self.backlog, self.input)
-            if not success then print(result) end
+            if not success then
+                print(result)
+                -- remove that dumb [string "what you just typed']:1: part at the beginning
+                if string.has_prefix(result, '[string "') then
+                    local add = #'[string ""]:' + 1
+                    if #self.input.text < 48 then
+                        result = string.sub(result, #self.input.text + add, #result)
+                    else
+                        result = string.sub(result, 48 + add, #result)
+                    end
+                    result = string.match(result, '%d+%: (.*)')
+                end
+            end
             if returning or not(result == nil) then
                 local result = UI.Label:new(tostring(result), Console.lineheight)
                 result.font = Font.Monospace
