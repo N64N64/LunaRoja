@@ -113,7 +113,7 @@ function Red:render_map(map, mapx, mapy, xplayer, yplayer, first_call)
     end
     -- east connection
     if bit.band(connection_flag, bit.lshift(1, 0)) ~= 0 then
-        if width*32 - xplayer < Red.Camera.y + 16 then
+        if width*32 - xplayer < Red.Camera.x + 16 then
             local map, yoff, mapwidth, mapheight = getoff(7)
             self:render_map(map, -(width - mapx), mapy - yoff, -(width*32 - xplayer), yplayer - yoff*32)
         end
