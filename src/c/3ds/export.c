@@ -40,6 +40,7 @@
     export(FT_Set_Pixel_Sizes);                 \
     export(FT_Load_Char);                       \
     export(FT_New_Face);                        \
+    export(FT_New_Memory_Face);                 \
     export(FT_Done_Face);                       \
     export(FT_Set_Transform);                   \
     export(FT_Get_Char_Index);                  \
@@ -123,6 +124,7 @@
     export(__heap_size);                        \
     export(__linear_heap_size);                 \
                                                 \
+    export(fseek_wrapper);                      \
     export(mallinfo);                           \
 
 #define builtin_symbols(export)                 \

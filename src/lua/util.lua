@@ -14,6 +14,26 @@ function HOOK(tbl, fname, f)
     end
 end
 
+function io.readbin(path)
+    local f = C.fopen(path, 'rb')
+    print(f)
+    if f == ffi.NULL then
+        error('file '..path..' not found')
+    end
+    ffi.luared.fseek_wrapper(f, 0, SEEK_END)
+    local siz = C.ftell(f)
+    print('siz: '..tostring(siz))
+    if siz == 0 then
+        C.fclose(f)
+        return nil
+    end
+    ffi.luared.fseek_wrapper(f, 0, SEEK_SET) -- same as rewind(f)
+    local result = ffi.new('uint8_t[?]', siz)
+    C.fread(result, siz, 1, f)
+    C.fclose(f)
+    return result
+end
+
 function ls(path)
     dir = C.opendir(path)
     if dir == ffi.NULL then return end

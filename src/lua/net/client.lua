@@ -13,11 +13,13 @@ function Net.Client:connect(ip, port)
     if self.connfd then
         error('connection already established')
     end
+    self.remote_ip = ip
+    self.remote_port = port
     self.connfd = C.client_start(ip, tostring(port))
 end
 
 function Net.Client:is_connected()
-    return self.connfd and C.client_is_connected(self.connfd)
+    return self.connfd and (not self.remote_ip or C.client_is_connected(self.connfd))
 end
 
 function Net.Client:close()

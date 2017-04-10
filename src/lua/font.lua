@@ -18,9 +18,11 @@ function Font:new(name)
     local self = super.new(self)
 
     self.name = name
+    self.path = Font.Path..'/'..self.name
 
     self.ft = freetype.new()
-    self.face = self.ft:new_face(Font.Path..'/'..self.name)
+    self.bin = io.readbin(self.path)
+    self.face = self.ft:new_memory_face(self.bin, ffi.sizeof(self.bin))
 
     local proxy = newproxy(true)
     local mt = getmetatable(proxy)

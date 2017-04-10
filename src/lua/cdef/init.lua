@@ -24,7 +24,7 @@ int memcmp ( const void * ptr1, const void * ptr2, size_t num );
 void free(void *);
 
 typedef void FILE;
-int fseek(FILE *stream, long offset, int whence);
+int fseek_wrapper(FILE *stream, long offset, int whence);
 void rewind(FILE *stream);
 FILE * fopen ( const char * filename, const char * mode );
 size_t fread ( void * ptr, size_t size, size_t count, FILE * stream );

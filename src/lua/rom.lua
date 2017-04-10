@@ -8,16 +8,7 @@ function Rom:new(path, romptr)
 
     if not romptr then
         self.path = path
-        local f = C.fopen(self.path, 'rb')
-        if f == ffi.NULL then
-            error('file '..self.path..' not found')
-        end
-        C.fseek(f, 0, SEEK_END)
-        local siz = C.ftell(f)
-        C.fseek(f, 0, SEEK_SET) -- same as rewind(f)
-        romptr = ffi.new('uint8_t[?]', siz)
-        C.fread(romptr, siz, 1, f)
-        C.fclose(f)
+        romptr = io.readbin(self.path)
     end
 
     self.romptr = romptr
