@@ -1,0 +1,15 @@
+language: c
+sudo: required
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      compiler: gcc
+install:
+  - |-
+    sudo apt-get clean &&
+    sudo apt-get update &&
+    sudo apt-get install -y -q luajit &&
+    git clone https://github.com/rweichler/aite build/.aite
+
+script: luajit build/.aite/main.lua love

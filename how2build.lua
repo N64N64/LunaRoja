@@ -111,13 +111,14 @@ function love()
     b.libraries = {
         'z',
     }
+    b.defines = {
+        '_GNU_SOURCE',
+    }
     if mgba then
-        b.defines = {
-            'USE_MGBA',
-        }
+        table.insert(b.defines, 'USE_MGBA')
     end
-    local objs = b:compile()
-    b:link(objs)
+    b.sflags = '-std=c99'
+    b:link(b:compile())
 end
 
 function zip()
