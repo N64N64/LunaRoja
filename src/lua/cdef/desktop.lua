@@ -8,19 +8,19 @@ else -- default to something like Linux or BSD
 end
 ffi.mgba = ffi.load(PATH..'/deps/lib/love/libmgba.'..ext, true)
 ffi.luared = ffi.load(PATH..'/build/love/luared.'..ext, true)
-if PLATFORM == 'cmd' then
-    ffi.freetype = ffi.load'freetype'
-elseif ffi.os == 'Windows' then
+if ffi.os == 'Windows' then
     ffi.freetype = ffi.load(PATH..'/deps/lib/love/freetype6.dll')
-else
+elseif PLATFORM == 'love' then
     ffi.freetype = C
+else
+    ffi.freetype = ffi.load'freetype'
 end
 
 if ffi.os == 'Linux' then
     O_CREAT = 0x40
 elseif ffi.os == 'Windows' then
     O_CREAT = 0x100
-elseif ffi.os == 'OSX' then
+elseif ffi.os == 'OSX' or ffi.os == 'BSD' then
     O_CREAT = 0x0200
 else
     error('unknown platform')
