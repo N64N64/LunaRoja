@@ -15,7 +15,6 @@ function love.load()
     love.window.setTitle('3DS Simulator')
 end
 
-local DT
 function CALCULATE_DT()
     return DT
 end

@@ -44,28 +44,39 @@ int server_start(int port)
     return listenfd;
 }
 
+#ifdef _3DS
+#define log(fmt, ...) do{\
+    char str[512];\
+    sprintf(str, fmt, ## __VA_ARGS__);\
+    svcOutputDebugString(str, strlen(str));\
+}while(0)
+#else
+#define log(fmt, ...) printf(fmt"\n", ## __VA_ARGS__)
+#endif
+
 // this doesnt work on 3DS
 int client_start(const char *ip, const char *port)
 {
-    struct addrinfo hints, *res;
+    struct sockaddr_in addr;
+    socklen_t addrlen = sizeof(addr);
 
-    // first, load up address structs with getaddrinfo():
-
-    memset(&hints, 0, sizeof hints);
-    hints.ai_family = AF_INET;  // use IPv4 or IPv6, whichever
-    hints.ai_socktype = SOCK_STREAM;
-
-    // we could put "80" instead on "http" on the next line:
-    getaddrinfo(ip, port, &hints, &res);
-
-    // make a socket:
-
-    int connfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+    int connfd = socket(AF_INET, SOCK_STREAM, 0);
+    if(connfd < 0) {
+        log("socket creation failed");
+        return -1;
+    }
     set_nonblocking(connfd);
 
-    // connect it to the address and port we passed in to getaddrinfo():
+    memset(&addr, 0, sizeof(addr));
+    addr.sin_family = AF_INET;
+    addr.sin_port = htons(atoi(port));
+    inet_aton(ip, &addr.sin_addr);
 
-    connect(connfd, res->ai_addr, res->ai_addrlen);
+    int rc = connect(connfd, (struct sockaddr*)&addr, addrlen);
+    if(rc >= 0) {
+        log("connect failed (%d): %s", rc, gai_strerror(rc));
+        return -1;
+    }
 
     return connfd;
 }

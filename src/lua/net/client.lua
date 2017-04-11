@@ -15,11 +15,16 @@ function Net.Client:connect(ip, port)
     end
     self.remote_ip = ip
     self.remote_port = port
-    self.connfd = C.client_start(ip, tostring(port))
+    local connfd = C.client_start(ip, tostring(port))
+    if connfd == -1 then
+        error('could not connect')
+    end
+    self.connfd = connfd
 end
 
 function Net.Client:is_connected()
-    return self.connfd and (not self.remote_ip or C.client_is_connected(self.connfd))
+    -- PLATFORM == '3ds' prevents 3ds from hanging. TODO fix segfault wherever it is
+    return self.connfd and (PLATFORM == '3ds' or not self.remote_ip or C.client_is_connected(self.connfd))
 end
 
 function Net.Client:close()

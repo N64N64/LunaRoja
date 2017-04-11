@@ -51,9 +51,9 @@ bool untargz(const char *filename, const char *outfolder)
         gzseek(f, 376, SEEK_CUR);
 
         long remaining = siz;
+        char contents[512];
         while(remaining > 0) {
             int len = MIN(512, remaining);
-            char contents[len];
             gzread(f, contents, len);
             fwrite(contents, len, 1, outf);
             remaining = remaining - len;

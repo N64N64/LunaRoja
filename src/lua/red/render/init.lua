@@ -115,7 +115,7 @@ local function init(self)
     self.customtiles = cleartiles()
 end
 
-function Red:render(framebuffer, dframebuffer)
+function Red:render()
     init(self)
 
     if self.wram.wIsInBattle == 0 then
