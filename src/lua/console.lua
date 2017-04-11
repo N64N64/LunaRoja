@@ -1,6 +1,6 @@
 Console = {}
 
-Console.lineheight = 10
+Console.lineheight = 12
 Console.history = {}
 Console.backlog = {}
 

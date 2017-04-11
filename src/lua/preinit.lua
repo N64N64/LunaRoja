@@ -7,6 +7,7 @@ require 'object'
 require 'config'
 require 'cdef'
 require 'util'
+require 'env'
 
 require 'font'
 require 'bitmap'

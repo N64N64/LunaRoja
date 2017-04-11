@@ -28,10 +28,10 @@ function Net.Server:listen()
 end
 
 function Net.Server:close()
-    for _,client in ipairs(self.clients) do
-        client:close()
+    for i=1,#self.clients do
+        self.clients[i]:close()
+        self.clients[i] = nil
     end
-    self.clients = {}
     if self.listenfd then
         C.closesocket(self.listenfd)
         self.listenfd = nil
@@ -66,16 +66,18 @@ function Net.Server:run()
     while i < #self.clients do
         i = i + 1
         local client = self.clients[i]
-        local data = client:recv()
-        if data == false then
+        if client:recv() == false then
             -- disconnected
             print('disconnected')
             table.remove(self.clients, i)
             i = i - 1
-        elseif data then
-            client.backlog = client.backlog or {}
-            table.insert(client.backlog, data)
         end
+    end
+end
+
+function Net.Server:send(...)
+    for _,client in ipairs(self.clients) do
+        client:send(...)
     end
 end
 

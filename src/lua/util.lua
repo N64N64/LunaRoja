@@ -28,6 +28,25 @@ function io.readbin(path)
     return result
 end
 
+function table.copy(t, level, trust)
+    if level == 0 then
+        if trust then
+            return t
+        else
+            return nil
+        end
+    end
+    level = level or -1
+    local r = {}
+    for k,v in pairs(t) do
+        if type(v) == 'table' then
+            v = table.copy(v, level - 1)
+        end
+        r[k] = v
+    end
+    return r
+end
+
 function ls(path)
     dir = C.opendir(path)
     if dir == ffi.NULL then return end

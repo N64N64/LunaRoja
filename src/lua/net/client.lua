@@ -40,7 +40,21 @@ function Net.Client:recv()
         self.connfd = nil
         return false
     elseif len ~= -1 then
-        return ffi.string(buf, len)
+        local data = ffi.string(buf, len)
+        self.backlog = self.backlog or {}
+        if self.partialdata then
+            data = self.partialdata..data
+            self.partialdata = nil
+        end
+        local parsedlen = 0
+        for line in string.gmatch(data, "([^\n]*)\n") do
+            parsedlen = #line + 1
+            table.insert(self.backlog, line)
+        end
+        if not(parsedlen == #data) then
+            self.partialdata = string.sub(data, parsedlen + 1, #data)
+        end
+        return true
     end
 end
 
