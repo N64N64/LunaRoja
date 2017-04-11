@@ -54,10 +54,11 @@ function Console:keycallback(key)
         if not _G[self.input.text] and override[self.input.text] and override[self.input.text](self) then
             -- skip
         else
-            local returning = not(string.match(self.input.text, '(%s*)') == self.input.text)
+            local empty = string.match(self.input.text, '(%s*)') == self.input.text
+            local returning = not empty
             local f, err = load('return '..self.input.text) -- first try returning result
             if err then
-                returning = false
+                returning = string.find(self.input.text, 'return')
                 f, err = load(self.input.text)
             end
             local success, result
@@ -67,7 +68,9 @@ function Console:keycallback(key)
                 success = false
                 result = err
             end
-            table.insert(self.history, self.input.text)
+            if not(empty or self.history[#self.history] == self.input.text) then
+                table.insert(self.history, self.input.text)
+            end
             table.insert(self.backlog, self.input)
             if not success then
                 print(result)
