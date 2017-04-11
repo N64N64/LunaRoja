@@ -132,5 +132,9 @@ function Red:render(framebuffer, dframebuffer)
         emu:render()
     end
 
+    if config.render_mgba_top then
+        emu:render()
+    end
+
     SHITTY_DIALOGUE_PRINTER()
 end
