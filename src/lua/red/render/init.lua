@@ -15,7 +15,7 @@ Red.Camera.y = Screen.top.height/2 - 8
 
 local lastwalkcount
 local sevencount = 0
-local function prep_render_player()
+local function get_player_coords()
     local self = Red
 
     local walkcount = self.wram.wWalkCounter
@@ -52,8 +52,7 @@ local function prep_render_player()
         diffx = speed
     end
 
-    playerx = math.floor(self.wram.wXCoord * 16 + diffx)
-    playery = math.floor(self.wram.wYCoord * 16 + diffy)
+    return math.floor(self.wram.wXCoord * 16 + diffx), math.floor(self.wram.wYCoord * 16 + diffy)
 end
 
 function randomizerainbow()
@@ -120,9 +119,11 @@ function Red:render(framebuffer, dframebuffer)
     init(self)
 
     if self.wram.wIsInBattle == 0 then
-        prep_render_player()
-        self:render_map(self.wram.wCurMap, math.floor(self.wram.wXCoord/2), math.floor(self.wram.wYCoord/2), playerx, playery, true)
-        self:render_sprites(dframebuffer)
+        local xplayer, yplayer = get_player_coords()
+        if config.render_map then
+            self:render_map(self.wram.wCurMap, math.floor(self.wram.wXCoord/2), math.floor(self.wram.wYCoord/2), xplayer, yplayer, true)
+            self:render_sprites(xplayer, yplayer)
+        end
         RENDER_DIALOGUE()
     else
         self:render_battlesprites()

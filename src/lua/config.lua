@@ -22,6 +22,7 @@ cheats.always_win = false
 cheats.skip_follow_oak = false
 
 config = {}
+config.render_map = true
 config.render_mgba = true
 config.use_custom_tiles = false
 config.show_hidden_sprites = false

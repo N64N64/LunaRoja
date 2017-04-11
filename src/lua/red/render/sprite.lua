@@ -122,7 +122,7 @@ end
 local spritex = {}
 local spritey = {}
 local hidden_sprites = {}
-function Red:render_sprites()
+function Red:render_sprites(xplayer, yplayer)
     local bufpix, bufheight, bufwidth = Screen.top.pix, Screen.top.height, Screen.top.width
     for i=0,self.wram.wNumSprites do
         hidden_sprites[i] = false
@@ -176,14 +176,14 @@ function Red:render_sprites()
 
             local x, y
             if is_player then
-                x = playerx
-                y = playery
+                x = xplayer
+                y = yplayer
             else
                 x = (xblk-dx)*16 + math.floor(spritex[i]/2)
                 y = (yblk-dy)*16 + math.floor(spritey[i]/2)
             end
 
-            self:render_sprite(spritemap, x, y, playerx, playery, s1.FacingDirection, s1.AnimFrameCounter)
+            self:render_sprite(spritemap, x, y, xplayer, yplayer, s1.FacingDirection, s1.AnimFrameCounter)
         end
     end
 end
