@@ -120,8 +120,9 @@ end
 
 require 'tmp'
 
-local f = io.open(LUAPATH..'/autorun.lua')
+local path = LUAPATH..'/config/autorun.lua'
+local f = io.open(path, 'r')
 if f then
     f:close()
-    require 'autorun'
+    dofile(path)
 end
