@@ -1,5 +1,4 @@
-PATH = '.'
-LUAPATH = 'src/lua'
+LUAPATH = PATH..'/src/lua'
 PLATFORM = 'cmd'
 package.path = LUAPATH..'/?.lua;'
              ..LUAPATH..'/?/init.lua;'
@@ -15,7 +14,7 @@ end
 
 MAIN_LOOP()
 
-emu = Gameboy:new(PATH..'/'..arg[1])
+emu = Gameboy:new(arg[1])
 Red:reset()
 
 MAIN_LOOP()
