@@ -54,7 +54,6 @@ int server_start(int port)
 #define log(fmt, ...) printf(fmt"\n", ## __VA_ARGS__)
 #endif
 
-// this doesnt work on 3DS
 int client_start(const char *ip, const char *port)
 {
     struct sockaddr_in addr;

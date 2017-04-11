@@ -69,12 +69,12 @@ function startserver()
     return server.hostname
 end
 
-function startclient(ip)
+function startclient(ip, port)
     if orig then error('already runnin nigga') end
     peers = {}
     print('starting client')
     client = Net.Client:new()
-    client:connect(ip or "127.0.0.1", 27716)
+    client:connect(ip or "127.0.0.1", port or 27716)
     UPDATE_CALLBACKS.client = function()
         if Red then
             if not client:is_connected() then

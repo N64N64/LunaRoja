@@ -85,8 +85,6 @@ _G['3ds'] = function()
     b.ldflags = '-Wl,--whole-archive,--allow-multiple-definition'
     local objs = b:compile()
     b:link(objs)
-    print(GREEN('NOTE: ^ All of those warnings about "type of symbol `blah` changed from blah to blah" are normal. Don\'t worry about it.'))
-
     folder()
 end
 
