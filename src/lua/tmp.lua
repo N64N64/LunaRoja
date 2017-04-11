@@ -54,7 +54,7 @@ local function hook(...)
 end
 
 function startserver()
-    if orig then error('already runnin nigga') end
+    if orig then error('already running') end
     print('starting server')
     server = Net.Server:new(27716)
     server:listen()
@@ -70,7 +70,7 @@ function startserver()
 end
 
 function startclient(ip, port)
-    if orig then error('already runnin nigga') end
+    if orig then error('already running') end
     peers = {}
     print('starting client')
     client = Net.Client:new()

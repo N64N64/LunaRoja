@@ -9,6 +9,8 @@ for _,v in pairs(ls(PATH..'/rom') or {}) do
     end
 end
 
+require 'wip.serverbrowser'
+
 Screen.init()
 
 local debug_label = UI.Label:new()

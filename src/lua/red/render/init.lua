@@ -77,7 +77,14 @@ ROOT.colors.randomize = function()
     collectgarbage()
 end
 
-local rainbows = require 'config.rainbows'
+local rainbows
+local f = io.open(LUAPATH..'/config/rainbows')
+if f then
+    f:close()
+    rainbows = require 'config.rainbows'
+else
+    rainbows = require 'default_config.rainbows'
+end
 
 local current_rainbow
 ROOT.colors.cycle = function(first)
