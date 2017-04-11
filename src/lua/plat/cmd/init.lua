@@ -22,7 +22,9 @@ MAIN_LOOP()
 
 print(startserver())
 
-while true do
-    MAIN_LOOP()
-    C.usleep(CALCULATE_DT()*1000*1000)
- end
+if not(arg[2] == 'test') then
+    while true do
+        MAIN_LOOP()
+        C.usleep(CALCULATE_DT()*1000*1000)
+    end
+end

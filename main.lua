@@ -15,7 +15,7 @@ else
     local function get_folder_from_path(path)
         local components = string_split(path, '/')
         components[#components] = nil
-        local prefix = string.sub(path,1,1) == '/' and '/' or ''
+        local prefix = string.sub(path,1,1) == '/' and '/' or './'
         return prefix..table.concat(components, '/')
     end
 

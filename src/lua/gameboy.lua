@@ -5,7 +5,7 @@ function Gameboy:new(rompath)
     local core = ffi.mgba.mCoreFind(rompath)
     local size = ffi.new('unsigned int[2]')
     if core == ffi.NULL then
-        error('file not found')
+        error('file "'..rompath..'" not found')
     end
 
     ffi.mgba.mCoreInitConfig(core, nil)
