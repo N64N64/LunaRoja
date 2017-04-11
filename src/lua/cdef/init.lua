@@ -1,4 +1,11 @@
-require('plat.'..PLATFORM..'.cdef')
+if PLATFORM == 'love' or PLATFORM == 'cmd' then
+    require 'cdef.desktop'
+end
+local f = io.open(LUAPATH..'/plat/'..PLATFORM..'/cdef.lua')
+if f then
+    f:close()
+    require('plat.'..PLATFORM..'.cdef')
+end
 require 'cdef.mgba'
 
 if jit.status() then
@@ -14,6 +21,8 @@ ffi.cdef[[
 
 // std
 
+int usleep(unsigned int usec);
+size_t clock();
 void printf(const char *fmt, ...);
 void * memcpy(void *, void *, size_t);
 void *memset(void *s, int c, size_t n);

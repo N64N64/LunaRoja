@@ -51,6 +51,10 @@ function Button.isheld(key)
     return bit.band(Button.KeysHeld, key) ~= 0
 end
 
-require('plat.'..PLATFORM..'.button')
+if PLATFORM == 'cmd' then
+    function Button.Scan() end
+else
+    require('plat.'..PLATFORM..'.button')
+end
 
 return Button

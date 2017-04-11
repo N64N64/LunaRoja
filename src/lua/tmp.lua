@@ -95,7 +95,9 @@ function startclient(ip)
             print(s)
             local f = setfenv(load('return '..s), Env.Empty())
             for i,peer in ipairs(f()) do
-                if not(peer == false) then
+                if peer == false then
+                    peers[i] = peers[i] or {}
+                else
                     peers[i] = {pos = peer}
                 end
             end
