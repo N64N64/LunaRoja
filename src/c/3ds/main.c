@@ -101,28 +101,22 @@ extern u32 __ctru_linear_heap;
 extern u32 __ctru_heap;
 extern u32 __ctru_heap_size;
 extern u32 __ctru_linear_heap_size;
-static u32 __custom_heap_size = 0x03600000 * 4 / 4;
+static u32 __custom_heap_size = 0x02400000;
 static u32 __custom_linear_heap_size = 0x01400000;
 
 void __system_allocateHeaps() {
-    u32 tmp=0;
+	u32 tmp=0;
 
-    __ctru_heap_size = __custom_heap_size;
-    __ctru_linear_heap_size = __custom_linear_heap_size;
+	__ctru_heap_size = __custom_heap_size;
+	__ctru_linear_heap_size = __custom_linear_heap_size;
 
-    // Allocate the application heap
-    __ctru_heap = 0x08000000;
-    svcControlMemory(&tmp, __ctru_heap, 0x0, __ctru_heap_size, MEMOP_ALLOC, MEMPERM_READ | MEMPERM_WRITE);
+	// Allocate the application heap
+	__ctru_heap = 0x08000000;
+	svcControlMemory(&tmp, __ctru_heap, 0x0, __ctru_heap_size, MEMOP_ALLOC, MEMPERM_READ | MEMPERM_WRITE);
 
-#if 0
-    Handle handle;
-    svcDuplicateHandle(&handle, CUR_PROCESS_HANDLE);
-    svcControlProcessMemory(handle, tmp, 0x0, __ctru_heap_size, MEMOP_PROT, MEMPERM_READ | MEMPERM_WRITE | MEMPERM_EXECUTE);
-#endif
-
-    // Allocate the linear heap
-    svcControlMemory(&__ctru_linear_heap, 0x0, 0x0, __ctru_linear_heap_size, MEMOP_ALLOC_LINEAR, MEMPERM_READ | MEMPERM_WRITE);
-    // Set up newlib heap
-    fake_heap_start = (char*)__ctru_heap;
-    fake_heap_end = fake_heap_start + __ctru_heap_size;
+	// Allocate the linear heap
+	svcControlMemory(&__ctru_linear_heap, 0x0, 0x0, __ctru_linear_heap_size, MEMOP_ALLOC_LINEAR, MEMPERM_READ | MEMPERM_WRITE);
+	// Set up newlib heap
+	fake_heap_start = (char*)__ctru_heap;
+	fake_heap_end = fake_heap_start + __ctru_heap_size;
 }

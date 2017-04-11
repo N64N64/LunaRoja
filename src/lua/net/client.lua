@@ -23,7 +23,7 @@ function Net.Client:connect(ip, port)
 end
 
 function Net.Client:is_connected()
-    return self.connfd and (not self.remote_ip or C.client_is_connected(self.connfd))
+    return self.connfd and (PLATFORM == '3ds' or not self.remote_ip or C.client_is_connected(self.connfd))
 end
 
 function Net.Client:close()

@@ -1,6 +1,6 @@
 ## Supported platforms
 
-* New 3DS
+* Old 3DS / New 3DS
 * Mac / Linux / Windows
 
 ## IRC chat

@@ -76,17 +76,16 @@ function startclient(ip, port)
     client = Net.Client:new()
     client:connect(ip or "127.0.0.1", port or 27716)
     UPDATE_CALLBACKS.client = function()
+        local is_connected = not(client:recv() == false)
         if Red then
-            if not client:is_connected() then
-                print('client not connected')
-            else
+            if is_connected then
                 local str = sendposstr()
                 if str then
                     client:send(str..'\n')
                 end
             end
         end
-        if client:recv() == false then
+        if not is_connected then
             peers = {}
             UPDATE_CALLBACKS.client = nil
             client = nil
