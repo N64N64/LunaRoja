@@ -24,6 +24,7 @@
 
 #include "export_freetype.h"
 
+
 // zip.c
 bool untargz(const char *filename, const char *outfolder);
 // main.c
@@ -66,6 +67,8 @@ int fseek_wrapper(FILE *f, long offset, int whence);
 
 // mgba
 #ifdef USE_MGBA
+typedef void blip_t;
+
 uint32_t* romBuffer;
 size_t romBufferSize;
 void _GBCoreReset(struct mCore* core);
@@ -78,13 +81,65 @@ void _GBCoreRunFrame(struct mCore* core);
 bool _GBCoreLoadSave(struct mCore* core, struct VFile* vf);
 void _GBCoreAddKeys(struct mCore* core, uint32_t keys);
 void _GBCoreClearKeys(struct mCore* core, uint32_t keys);
+void _GBCoreSetAVStream(struct mCore* core, struct mAVStream* stream);
+int32_t _GBCoreFrequency(const struct mCore* core);
+blip_t* _GBCoreGetAudioChannel(struct mCore* core, int ch);
 
 bool allocateRomBuffer(void);
+float GBAAudioCalculateRatio(float inputSampleRate, float desiredFPS, float desiredSampleRatio);
+void blip_set_rates( blip_t*, double clock_rate, double sample_rate );
+int blip_read_samples( blip_t*, short out [], int count, int stereo );
 #endif
 
 // libctru
 extern uint32_t __heap_size;
 extern uint32_t __linear_heap_size;
+
+
+#define CSND_TIMER(n) (0x3FEC3FC / ((u32)(n)))
+
+u32 CSND_TIMER_WRAPPER(u32 n)
+{
+    return CSND_TIMER(n);
+}
+
+u32 CSND_VOL_WRAPPER(float vol, float pan)
+{
+    if (vol < 0.0f) vol = 0.0f;
+    else if (vol > 1.0f) vol = 1.0f;
+
+    float rpan = (pan+1) / 2;
+    if (rpan < 0.0f) rpan = 0.0f;
+    else if (rpan > 1.0f) rpan = 1.0f;
+
+    u32 lvol = vol*(1-rpan) * 0x8000;
+    u32 rvol = vol*rpan * 0x8000;
+    return lvol | (rvol << 16);
+}
+
+/// Creates a sound channel value from a channel number.
+#define SOUND_CHANNEL(n) ((u32)(n) & 0x1F)
+
+/// Creates a sound format value from an encoding.
+#define SOUND_FORMAT(n) ((u32)(n) << 12)
+
+/// Creates a sound loop mode value from a loop mode.
+#define SOUND_LOOPMODE(n) ((u32)(n) << 10)
+
+u32 SOUND_CHANNEL_WRAPPER(u32 n)
+{
+    return SOUND_CHANNEL(n);
+}
+
+u32 SOUND_FORMAT_WRAPPER(u32 n)
+{
+    return SOUND_FORMAT(n);
+}
+
+u32 SOUND_LOOPMODE_WRAPPER(u32 n)
+{
+    return SOUND_LOOPMODE(n);
+}
 
 
 #define export(symbol) do {                 \
@@ -99,7 +154,24 @@ void export_symbols(lua_State *L)
 {
     lua_newtable(L);
 
-    // TODO
+    export(SOUND_CHANNEL_WRAPPER);
+    export(SOUND_FORMAT_WRAPPER);
+    export(SOUND_LOOPMODE_WRAPPER);
+    export(aptHook);
+    export(linearMemAlign);
+    export(GSPGPU_FlushDataCache);
+    export(blip_set_rates);
+    export(blip_read_samples);
+    export(CSND_SetChnRegs);
+    export(CSND_SetPlayState);
+    export(CSND_TIMER_WRAPPER);
+    export(CSND_VOL_WRAPPER);
+    export(osConvertVirtToPhys);
+    export(csndExecCmds);
+    export(csndIsPlaying);
+    export(csndInit);
+    export(csndExit);
+
     export(FT_Init_FreeType);
     export(FT_Done_FreeType);
     export(FT_Set_Pixel_Sizes);
@@ -168,6 +240,10 @@ void export_symbols(lua_State *L)
     export(ftell);
 
 #ifdef USE_MGBA
+    export(GBAAudioCalculateRatio);
+    export(_GBCoreGetAudioChannel);
+    export(_GBCoreFrequency);
+    export(_GBCoreSetAVStream);
     export(romBuffer);
     export(romBufferSize);
     export(mCoreFind);

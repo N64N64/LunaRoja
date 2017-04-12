@@ -93,3 +93,63 @@ DIR *opendir(const char *dirname);
 struct dirent *readdir(DIR *dirp);
 
 ]]
+
+
+
+
+ffi.cdef[[
+/// APT hook types.
+typedef enum {
+	APTHOOK_ONSUSPEND = 0, ///< App suspended.
+	APTHOOK_ONRESTORE,     ///< App restored.
+	APTHOOK_ONSLEEP,       ///< App sleeping.
+	APTHOOK_ONWAKEUP,      ///< App waking up.
+	APTHOOK_ONEXIT,        ///< App exiting.
+
+	APTHOOK_COUNT,         ///< Number of APT hook types.
+} APT_HookType;
+
+
+typedef uint32_t u32;
+typedef uint8_t u8;
+typedef u32 Result;
+typedef struct tag_aptHookCookie {
+	struct tag_aptHookCookie* next; ///< Next cookie.
+} aptHookCookie;
+typedef void (*aptHookFn)(APT_HookType hook, void* param);
+
+/// CSND encodings.
+enum
+{
+	CSND_ENCODING_PCM8 = 0, ///< PCM8
+	CSND_ENCODING_PCM16,    ///< PCM16
+	CSND_ENCODING_ADPCM,    ///< IMA-ADPCM
+	CSND_ENCODING_PSG,      ///< PSG (Similar to DS?)
+};
+
+/// CSND loop modes.
+enum
+{
+	CSND_LOOPMODE_MANUAL = 0, ///< Manual loop.
+	CSND_LOOPMODE_NORMAL,     ///< Normal loop.
+	CSND_LOOPMODE_ONESHOT,    ///< Do not loop.
+	CSND_LOOPMODE_NORELOAD,   ///< Don't reload.
+};
+
+u32 SOUND_CHANNEL_WRAPPER(u32 n);
+u32 SOUND_FORMAT_WRAPPER(u32 n);
+u32 SOUND_LOOPMODE_WRAPPER(u32 n);
+
+void aptHook(aptHookCookie* cookie, aptHookFn callback, void* param);
+void* linearMemAlign(size_t size, size_t alignment);
+Result GSPGPU_FlushDataCache(const void* adr, u32 size);
+void CSND_SetChnRegs(u32 flags, u32 physaddr0, u32 physaddr1, u32 totalbytesize, u32 chnVolumes, u32 capVolumes);
+uint32_t CSND_TIMER_WRAPPER(uint32_t n);
+uint32_t CSND_VOL_WRAPPER(float vol, float pan);
+void CSND_SetPlayState(u32 channel, u32 value);
+u32 osConvertVirtToPhys(const void* vaddr);
+Result csndExecCmds(bool waitDone);
+Result csndIsPlaying(u32 channel, u8* status);
+Result csndInit(void);
+void csndExit();
+]]

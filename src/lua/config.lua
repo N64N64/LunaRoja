@@ -22,6 +22,9 @@ cheats.always_win = false
 cheats.skip_follow_oak = false
 
 config = {}
+if PLATFORM == '3ds' then
+    config['audio (broken)'] = false
+end
 config.render_map = true
 config.render_mgba = true
 config.render_mgba_top = false

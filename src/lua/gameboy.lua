@@ -1,8 +1,12 @@
 Gameboy = {}
+if PLATFORM == '3ds' then
+    Audio = require 'plat.3ds.audio'
+end
 
 function Gameboy:new(rompath)
     local self = setmetatable({}, {__index = self})
     local core = ffi.mgba.mCoreFind(rompath)
+    self.core = core
     local size = ffi.new('unsigned int[2]')
     if core == ffi.NULL then
         error('file "'..rompath..'" not found')
@@ -13,6 +17,9 @@ function Gameboy:new(rompath)
     ffi.mgba._GBCoreDesiredVideoDimensions(core, size+0, size+1)
     local pix = ffi.new('uint8_t[?]', size[0] * size[1] * 4)
     ffi.mgba._GBCoreSetVideoBuffer(core, pix, size[0])
+    if config['audio (broken)'] and PLATFORM == '3ds' then
+        Audio.setup(self)
+    end
     local file = ffi.mgba.VFileOpen(rompath, 0)
     if file == ffi.NULL then
         error('file is NULL')
@@ -33,6 +40,9 @@ function Gameboy:new(rompath)
     end
     ffi.mgba._GBCoreLoadSave(core, savefile)
     ffi.mgba._GBCoreReset(core)
+    if config['audio (broken)'] and PLATFORM == '3ds' then
+        Audio.gameLoaded(self)
+    end
 
     self.core = core
     self.pix = pix

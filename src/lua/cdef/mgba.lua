@@ -1,4 +1,9 @@
 ffi.cdef[[
+
+typedef void blip_t;
+int blip_read_samples( blip_t*, short out [], int count, int stereo );
+void blip_set_rates( blip_t*, double clock_rate, double sample_rate );
+
 struct TableList;
 struct Table {
 	struct TableList* table;
@@ -160,6 +165,12 @@ void mCoreConfigLoadDefaults(void *, struct mCoreOptions *);
 bool mCoreLoadFile(struct mCore *, const char*);
 void mCoreAutoloadSave(struct mCore *);
 
+
+
+float GBAAudioCalculateRatio(float inputSampleRate, float desiredFPS, float desiredSampleRatio);
+int32_t _GBCoreFrequency(const struct mCore* core);
+blip_t* _GBCoreGetAudioChannel(struct mCore* core, int ch);
+void _GBCoreSetAVStream(struct mCore* core, struct mAVStream* stream);
 void _GBCoreReset(struct mCore* core);
 bool _GBCoreInit(struct mCore* core);
 void _GBCoreDesiredVideoDimensions(struct mCore* core, unsigned* width, unsigned* height);
@@ -812,5 +823,11 @@ struct GBCartridge {
 	// And ROM data...
 };
 
+struct mAVStream {
+	void (*videoDimensionsChanged)(struct mAVStream*, unsigned width, unsigned height);
+	void (*postVideoFrame)(struct mAVStream*, const void* buffer, size_t stride);
+	void (*postAudioFrame)(struct mAVStream*, int16_t left, int16_t right);
+	void (*postAudioBuffer)(struct mAVStream*, blip_t* left, blip_t* right);
+};
 
 ]]
