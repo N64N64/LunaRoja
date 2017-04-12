@@ -20,6 +20,7 @@ function getmapheader(map)
     return emu:rom(mapbank, mapheaderaddr), emu:rom(mapbank, mapblocksaddr)
 end
 
+local hooked = Red.render_map or function() end -- tmp.lua
 function Red:render_map(map, mapx, mapy, xplayer, yplayer, first_call)
     if first_call then
         already_rendered = {}
@@ -119,6 +120,8 @@ function Red:render_map(map, mapx, mapy, xplayer, yplayer, first_call)
         end
         addr = addr + 11
     end
+
+    hooked(self, map, mapx, mapy, xplayer, yplayer, first_call) -- tmp.lua
 end
 
 function gettilefromrom(tileset, tile)

@@ -25,6 +25,7 @@ end
 
 local lastx, lasty, lastmap, lastdir
 function sendposstr()
+    if not Red.wram then return end
     if  lastx == Red.wram.wXCoord
         and lasty == Red.wram.wYCoord
         and lastmap == Red.wram.wCurMap

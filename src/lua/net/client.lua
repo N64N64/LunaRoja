@@ -1,36 +1,36 @@
 local super = Object
 Net.Client = Object.new(super)
 
-function Net.Client:new(connfd)
+function Net.Client:new(fd)
     local self = super.new(self)
 
-    self.connfd = connfd -- optional
+    self.fd = fd -- optional
 
     return self
 end
 
 function Net.Client:connect(ip, port)
-    if self.connfd then
+    if self.fd then
         error('connection already established')
     end
     self.remote_ip = ip
     self.remote_port = port
-    local connfd = C.client_start(ip, tostring(port))
-    if connfd == -1 then
+    local fd = C.client_start(ip, tostring(port))
+    if fd == -1 then
         error('could not connect')
     end
-    self.connfd = connfd
+    self.fd = fd
 end
 
 function Net.Client:is_connected()
-    return self.connfd and (PLATFORM == '3ds' or not self.remote_ip or C.client_is_connected(self.connfd))
+    return self.fd and (PLATFORM == '3ds' or not self.remote_ip or C.client_is_connected(self.fd))
 end
 
 function Net.Client:close()
-    if not self.connfd then return end
+    if not self.fd then return end
 
-    C.closesocket(self.connfd)
-    self.connfd = nil
+    C.closesocket(self.fd)
+    self.fd = nil
 end
 
 local buf = ffi.new('char[512]')
@@ -39,9 +39,9 @@ function Net.Client:recv()
         error('not connected')
     end
 
-    local len = C.recv(self.connfd, buf, ffi.sizeof(buf), 0)
+    local len = C.recv(self.fd, buf, ffi.sizeof(buf), 0)
     if len == 0 then
-        self.connfd = nil
+        self.fd = nil
         return false
     elseif len ~= -1 then
         local data = ffi.string(buf, len)
@@ -62,9 +62,18 @@ function Net.Client:recv()
     end
 end
 
-function Net.Client:send(s)
+function Net.Client:send(data)
     if not self:is_connected() then
         error('not connected')
     end
-    return C.send(self.connfd, s, #s, 0)
+
+    if type(data) == 'string' then
+        return C.send(self.fd, data, #data, 0)
+    elseif type(data) == 'cdata' then
+        return C.send(self.fd, data, ffi.sizeof(data), 0)
+    elseif type(data) == 'table' then
+        return self:send(data:serialize())
+    else
+        error('unsupportred type '..type(data))
+    end
 end

@@ -15,13 +15,13 @@ function Net.Server:new(port)
 end
 
 function Net.Server:listen()
-    if self.listenfd then
+    if self.fd then
         error('server already started')
     end
 
-    local listenfd = C.server_start(self.port)
-    if listenfd ~= -1 then
-        self.listenfd = listenfd
+    local fd = C.server_start(self.port)
+    if fd ~= -1 then
+        self.fd = fd
     else
         error('couldnt start server')
     end
@@ -32,9 +32,9 @@ function Net.Server:close()
         self.clients[i]:close()
         self.clients[i] = nil
     end
-    if self.listenfd then
-        C.closesocket(self.listenfd)
-        self.listenfd = nil
+    if self.fd then
+        C.closesocket(self.fd)
+        self.fd = nil
     end
 end
 
@@ -52,13 +52,13 @@ end
 
 local buf = ffi.new('char[512]')
 function Net.Server:run()
-    if not self.listenfd then error('not listening') end
+    if not self.fd then error('not listening') end
 
     -- get new connections
-    local connfd = C.server_listen(self.listenfd)
-    if connfd >= 0 then
+    local fd = C.server_listen(self.fd)
+    if fd >= 0 then
         print('got connection')
-        table.insert(self.clients, Net.Client:new(connfd))
+        table.insert(self.clients, Net.Client:new(fd))
     end
 
     -- listen on existing connections
