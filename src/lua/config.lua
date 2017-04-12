@@ -1,6 +1,6 @@
 ROOT = {}
 ROOT.console = function()
-    Mode:changeto('console')
+    DISPLAY(Console)
 end
 ROOT.quit = function()
     wants_to_exit = true

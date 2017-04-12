@@ -9,57 +9,10 @@ for _,v in pairs(ls(PATH..'/rom') or {}) do
     end
 end
 
-require 'wip.serverbrowser'
-
 Screen.init()
 
-local debug_label = UI.Label:new()
-
-RENDER_CALLBACKS = {}
-RENDER_CALLBACKS.lua_logo = require 'art.lua_logo'
-
-UPDATE_CALLBACKS = {}
-
-function render()
-    if emu and not firstrun then
-        emu:run()
-        if config.render_mgba then
-            emu:render(Screen.bottom, 0, 0)
-        end
-
-        Red:run()
-        Red:render()
-    end
-    Toggler:render()
-    if DEBUG_TEXT or not emu then
-        local text
-        if emu then
-            text = tostring(DEBUG_TEXT)
-        else
-            text = 'ROM path: '..PATH..'/rom/'
-        end
-        if not(debug_label.text == text) then
-            debug_label.text = text
-            debug_label:paint()
-        end
-        debug_label:render(Screen.bottom, Screen.bottom.width - debug_label.width, Screen.bottom.height - debug_label.fontsize)
-    end
-    firstrun = false
-
-    for k,v in pairs(RENDER_CALLBACKS) do
-        v()
-    end
-end
-Mode['game'] = {
-    keycallback = function(key)
-    end,
-    rendercallback = render
-}
-Mode['console'] = Console.mode
---mode[3] = paint.mode
-
-rendercallbacks = {}
-Mode:changeto('game')
+require 'game'
+DISPLAY(Game)
 
 local quit_label = UI.Label:new()
 quit_label.text = 'Press A to quit'
@@ -104,9 +57,7 @@ function MAIN_LOOP()
     end
 
     Screen.startframe()
-    Mode:update()
-
-    rendercallbacks.mode()
+    DISPLAY():render()
 
     if wants_to_exit then
         C.draw_set_color(0x00, 0x00, 0x00)

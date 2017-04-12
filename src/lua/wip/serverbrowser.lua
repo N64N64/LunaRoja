@@ -18,21 +18,21 @@ local function closure(v)
     end
 end
 
-Mode.addserver = {}
-Mode.addserver.rendercallback = function()
+ServerBrowser = {}
+function ServerBrowser:render()
     if Button.isdown(Button.b) then
-        Mode:changeto('game')
+        DISPLAY(Game)
     end
     cancel:draw(Screen.top, 0, 0)
     ip:draw(Screen.top, (Screen.top.width - ip.width)/2, (Screen.top.height - ip.height)/2)
     Keyboard:render()
 end
-Mode.addserver.keycallback = function(key)
+function ServerBrowser.key(key)
     if key == '\n' then
         table.insert(options, closure(input))
         startclient(input)
         DEBUG_TEXT = 'Connected to '..input
-        Mode:changeto('game')
+        DISPLAY(Game)
         local found = false
         for i,v in ipairs(saved_ips) do
             if v == input then
@@ -74,7 +74,7 @@ end
 options['add new'] = function()
     ip.text = 'IP: '
     ip:paint()
-    Mode:changeto('addserver')
+    DISPLAY(ServerBrowser)
 end
 
 ROOT['connect to server'] = options

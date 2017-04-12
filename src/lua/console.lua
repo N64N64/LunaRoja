@@ -8,16 +8,6 @@ Console.input = UI.Label:new('', Console.lineheight)
 Console.input.font = Font.Monospace
 Console.input:paint()
 
-Console.mode = {
-    keycallback = function(key)
-        Console:keycallback(key)
-    end,
-    rendercallback = function()
-        Keyboard:render()
-        Console:render()
-    end,
-}
-
 local button = PLATFORM == '3ds' and 'B' or 'ESC'
 local header = UI.Label:new('Lua console! Press '..button..' to return to game', Console.lineheight, {0x86, 0x86, 0xff})
 header.font = Font.Monospace
@@ -40,7 +30,9 @@ override.quit = function()
     SHOULD_QUIT = true
 end
 
-function Console:keycallback(key)
+function Console.key(key)
+    local self = Console
+
     if key == '\b' then
         local front = string.sub(self.input.text, 1, math.max(0, self.blinker.pos - 1))
         local back = string.sub(self.input.text, self.blinker.pos + 1, #self.input.text)
@@ -117,18 +109,18 @@ if PLATFORM == 'love' then
     local orig
     orig = HOOK(love, 'keypressed', function(key)
         orig(key)
-        if not(Mode.idx == 'console') then 
+        if not(DISPLAY() == Console) then 
             if key == 'escape' then
-                Mode:changeto('console')
+                DISPLAY(Console)
             end
             return
         end
         if key == 'return' then
-            Console:keycallback('\n')
+            Console.key('\n')
         elseif key == 'backspace' then
-            Console:keycallback('\b')
+            Console.key('\b')
         elseif key == 'escape' then
-            Mode:changeto('game')
+            DISPLAY(Game)
             love.keyboard.setKeyRepeat(false)
         elseif dirs[key] then
             Console[key](Console)
@@ -137,8 +129,8 @@ if PLATFORM == 'love' then
     local orig
     orig = HOOK(love, 'textinput', function(key)
         orig(key)
-        if not(Mode.idx == 'console') then return end
-        Console:keycallback(key)
+        if not(DISPLAY() == Console) then return end
+        Console.key(key)
         love.keyboard.setKeyRepeat(true)
     end)
 end
@@ -215,9 +207,11 @@ function Console:up()
 end
 
 function Console:render()
+    Keyboard:render()
+
     if PLATFORM == '3ds' then
         if Button.isdown(Button.b) then
-            Mode:changeto('game')
+            DISPLAY(Game)
         end
         if Button.isdown(Button.dleft) then
             self:left()
