@@ -98,6 +98,7 @@ extern uint32_t __linear_heap_size;
 
 #define CSND_TIMER(n) (0x3FEC3FC / ((u32)(n)))
 
+#if 0
 u32 CSND_TIMER_WRAPPER(u32 n)
 {
     return CSND_TIMER(n);
@@ -140,6 +141,7 @@ u32 SOUND_LOOPMODE_WRAPPER(u32 n)
 {
     return SOUND_LOOPMODE(n);
 }
+#endif
 
 
 #define export(symbol) do {                 \
@@ -154,9 +156,12 @@ void export_symbols(lua_State *L)
 {
     lua_newtable(L);
 
+#if 0
     export(SOUND_CHANNEL_WRAPPER);
     export(SOUND_FORMAT_WRAPPER);
     export(SOUND_LOOPMODE_WRAPPER);
+    export(CSND_TIMER_WRAPPER);
+    export(CSND_VOL_WRAPPER);
     export(aptHook);
     export(linearMemAlign);
     export(GSPGPU_FlushDataCache);
@@ -164,13 +169,12 @@ void export_symbols(lua_State *L)
     export(blip_read_samples);
     export(CSND_SetChnRegs);
     export(CSND_SetPlayState);
-    export(CSND_TIMER_WRAPPER);
-    export(CSND_VOL_WRAPPER);
     export(osConvertVirtToPhys);
     export(csndExecCmds);
     export(csndIsPlaying);
     export(csndInit);
     export(csndExit);
+#endif
 
     export(FT_Init_FreeType);
     export(FT_Done_FreeType);
@@ -240,10 +244,12 @@ void export_symbols(lua_State *L)
     export(ftell);
 
 #ifdef USE_MGBA
+#if 0
     export(GBAAudioCalculateRatio);
     export(_GBCoreGetAudioChannel);
     export(_GBCoreFrequency);
     export(_GBCoreSetAVStream);
+#endif
     export(romBuffer);
     export(romBufferSize);
     export(mCoreFind);
