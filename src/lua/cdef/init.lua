@@ -1,11 +1,3 @@
-if PLATFORM == 'love' or PLATFORM == 'cmd' then
-    require 'cdef.desktop'
-end
-local f = io.open(LUAPATH..'/plat/'..PLATFORM..'/cdef.lua')
-if f then
-    f:close()
-    require('plat.'..PLATFORM..'.cdef')
-end
 require 'cdef.mgba'
 
 if jit.status() then
@@ -95,3 +87,12 @@ void draw_line(uint8_t *fb, int fbwidth, int fbheight, float x1, float y1, float
 bool untargz(const char *filename, const char *outfolder);
 
 ]]
+
+if PLATFORM == 'love' or PLATFORM == 'cmd' then
+    require 'cdef.desktop'
+end
+local f = io.open(LUAPATH..'/plat/'..PLATFORM..'/cdef.lua')
+if f then
+    f:close()
+    require('plat.'..PLATFORM..'.cdef')
+end

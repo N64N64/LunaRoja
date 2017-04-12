@@ -26,6 +26,7 @@ bool lua_initted_gfx = false;
 uint32_t* romBuffer;
 size_t romBufferSize;
 int l_aaas_add_pc_hook(lua_State *l);
+int l_aaas_set_postAudioBuffer(lua_State *L);
 #endif
 void export_symbols(lua_State *L);
 
@@ -41,7 +42,7 @@ int main(int argc, char **argv)
     srvInit();
     aptInit();
     hidInit();
-
+    bool NDSP_ON = ndspInit() == 0;
     fsInit();
     sdmcInit();
 #ifdef USE_MGBA
@@ -55,6 +56,10 @@ int main(int argc, char **argv)
 #ifdef USE_MGBA
     lua_pushcfunction(L, l_aaas_add_pc_hook);
     lua_setglobal(L, "PC_HOOK");
+    lua_pushcfunction(L, l_aaas_set_postAudioBuffer);
+    lua_setglobal(L, "SET_POSTAUDIOBUFFER");
+    lua_pushboolean(L, NDSP_ON);
+    lua_setglobal(L, "NDSP_ON");
 #endif
     export_symbols(L);
 
@@ -89,6 +94,7 @@ int main(int argc, char **argv)
     socExit();
     srvExit();
     aptExit();
+    ndspExit();
     hidExit();
     fsExit();
     sdmcExit();

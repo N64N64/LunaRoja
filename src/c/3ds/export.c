@@ -89,6 +89,11 @@ bool allocateRomBuffer(void);
 float GBAAudioCalculateRatio(float inputSampleRate, float desiredFPS, float desiredSampleRatio);
 void blip_set_rates( blip_t*, double clock_rate, double sample_rate );
 int blip_read_samples( blip_t*, short out [], int count, int stereo );
+void blip_clear( blip_t* );
+
+
+// my shit
+void aaas_postAudioBuffer(void *arg1, void *arg2, void *arg3);
 #endif
 
 // libctru
@@ -98,7 +103,6 @@ extern uint32_t __linear_heap_size;
 
 #define CSND_TIMER(n) (0x3FEC3FC / ((u32)(n)))
 
-#if 0
 u32 CSND_TIMER_WRAPPER(u32 n)
 {
     return CSND_TIMER(n);
@@ -141,7 +145,6 @@ u32 SOUND_LOOPMODE_WRAPPER(u32 n)
 {
     return SOUND_LOOPMODE(n);
 }
-#endif
 
 
 #define export(symbol) do {                 \
@@ -156,7 +159,7 @@ void export_symbols(lua_State *L)
 {
     lua_newtable(L);
 
-#if 0
+    export(aaas_postAudioBuffer);
     export(SOUND_CHANNEL_WRAPPER);
     export(SOUND_FORMAT_WRAPPER);
     export(SOUND_LOOPMODE_WRAPPER);
@@ -168,13 +171,23 @@ void export_symbols(lua_State *L)
     export(blip_set_rates);
     export(blip_read_samples);
     export(CSND_SetChnRegs);
+
+    export(ndspInit);
+    export(ndspSetOutputMode);
+    export(ndspSetOutputCount);
+    export(ndspChnReset);
+    export(ndspChnSetFormat);
+    export(ndspChnSetInterp);
+    export(ndspChnSetRate);
+    export(ndspChnWaveBufClear);
+    export(blip_clear);
+    export(DSP_FlushDataCache);
+    export(ndspChnWaveBufAdd);
+
     export(CSND_SetPlayState);
     export(osConvertVirtToPhys);
     export(csndExecCmds);
     export(csndIsPlaying);
-    export(csndInit);
-    export(csndExit);
-#endif
 
     export(FT_Init_FreeType);
     export(FT_Done_FreeType);
@@ -244,12 +257,11 @@ void export_symbols(lua_State *L)
     export(ftell);
 
 #ifdef USE_MGBA
-#if 0
     export(GBAAudioCalculateRatio);
     export(_GBCoreGetAudioChannel);
     export(_GBCoreFrequency);
     export(_GBCoreSetAVStream);
-#endif
+
     export(romBuffer);
     export(romBufferSize);
     export(mCoreFind);

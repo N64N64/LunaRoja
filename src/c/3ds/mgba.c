@@ -28,4 +28,28 @@ int l_aaas_add_pc_hook(lua_State *l)
     aaas_add_pc_hook(lua_tonumber(L, 1), lua_tonumber(L, 2), luaL_ref(L, LUA_REGISTRYINDEX));
     return 0;
 }
+
+static int postAudioBufferFunc = -1;
+void aaas_postAudioBuffer(void *arg1, void *arg2, void *arg3)
+{
+    if(postAudioBufferFunc == -1) {
+        return;
+    }
+    lua_rawgeti(L, LUA_REGISTRYINDEX, postAudioBufferFunc);
+    lua_pushlightuserdata(L, arg1);
+    lua_pushlightuserdata(L, arg2);
+    lua_pushlightuserdata(L, arg3);
+    lua_pcall(L, 3, 0, 0);
+}
+
+int l_aaas_set_postAudioBuffer(lua_State *L)
+{
+    if(!lua_isfunction(L, 1)) {
+        return luaL_error(L, "expected function");
+    }
+    lua_pushvalue(L, 1);
+    postAudioBufferFunc = luaL_ref(L, LUA_REGISTRYINDEX);
+    return 0;
+}
+
 #endif
