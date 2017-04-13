@@ -51,11 +51,17 @@ function default()
 end
 
 _G['3ds'] = function()
+    local devkitpro = check_devkitarm()
+    if not devkitpro then return end
+    if type(devkitpro) == 'string' then
+        DEVKITPRO = devkitpro
+        DEVKITARM = devkitpro..'/devkitARM'
+    end
     fs.mkdir('deps/lib/3ds')
     downloadlibs{
         {'deps/lib/3ds/libluajit.a', 'https://github.com/N64N64/mgba/releases/download/1/libluajit.a'},
         {'deps/lib/3ds/libfreetype.a', 'https://github.com/N64N64/mgba/releases/download/1/libfreetype.a'},
-        {'deps/lib/3ds/libmgba.a', 'https://github.com/N64N64/mgba/releases/download/1/libmgba.a'},
+        {'deps/lib/3ds/libmgba.a', 'https://github.com/N64N64/mgba/releases/download/2/libmgba.a'},
         {'deps/lib/3ds/libpng16.a', 'https://github.com/N64N64/mgba/releases/download/1/libpng16.a'},
         {'deps/lib/3ds/libzlibstatic.a', 'https://github.com/N64N64/mgba/releases/download/1/libzlibstatic.a'},
     }
@@ -174,9 +180,10 @@ function sd(name)
 end
 
 function folder()
+    local path = builder('3ds').DEVKITARM..'/bin'
     -- 3dsx
-    os.pexecute('smdhtool --create "Lua Red" "" "" 3ds_stuff/icon.png build/3ds/luared.smdh')
-    os.pexecute('3dsxtool build/3ds/luared.elf build/3ds/luared.3dsx --smdh=build/3ds/luared.smdh')
+    os.pexecute(path..'/smdhtool --create "Lua Red" "" "" 3ds_stuff/icon.png build/3ds/luared.smdh')
+    os.pexecute(path..'/3dsxtool build/3ds/luared.elf build/3ds/luared.3dsx --smdh=build/3ds/luared.smdh')
     -- cia, this doesn't work for some reason
     --[[
     os.pexecute('bannertool makebanner -i 3ds_stuff/cia/banner.png -a 3ds_stuff/cia/sound.wav -o build/banner.bin')
@@ -197,4 +204,44 @@ function run(plat)
     elseif plat == 'love' then
         os.execute('love .')
     end
+end
+
+local function ask()
+    io.write( '(Y/n) ')
+    local response = io.read('*line')
+    if response == '' or response == 'y' or response == 'Y' then
+        return true
+    elseif response == 'n' or response == 'N' then
+        return false
+    else
+        io.write('Please put y or n. ')
+        return ask()
+    end
+end
+
+function check_devkitarm()
+    if os.getenv('DEVKITPRO') and os.getenv('DEVKITARM') then return true end
+    if not fs.isfile('deps/lib/3ds/.devkitarmhalfinstalled') and fs.isdir('deps/lib/3ds/devkitpro') then return 'deps/lib/3ds/devkitpro' end
+    io.write('devkitARM not detected. would you like to install it?')
+    if not ask() then return false end
+
+    io.write('\n\n\n\n\n')
+    print(RED('Grab a coffee or something. This is gonna take a while to download.'))
+    io.write('\n\n\n\n\n')
+    update_devkitarm()
+end
+function update_devkitarm()
+    -- install devkitarm
+    fs.mkdir('deps/lib/3ds')
+    os.pexecute('touch deps/lib/3ds/.devkitarmhalfinstalled')
+    os.pexecute('rm -f deps/lib/3ds/devkitARMupdate.pl')
+    os.pexecute('curl -L https://raw.githubusercontent.com/devkitPro/installer/master/perl/devkitARMupdate.pl -o deps/lib/3ds/devkitARMupdate.pl')
+    os.pexecute('chmod +x deps/lib/3ds/devkitARMupdate.pl')
+    os.pexecute('cd deps/lib/3ds && ./deps/lib/3ds/devkitARMupdate.pl deps/lib/3ds/devkitpro')
+    os.pexecute('rm deps/lib/3ds/devkitARMupdate.pl')
+    os.pexecute('rm deps/lib/3ds/.devkitarmhalfinstalled')
+end
+function penis()
+    fs.mkdir('tmp')
+    os.pexecute('cd tmp && pwd')
 end

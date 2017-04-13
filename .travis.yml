@@ -21,6 +21,8 @@ install:
     cd - &&
     rm -rf rgbds && cd "$path" &&
     cd pokered && make && cd "$path"
-    cd mgba && luajit ../build/.aite/main.lua && mkdir -p ../deps/lib/love && cp build_aite/libmgba.so ../deps/lib/love/ && cd "$path"
+    cd mgba && luajit ../build/.aite/main.lua && mkdir -p ../deps/lib/love && cp build_aite/libmgba.so ../deps/lib/love/ && cd "$path" && mkdir rom
 
-script: mkdir rom && luajit build/.aite/main.lua love && luajit main.lua pokered/pokered.gbc test
+script: ./compile love
+script: ./compile install_devkitarm && ./compile 3ds
+script: ./main.lua pokered/pokered.gbc test

@@ -1,3 +1,3 @@
 [submodule "deps/build_system"]
 	path = deps/build_system
-	url = n64:n64n64/aite.git
+	url = https://github.com/N64N64/aite
