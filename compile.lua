@@ -1,3 +1,12 @@
+#!/usr/bin/env luajit
+if not BUILD_RULES_FILENAME then
+    BUILD_RULES_FILENAME = 'compile.lua'
+    ARG0 = arg[0]
+    arg[0] = 'deps/build_system/main.lua'
+    dofile(arg[0])
+    return
+end
+
 local mgba = true
 
 local info
@@ -36,8 +45,9 @@ end
 
 function default()
     print(GREEN('There are two supported platforms. Try running one of these commands:'))
-    print('aite 3ds')
-    print('aite love')
+    local cmd
+    print((ARG0 or arg[0])..' 3ds')
+    print((ARG0 or arg[0])..' love')
 end
 
 _G['3ds'] = function()
