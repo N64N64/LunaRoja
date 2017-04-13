@@ -20,6 +20,8 @@ function Font:new(name)
     self.name = name
     self.path = Font.Path..'/'..self.name
 
+    if NO_FREETYPE then return self end
+
     self.ft = freetype.new()
     self.bin = io.readbin(self.path)
     self.face = self.ft:new_memory_face(self.bin, ffi.sizeof(self.bin))
@@ -42,6 +44,7 @@ function Font:new(name)
 end
 
 function Font:paint(text, size)
+    if NO_FREETYPE then return ffi.new('uint8_t[9]'), 3, 3 end
     local len = #text
     local str = ffi.cast('const char *', text)
     local face = self.face

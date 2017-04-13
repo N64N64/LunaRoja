@@ -1,21 +1,18 @@
 local last_client_count
 local function getpos()
     local update = {}
-    update[1] = encode(sendposstr() or 'false')
+    update[1] = encode(sendposstr() or false)
     local should_send = not(last_client_count == #server.clients and update[1] == 'false')
     for i,client in ipairs(server.clients) do
-        update[i + 1] = 'false'
+        update[i + 1] = encode(false)
 
         if client.backlog then
-            client.pos = client.pos or {}
             local s = client.backlog[#client.backlog]
-            print(s)
-            local f = setfenv(load('return '..s), Env.Empty())
-            if f then
-                client.pos = f()
-                print(client.pos)
-                client.pos.id = client.id
-                update[i + 1] = encode(client.pos)
+            local player = decode(s)
+            if player then
+                print('got: '..encode(player))
+                client.player = player
+                update[i + 1] = encode(player)
                 should_send = true
             end
             client.backlog = nil
@@ -29,6 +26,9 @@ end
 
 PLAYER = Player:new()
 function sendposstr()
+    if server then
+        PLAYER.id = -1
+    end
     if PLAYER:update() then
         return encode(PLAYER)
     end
@@ -38,14 +38,14 @@ local orig, peers
 local function hook(...)
     orig(...)
     local _, map, mapx, mapy, xplayer, yplayer = ...
-    for _,peer in ipairs(peers) do
-        if peer.pos and peer.pos.map == map then
-            if client and client.id == peer.pos.id then
+    for _,player in pairs(Player.Peers) do
+        if player.map == map then
+            if client and client.id == player.id then
             else
-                local x = peer.pos.x*16
-                local y = peer.pos.y*16
+                local x = player.x*16
+                local y = player.y*16
                 local bmap = getspritefromrom(Red.wram.wSpriteStateData1[0].PictureID)
-                Red:render_sprite(bmap, x + peer.pos.diffx, y + peer.pos.diffy, xplayer, yplayer, peer.pos.dir, peer.pos.anim)
+                Red:render_sprite(bmap, x + player.diffx, y + player.diffy, xplayer, yplayer, player.dir, player.anim)
             end
         end
     end
@@ -81,14 +81,6 @@ function startclient(ip, port)
     client:connect(ip or "127.0.0.1", port or 27716)
     UPDATE_CALLBACKS.client = function()
         local is_connected = not(client:recv() == false)
-        if Red then
-            if is_connected then
-                local str = sendposstr()
-                if str then
-                    client:send(str..'\n')
-                end
-            end
-        end
         if not is_connected then
             --peers = {}
             --UPDATE_CALLBACKS.client = nil
@@ -98,6 +90,7 @@ function startclient(ip, port)
 
         if not client.id and client.backlog and #client.backlog > 0 then
             client.id = tonumber(client.backlog[1])
+            PLAYER.id = client.id
             if #client.backlog == 1 then
                 client.backlog = nil
             else
@@ -105,17 +98,18 @@ function startclient(ip, port)
             end
         end
 
+        if not PLAYER.id then return end
+
+        if Red then
+            local str = sendposstr()
+            if str then
+                client:send(str..'\n')
+            end
+        end
+
         if client.backlog then
             local s = client.backlog[#client.backlog]
-            print(s)
-            local f = setfenv(load('return '..s), Env.Empty())
-            for i,peer in ipairs(f()) do
-                if peer == false then
-                    peers[i] = peers[i] or {}
-                else
-                    peers[i] = {pos = peer}
-                end
-            end
+            decode(s)
             client.backlog = nil
         end
     end

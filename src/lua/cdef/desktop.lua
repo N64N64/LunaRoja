@@ -12,6 +12,8 @@ if ffi.os == 'Windows' then
     ffi.freetype = ffi.load(PATH..'/deps/lib/love/freetype6.dll')
 elseif PLATFORM == 'love' then
     ffi.freetype = ffi.C
+elseif NO_FREETYPE then
+    ffi.freetype = {}
 else
     ffi.freetype = ffi.load'freetype'
 end

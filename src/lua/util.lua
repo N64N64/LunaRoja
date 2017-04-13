@@ -98,14 +98,27 @@ function populate(dest, src, attrs)
     end
 end
 
-function decode(s)
+local function sugar(t)
+    if type(t) == 'table' then
+        if t.__class then
+            local class = _G[t.__class]
+            return class.Decode(t)
+        else
+            for k,v in pairs(t) do
+                t[k] = sugar(v)
+            end
+        end
+    end
+    return t
+end
+
+function decode(s, raw)
     local f = setfenv(load('return '..s), Env.Empty())
     local t = f()
-    if type(t) == 'table' and t.__class then
-        local class = _G[t.__class]
-        return class.Decode(t)
-    else
+    if raw then
         return t
+    else
+        return sugar(t)
     end
 end
 

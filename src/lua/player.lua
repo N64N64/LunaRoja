@@ -39,12 +39,17 @@ function Player:encode()
 end
 
 function Player.Decode(t)
+    if not t.id then
+        error('id not set')
+    end
+
     local self = Player.Peers[t.id]
     if not self then
         self = Player:new()
         Player.Peers[t.id] = self
     end
     populate(self, t, Player.Attrs)
+    return self
 end
 
 return Player
