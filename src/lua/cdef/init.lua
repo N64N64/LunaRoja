@@ -56,6 +56,7 @@ void sha256_final(SHA256_CTX *ctx, unsigned char hash[]);
 
 // my stuff
 
+const char *lr_net_error;
 int server_start(int port);
 int server_listen(int listenfd);
 

@@ -17,7 +17,7 @@ function Net.Client:connect(ip, port)
     self.remote_port = port
     local fd = C.client_start(ip, tostring(port))
     if fd == -1 then
-        error('could not connect')
+        error('could not connect: '..ffi.string(C.lr_net_error))
     end
     self.fd = fd
 end

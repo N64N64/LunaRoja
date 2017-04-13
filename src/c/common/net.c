@@ -40,7 +40,7 @@ int server_start(int port)
     //int yes = 1;
     //setsockopt(self->listenfd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
 
-    listen(listenfd, 5);
+    listen(listenfd, 20);
 
     return listenfd;
 }
@@ -54,6 +54,8 @@ int server_start(int port)
 #else
 #define log(fmt, ...) printf(fmt"\n", ## __VA_ARGS__)
 #endif
+
+const char *lr_net_error = NULL;
 
 int client_start(const char *ip, const char *port)
 {
@@ -74,7 +76,10 @@ int client_start(const char *ip, const char *port)
     int rc = connect(connfd, (struct sockaddr*)&addr, addrlen);
 
     if(rc > 0) {
-        log("connect failed (%d): %s", rc, gai_strerror(rc));
+        lr_net_error = gai_strerror(rc);
+        return -1;
+    } else if(rc == -1) {
+        lr_net_error = strerror(errno);
         return -1;
     }
     set_nonblocking(connfd);

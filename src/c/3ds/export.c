@@ -56,6 +56,7 @@ void draw_line(uint8_t *fb, int fbwidth, int fbheight, float x1, float y1, float
 void draw_rect(uint8_t *fb, int fbwidth, int fbheight, float fx, float fy, float fwidth, float fheight);
 
 // net.c
+extern const char *lr_net_error;
 int client_start(const char *ip, const char *port);
 bool client_is_connected(int fd);
 int server_start(int port);
@@ -310,6 +311,7 @@ void export_symbols(lua_State *L)
 
     export(lua_initted_gfx);
 
+    export(lr_net_error);
     export(server_start);
     export(server_listen);
     export(client_start);
