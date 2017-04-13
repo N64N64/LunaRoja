@@ -1,5 +1,4 @@
 ffi = require 'ffi'
-C = ffi.C
 bit = require 'bit'
 
 require 'object'

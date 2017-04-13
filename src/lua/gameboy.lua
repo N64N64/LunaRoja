@@ -14,7 +14,10 @@ function Gameboy:new(rompath)
     ffi.mgba._GBCoreDesiredVideoDimensions(core, size+0, size+1)
     local pix = ffi.new('uint8_t[?]', size[0] * size[1] * 4)
     ffi.mgba._GBCoreSetVideoBuffer(core, pix, size[0])
-    if config['audio (broken)'] and PLATFORM == '3ds' then
+    if config.audio then
+        if not(PLATFORM == '3ds') then
+            error('audio not supported on this platform yet')
+        end
         require('plat.3ds.audio').setup(self)
     end
     local file = ffi.mgba.VFileOpen(rompath, 0)
@@ -37,7 +40,7 @@ function Gameboy:new(rompath)
     end
     ffi.mgba._GBCoreLoadSave(core, savefile)
     ffi.mgba._GBCoreReset(core)
-    if config['audio (broken)'] and PLATFORM == '3ds' then
+    if config.audio then
         require('plat.3ds.audio').gameLoaded(self)
     end
 

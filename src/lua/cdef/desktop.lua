@@ -11,7 +11,7 @@ ffi.luared = ffi.load(PATH..'/build/love/luared.'..ext, true)
 if ffi.os == 'Windows' then
     ffi.freetype = ffi.load(PATH..'/deps/lib/love/freetype6.dll')
 elseif PLATFORM == 'love' then
-    ffi.freetype = C
+    ffi.freetype = ffi.C
 else
     ffi.freetype = ffi.load'freetype'
 end

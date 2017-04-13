@@ -96,3 +96,5 @@ if f then
     f:close()
     require('plat.'..PLATFORM..'.cdef')
 end
+
+C = ffi.C
