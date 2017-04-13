@@ -50,6 +50,9 @@ local function runcode(s)
     return result
 end
 
+function Net.Server.onnewclient()
+end
+
 local buf = ffi.new('char[512]')
 function Net.Server:run()
     if not self.fd then error('not listening') end
@@ -57,8 +60,9 @@ function Net.Server:run()
     -- get new connections
     local fd = C.server_listen(self.fd)
     if fd >= 0 then
-        print('got connection')
-        table.insert(self.clients, Net.Client:new(fd))
+        local client = New.Client:new(fd)
+        self:onnewclient(client)
+        table.insert(self.clients, client)
     end
 
     -- listen on existing connections

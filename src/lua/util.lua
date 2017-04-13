@@ -92,6 +92,22 @@ function string.split(inputstr, sep)
     return t
 end
 
+function encode(t)
+    if type(t) == 'string' then
+        return t
+    elseif type(t) == 'table' then
+        local s = {}
+        for k,v in pairs(t) do
+            if type(k) == 'number' then
+                s[#s + 1] = v
+            elseif type(k) == 'string' then
+                s[#s + 1] = k..' = '..v
+            end
+        end
+        return '{'..table.concat(s, ',')..'}'
+    end
+end
+
 function serialize(f, t, lvl)
     lvl = lvl or 0
     f:write('{\n')

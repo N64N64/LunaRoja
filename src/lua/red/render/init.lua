@@ -52,6 +52,9 @@ local function get_player_coords()
         diffx = speed
     end
 
+    Red.diffx = diffx
+    Red.diffy = diffy
+
     return math.floor(self.wram.wXCoord * 16 + diffx), math.floor(self.wram.wYCoord * 16 + diffy)
 end
 
