@@ -228,18 +228,21 @@ function check_devkitarm()
     io.write('\n\n\n\n\n')
     print(RED('Grab a coffee or something. This is gonna take a while to download.'))
     io.write('\n\n\n\n\n')
-    update_devkitarm()
+    if not update_devkitarm() then
+        error('Could not install devkitARM')
+    end
 end
 function update_devkitarm()
     -- install devkitarm
     fs.mkdir('deps/lib/3ds')
-    os.pexecute('touch deps/lib/3ds/.devkitarmhalfinstalled')
-    os.pexecute('rm -f deps/lib/3ds/devkitARMupdate.pl')
-    os.pexecute('curl -L https://raw.githubusercontent.com/devkitPro/installer/master/perl/devkitARMupdate.pl -o deps/lib/3ds/devkitARMupdate.pl')
-    os.pexecute('chmod +x deps/lib/3ds/devkitARMupdate.pl')
-    os.pexecute('cd deps/lib/3ds && ./deps/lib/3ds/devkitARMupdate.pl deps/lib/3ds/devkitpro')
-    os.pexecute('rm deps/lib/3ds/devkitARMupdate.pl')
-    os.pexecute('rm deps/lib/3ds/.devkitarmhalfinstalled')
+    return
+        0 == os.pexecute 'touch deps/lib/3ds/.devkitarmhalfinstalled'
+    and 0 == os.pexecute 'rm -f deps/lib/3ds/devkitARMupdate.pl'
+    and 0 == os.pexecute 'curl -L https://raw.githubusercontent.com/devkitPro/installer/master/perl/devkitARMupdate.pl -o deps/lib/3ds/devkitARMupdate.pl'
+    and 0 == os.pexecute 'chmod +x deps/lib/3ds/devkitARMupdate.pl'
+    and 0 == os.pexecute 'cd deps/lib/3ds && ./devkitARMupdate.pl devkitpro'
+    and 0 == os.pexecute 'rm deps/lib/3ds/devkitARMupdate.pl'
+    and 0 == os.pexecute 'rm deps/lib/3ds/.devkitarmhalfinstalled'
 end
 function penis()
     fs.mkdir('tmp')
