@@ -22,7 +22,7 @@ cheats.always_win = false
 cheats.skip_follow_oak = false
 
 config = {}
-config.audio = platform == '3ds'
+config.audio = PLATFORM == '3ds'
 config.render_map = true
 config.render_mgba = true
 config.render_mgba_top = false
