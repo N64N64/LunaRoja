@@ -82,26 +82,32 @@ function Audio.setup(emu)
         dspBuffer[i].nsamples = AUDIO_SAMPLES;
     end
     SET_POSTAUDIOBUFFER(function (stream, left, right)
-        local startId = bufferId
-        while dspBuffer[bufferId].status == C.NDSP_WBUF_QUEUED or dspBuffer[bufferId].status == C.NDSP_WBUF_PLAYING do
-            bufferId = bit.band(bufferId + 1, DSP_BUFFERS - 1)
-            if bufferId == startId then
-                C.blip_clear(left)
-                C.blip_clear(right)
-                return
+        local success, err = xpcall(function()
+            local startId = bufferId
+            while dspBuffer[bufferId].status == C.NDSP_WBUF_QUEUED or dspBuffer[bufferId].status == C.NDSP_WBUF_PLAYING do
+                bufferId = bit.band(bufferId + 1, DSP_BUFFERS - 1)
+                if bufferId == startId then
+                    C.blip_clear(left)
+                    C.blip_clear(right)
+                    return
+                end
             end
+            local tmpBuf = dspBuffer[bufferId].data_pcm16
+            ffi.fill(dspBuffer+bufferId, ffi.sizeof(dspBuffer[bufferId]))
+            dspBuffer[bufferId].data_pcm16 = tmpBuf
+            dspBuffer[bufferId].nsamples = AUDIO_SAMPLES
+            C.blip_read_samples(left, dspBuffer[bufferId].data_pcm16, AUDIO_SAMPLES, true)
+            C.blip_read_samples(right, dspBuffer[bufferId].data_pcm16 + 1, AUDIO_SAMPLES, true)
+            if RENDER_AUDIO then
+                RENDER_AUDIO(dspBuffer[bufferId].data_pcm16, AUDIO_SAMPLES)
+            end
+            C.DSP_FlushDataCache(dspBuffer[bufferId].data_pcm16, AUDIO_SAMPLES * 2 * ffi.sizeof('s16'))
+            C.ndspChnWaveBufAdd(0, dspBuffer+bufferId)
+        end, debug.traceback)
+        if not success then
+            ERROR = err
+            SHOULD_QUIT = true
         end
-        local tmpBuf = dspBuffer[bufferId].data_pcm16
-        ffi.fill(dspBuffer+bufferId, ffi.sizeof(dspBuffer[bufferId]))
-        dspBuffer[bufferId].data_pcm16 = tmpBuf
-        dspBuffer[bufferId].nsamples = AUDIO_SAMPLES
-        C.blip_read_samples(left, dspBuffer[bufferId].data_pcm16, AUDIO_SAMPLES, true)
-        C.blip_read_samples(right, dspBuffer[bufferId].data_pcm16 + 1, AUDIO_SAMPLES, true)
-        if RENDER_AUDIO then
-            RENDER_AUDIO(dspBuffer[bufferId].data_pcm16, AUDIO_SAMPLES)
-        end
-        C.DSP_FlushDataCache(dspBuffer[bufferId].data_pcm16, AUDIO_SAMPLES * 2 * ffi.sizeof('s16'))
-        C.ndspChnWaveBufAdd(0, dspBuffer+bufferId)
     end)
 end
 

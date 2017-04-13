@@ -1,6 +1,7 @@
 ffi.cdef[[
 
 typedef void blip_t;
+void blip_clear(blip_t*);
 int blip_read_samples( blip_t*, short out [], int count, int stereo );
 void blip_set_rates( blip_t*, double clock_rate, double sample_rate );
 
