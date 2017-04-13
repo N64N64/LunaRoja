@@ -1,3 +1,10 @@
+local path = LUAPATH..'/config/preautorun.lua'
+local f = io.open(path, 'r')
+if f then
+    f:close()
+    dofile(path)
+end
+
 ffi = require 'ffi'
 bit = require 'bit'
 
