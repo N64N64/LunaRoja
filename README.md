@@ -1,17 +1,6 @@
-## Supported platforms
+**NOTE:** For both platforms, you must supply your own symfile and ROM and place them in the `rom` directory (create it if it does not exist). The symfile must have the same basename as the rom. So, for example, if your ROM was named `example.gb`, your symfile must be named `example.sym`.
 
-* Old 3DS / New 3DS
-* Mac / Linux / Windows
-
-## IRC chat
-
-[#luared](https://kiwiirc.com/client/irc.freenode.net?channel=#luared) on freenode
-
-## Building
-
-For both platforms, you must supply your own symfile and ROM and place them in the `rom` directory (create it if it does not exist). The symfile must have the same basename as the rom. So, for example, if your ROM was named `example.gb`, your symfile must be named `example.sym`.
-
-### 3DS
+### 3DS Build
 
 Linux / Mac only.
 
@@ -28,3 +17,7 @@ Then, copy `build/luared.3dsx`, `build/luared.smdh`, the `lua` folder, and the `
 4. Run `./compile.lua` (Windows: `luajit.exe compile.lua`)
 
 Open the LÖVE executable with the repo directory to run it.
+
+### IRC
+
+[#luared](https://kiwiirc.com/client/irc.freenode.net?channel=#luared) on freenode
