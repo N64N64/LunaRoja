@@ -7,6 +7,7 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <fcntl.h>
+#include <errno.h>
 
 #ifdef _3DS
 #include <3ds.h>
@@ -64,7 +65,6 @@ int client_start(const char *ip, const char *port)
         log("socket creation failed");
         return -1;
     }
-    set_nonblocking(connfd);
 
     memset(&addr, 0, sizeof(addr));
     addr.sin_family = AF_INET;
@@ -72,10 +72,12 @@ int client_start(const char *ip, const char *port)
     inet_aton(ip, &addr.sin_addr);
 
     int rc = connect(connfd, (struct sockaddr*)&addr, addrlen);
-    if(rc >= 0) {
+
+    if(rc > 0) {
         log("connect failed (%d): %s", rc, gai_strerror(rc));
         return -1;
     }
+    set_nonblocking(connfd);
 
     return connfd;
 }

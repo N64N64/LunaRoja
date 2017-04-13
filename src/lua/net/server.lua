@@ -60,9 +60,10 @@ function Net.Server:run()
     -- get new connections
     local fd = C.server_listen(self.fd)
     if fd >= 0 then
-        local client = New.Client:new(fd)
-        self:onnewclient(client)
+        print('got new client')
+        local client = Net.Client:new(fd)
         table.insert(self.clients, client)
+        self:onnewclient(client)
     end
 
     -- listen on existing connections

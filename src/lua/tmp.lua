@@ -53,12 +53,14 @@ local function hook(...)
     orig(...)
     local _, map, mapx, mapy, xplayer, yplayer = ...
     for _,peer in ipairs(peers) do
-        if peer.pos and peer.pos.map == map and (not client or not(client.id == peer.pos.id)) then
-            C.draw_set_color(0xff, 0x00, 0x00)
-            local x = peer.pos.x*16
-            local y = peer.pos.y*16
-            local bmap = getspritefromrom(Red.wram.wSpriteStateData1[0].PictureID)
-            Red:render_sprite(bmap, x + peer.pos.diffx, y + peer.pos.diffy, xplayer, yplayer, peer.pos.dir, peer.pos.anim)
+        if peer.pos and peer.pos.map == map then
+            if client and client.id == peer.pos.id then
+            else
+                local x = peer.pos.x*16
+                local y = peer.pos.y*16
+                local bmap = getspritefromrom(Red.wram.wSpriteStateData1[0].PictureID)
+                Red:render_sprite(bmap, x + peer.pos.diffx, y + peer.pos.diffy, xplayer, yplayer, peer.pos.dir, peer.pos.anim)
+            end
         end
     end
 end
@@ -109,7 +111,7 @@ function startclient(ip, port)
         end
 
         if not client.id and client.backlog and #client.backlog > 0 then
-            client.id = client.backlog[1]
+            client.id = tonumber(client.backlog[1])
             if #client.backlog == 1 then
                 client.backlog = nil
             else
