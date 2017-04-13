@@ -3,6 +3,13 @@ if not BUILD_RULES_FILENAME then
     BUILD_RULES_FILENAME = 'compile.lua'
     ARG0 = arg[0]
     arg[0] = 'deps/build_system/main.lua'
+    local f = io.open(arg[0], 'r')
+    if not f then
+        -- they probably forgot to update the submodule
+        os.execute('git submodule update --init')
+    else
+        f:close()
+    end
     dofile(arg[0])
     return
 end
