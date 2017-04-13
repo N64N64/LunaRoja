@@ -9,9 +9,11 @@ local function getpos()
         if client.backlog then
             client.pos = client.pos or {}
             local s = client.backlog[#client.backlog]
+            print(s)
             local f = setfenv(load('return '..s), Env.Empty())
             if f then
                 client.pos = f()
+                print(client.pos)
                 client.pos.id = client.id
                 update[i + 1] = encode(client.pos)
                 should_send = true
@@ -25,27 +27,11 @@ local function getpos()
     last_client_count = #server.clients
 end
 
-local lastx, lasty, lastmap, lastdir, lastanim, lastwalk, diffx, diffy
+PLAYER = Player:new()
 function sendposstr()
-    if not Red.wram then return end
-    if  lastx == Red.wram.wXCoord
-        and lasty == Red.wram.wYCoord
-        and lastmap == Red.wram.wCurMap
-        and lastdir == Red.wram.wSpriteStateData1[0].FacingDirection
-        and lastanim == Red.wram.wSpriteStateData1[0].AnimFrameCounter
-        and diffx == Red.diffx
-        and diffy == Red.diffy
-    then return end
-
-    lastx = Red.wram.wXCoord
-    lasty = Red.wram.wYCoord
-    lastmap = Red.wram.wCurMap
-    lastdir = Red.wram.wSpriteStateData1[0].FacingDirection
-    lastanim = Red.wram.wSpriteStateData1[0].AnimFrameCounter
-    lastwalk = Red.wram.wWalkCounter
-    diffx = Red.diffx or 0
-    diffy = Red.diffy or 0
-    return '{x='..lastx..', y='..lasty..', map='..lastmap..', dir='..lastdir..', anim='..lastanim..', diffx = '..diffx..', diffy = '..diffy..'}'
+    if PLAYER:update() then
+        return encode(PLAYER)
+    end
 end
 
 local orig, peers
@@ -99,14 +85,14 @@ function startclient(ip, port)
             if is_connected then
                 local str = sendposstr()
                 if str then
-                    client:send(encode(str)..'\n')
+                    client:send(str..'\n')
                 end
             end
         end
         if not is_connected then
-            peers = {}
-            UPDATE_CALLBACKS.client = nil
-            client = nil
+            --peers = {}
+            --UPDATE_CALLBACKS.client = nil
+            --client = nil
             return
         end
 

@@ -92,19 +92,46 @@ function string.split(inputstr, sep)
     return t
 end
 
+function populate(dest, src, attrs)
+    for _,v in ipairs(attrs) do
+        dest[v] = src[v]
+    end
+end
+
+function decode(s)
+    local f = setfenv(load('return '..s), Env.Empty())
+    local t = f()
+    if type(t) == 'table' and t.__class then
+        local class = _G[t.__class]
+        return class.Decode(t)
+    else
+        return t
+    end
+end
+
+local function strescape(s)
+    s = string.gsub(s, '"', '\\"')
+    s = string.gsub(s, '\n', '\\n')
+    return s
+end
+
 function encode(t)
     if type(t) == 'string' then
-        return t
+        return '"'..strescape(t)..'"'
+    elseif t == nil or type(t) == 'number' or type(t) == 'boolean' then
+        return tostring(t)
     elseif type(t) == 'table' then
-        local s = {}
-        for k,v in pairs(t) do
-            if type(k) == 'number' then
-                s[#s + 1] = v
-            elseif type(k) == 'string' then
-                s[#s + 1] = k..' = '..v
+        if t.encode then
+            return t:encode()
+        else
+            local s = {}
+            for k,v in pairs(t) do
+                s[#s + 1] = '['..encode(k)..'] = '..encode(v)
             end
+            return '{'..table.concat(s, ',')..'}'
         end
-        return '{'..table.concat(s, ',')..'}'
+    else
+        error('unsupported type '..type(t))
     end
 end
 
