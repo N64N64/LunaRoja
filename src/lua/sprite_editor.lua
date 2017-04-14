@@ -114,7 +114,7 @@ function SE.rofl()
 end
 
 function SE.yeah(override)
-    if not override and SE.tile == SE.rofl() then return end
+    if (not override and SE.tile == SE.rofl()) or not SE.tile then return end
 
     SE.colors = SE.colors or {}
     for y=0,16-1 do
