@@ -113,7 +113,7 @@ end
 function SE.rofl()
     local x, y = math.floor(Red.wram.wXCoord/2), math.floor(Red.wram.wYCoord/2)
     local i = Red.zram.mapwidth*y + x
-    SE.tile = Red.tiles[Red.zram.tileset][Red.zram.mapblocks[i]]
+    SE.tile = Red.customtiles[Red.zram.tileset][Red.zram.mapblocks[i]] or Red.tiles[Red.zram.tileset][Red.zram.mapblocks[i]]
     return SE.tile
 end
 
@@ -170,12 +170,6 @@ function SE.painttile()
     end
 end
 
-function SE.PickTile(tileset, tileno)
-    SE.tile = Red.tiles[tileset][tileno]
-
-    return SE.tile
-end
-
 function SE.paint()
     SE.color = UI.View:new(0, back.height)
     function SE.color:postdraw(scr, x, y)
@@ -206,7 +200,11 @@ function SE.paint()
         local v = UI.Button(UI.View:new(x*8,y*8, 8, 8), function()
             SE.pick = pick
         end)
-        v.background_color =  {math.floor(color / 0x10000) % 0x100, math.floor(color / 0x100) % 0x100, color % 0x100}
+        if PLATFORM == '3ds' then
+            v.background_color =  {color % 0x100, math.floor(color / 0x100) % 0x100, math.floor(color / 0x10000) % 0x100}
+        else
+            v.background_color =  {math.floor(color / 0x10000) % 0x100, math.floor(color / 0x100) % 0x100, color % 0x100}
+        end
         SE.color:add_subview(v)
         i = i + 1
     end
