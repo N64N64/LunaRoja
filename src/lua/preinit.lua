@@ -27,6 +27,7 @@ UI = {}
 require 'ui.view'
 require 'ui.label'
 require 'ui.picker'
+require 'ui.button'
 
 require 'screen'
 require 'button'
@@ -39,4 +40,5 @@ require 'console'
 require 'toggler'
 require 'rom'
 require 'red'
+require 'sprite_editor'
 require 'player'

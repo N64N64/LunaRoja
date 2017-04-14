@@ -1,8 +1,8 @@
 local super = Object
-DebugScreen = Object.new(super)
+DebugMenu = Object.new(super)
 
 local debug_label = UI.Label:new()
-function DebugScreen.render()
+function DebugMenu.render()
     Toggler:render()
     if DEBUG_TEXT or not emu then
         local text
@@ -19,4 +19,4 @@ function DebugScreen.render()
     end
 end
 
-return DebugScreen
+return DebugMenu

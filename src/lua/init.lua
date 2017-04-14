@@ -9,6 +9,10 @@ for _,v in pairs(ls(PATH..'/rom') or {}) do
     end
 end
 
+ROOT['sprite editor'] = function()
+    DISPLAY[2] = SpriteEditor
+end
+
 ROOT.console = function()
     DISPLAY(Console)
 end
@@ -19,8 +23,8 @@ end
 Screen.init()
 
 require 'game'
-require 'debug_screen'
-DISPLAY(Game, DebugScreen)
+require 'debug_menu'
+DISPLAY(Game, DebugMenu)
 
 local quit_label = UI.Label:new()
 quit_label.text = 'Press A to quit'

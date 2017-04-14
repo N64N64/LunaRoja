@@ -7,8 +7,5 @@ function Mouse.Scan()
         C.hidTouchRead(touch)
         Mouse.x = tonumber(touch[0].px)
         Mouse.y = tonumber(touch[0].py)
-    else
-        Mouse.x = nil
-        Mouse.y = nil
     end
 end

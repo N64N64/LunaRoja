@@ -9,6 +9,15 @@ function UI.View:new()
     return self
 end
 
+function UI.View:contains_point(x, y)
+    return x > self.x and y > self.y and
+            x < self.x + self.width and y < self.y + self.height
+end
+
+function UI.View:contains_mouse()
+    return self:contains_point(Mouse.x, Mouse.y)
+end
+
 function UI.View:add_subview(subview)
     self.subviews[#self.subviews + 1] = subview
     subview.superview = self
