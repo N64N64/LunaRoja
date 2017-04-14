@@ -1,11 +1,13 @@
-local super = require 'ui.label'
-UI.Button = Object.new(super)
-
-function UI.Button:draw(scr, x, y)
-    if Mouse.isup and self:contains_mouse() then
-        self:pressed()
+function UI.Button(self, f)
+    local orig = self.draw or function() end
+    function self:draw(scr, x, y)
+        if Mouse.isup and self:contains_mouse() then
+            self:pressed()
+        end
+        orig(self, scr, x, y)
     end
-    super.draw(self, scr, x, y)
+    self.pressed = f or self.pressed
+    return self
 end
 
 return UI.Button

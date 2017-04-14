@@ -11,9 +11,6 @@ local firstrun = true
 function Game.render()
     if emu and not firstrun then
         emu:run()
-        if config.render_mgba then
-            emu:render(Screen.bottom, 0, 0)
-        end
 
         Red:run()
         Red:render()

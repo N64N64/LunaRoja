@@ -32,20 +32,29 @@ function Red:render_map(map, mapx, mapy, xplayer, yplayer, first_call)
     local mapheader, mapblocks = getmapheader(map)
 
     local tileset = mapheader[0]
-    if first_call and not(lasttileset == tileset) then
-        -- because the 3DS has very little memory
-        if lasttileset then
-            self.tiles[lasttileset] = {}
-            self.customtiles[lasttileset] = {}
+    if first_call then
+        Red.zram.tileset = tileset
+        if not(lasttileset == tileset) then
+            -- because the 3DS has very little memory
+            if lasttileset then
+                self.tiles[lasttileset] = {}
+                self.customtiles[lasttileset] = {}
+            end
+            lasttileset = tileset
+            collectgarbage()
         end
-        lasttileset = tileset
-        collectgarbage()
     end
 
     local math_floor = math.floor
     local tiles = self.tiles
     local width = mapheader[2]
     local height = mapheader[1]
+
+    if first_call then
+        Red.zram.mapwidth = width
+        Red.zram.mapheight = height
+        Red.zram.mapblocks = mapblocks
+    end
 
     local bufpix, bufheight, bufwidth = Screen.top.pix, Screen.top.height, Screen.top.width
 

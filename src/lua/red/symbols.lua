@@ -322,3 +322,4 @@ ffi.metatype('struct battle', struct_mt)
 Red.sym = emu.romfile.sym
 Red.wram = setmetatable({}, mt)
 Red.rom = emu.romfile.rom
+Red.zram = {}

@@ -3,7 +3,12 @@ DebugMenu = Object.new(super)
 
 local debug_label = UI.Label:new()
 function DebugMenu.render()
+    if emu and config.render_mgba then
+        emu:render(Screen.bottom, 0, 0)
+    end
+
     Toggler:render()
+
     if DEBUG_TEXT or not emu then
         local text
         if emu then
