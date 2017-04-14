@@ -157,14 +157,13 @@ bool scalecopy(uint8_t *out, uint8_t *in, int width, int height, float scale)
 {
     for(int y = 0; y < height; y++) {
         for(int x = 0; x < width; x++) {
-            int outidx = scale*(y*width + x);
             int ii = y*width + x;
             for(int yy = 0; yy < scale; yy++) {
                 for(int xx = 0; xx < scale; xx++) {
-                    int oi = outidx + yy*width*scale + xx;
-                    out[oi + 0] = in[ii + 0];
-                    out[oi + 1] = in[ii + 1];
-                    out[oi + 2] = in[ii + 2];
+                    int oi = ((yy+scale*y)*width*scale + xx+scale*x);
+                    out[oi*3 + 0] = in[ii*3 + 0];
+                    out[oi*3 + 1] = in[ii*3 + 1];
+                    out[oi*3 + 2] = in[ii*3 + 2];
                 }
             }
         }

@@ -17,7 +17,11 @@ ROOT.console = function()
     DISPLAY(Console)
 end
 ROOT.quit = function()
-    wants_to_exit = true
+    if PLATFORM == '3ds' then
+        wants_to_exit = true
+    else
+        SHOULD_QUIT = true
+    end
 end
 
 Screen.init()

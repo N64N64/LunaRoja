@@ -27,7 +27,7 @@ function love.update(dt)
 end
 
 function love.draw()
-    love.graphics.setBackgroundColor(10, 10, 10)
+    love.graphics.setBackgroundColor(30, 30, 30)
     love.graphics.setColor(255, 255, 255)
     love.graphics.draw(Screen.top.love, 0, Screen.top.height*2, -math.pi/2, 2, 2)
     love.graphics.draw(Screen.bottom.love, (Screen.top.width - Screen.bottom.width)/2, Screen.top.height*3, -math.pi/2)
