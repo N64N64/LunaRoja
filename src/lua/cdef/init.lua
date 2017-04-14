@@ -42,6 +42,8 @@ int stbi_write_png(char const *filename, int w, int h, int comp, const void *dat
 typedef void stbi_write_func(void *context, void *data, int size);
 int stbi_write_png_to_func(stbi_write_func *func, void *context, int w, int h, int comp, const void  *data, int stride_in_bytes);
 
+int stb_vorbis_decode_memory(const uint8 *mem, int len, int *channels, int *sample_rate, short **output);
+
 // sha256
 
 typedef struct SHA256_CTX {

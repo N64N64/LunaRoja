@@ -19,6 +19,8 @@
 
 #include "stb/stb_image.h"
 #include "stb/stb_image_write.h"
+#define STB_VORBIS_HEADER_ONLY
+#include "stb/stb_vorbis.h"
 
 #include <3ds.h>
 
@@ -159,6 +161,8 @@ extern uint16_t MGBA_ACTIVE_ADDR;
 void export_symbols(lua_State *L)
 {
     lua_newtable(L);
+
+    export(stb_vorbis_decode_memory);
 
     export(aaas_postAudioBuffer);
     export(SOUND_CHANNEL_WRAPPER);
