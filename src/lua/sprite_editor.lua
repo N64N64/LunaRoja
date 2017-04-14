@@ -21,19 +21,19 @@ local function init()
     end
     tile:add_subview(UI.Button(UI.View:new(0, 0, 16, 16), function()
         quadrant = 'nw'
-        SE.yeah(true)
+        SE.refresh(true)
     end))
     tile:add_subview(UI.Button(UI.View:new(16, 0, 16, 16), function()
         quadrant = 'ne'
-        SE.yeah(true)
+        SE.refresh(true)
     end))
     tile:add_subview(UI.Button(UI.View:new(0, 16, 16, 16), function()
         quadrant = 'sw'
-        SE.yeah(true)
+        SE.refresh(true)
     end))
     tile:add_subview(UI.Button(UI.View:new(16, 16, 16, 16), function()
         quadrant = 'se'
-        SE.yeah(true)
+        SE.refresh(true)
     end))
 
     header = UI.View:new(0, 0, controls_width, 25)
@@ -45,7 +45,7 @@ local function init()
 
     clear = UI.Button(UI.View:new(controls_width/2, 0, controls_width/2, 25), function()
         SE.colors = nil
-        SE.yeah(true)
+        SE.refresh(true)
     end, 'Clear')
     header:add_subview(clear)
 
@@ -78,7 +78,7 @@ function SE.render()
     init()
     C.draw_set_color(r(), g(), b())
     Screen.bottom:rect(0, 0, Screen.bottom.width, Screen.bottom.height)
-    SE.yeah()
+    SE.refresh()
     local canvasx = Screen.bottom.width - scaled_canvas.width
     local canvasy = (Screen.bottom.height - scaled_canvas.height)/2
     scaled_canvas:fastdraw(Screen.bottom, canvasx, canvasy)
@@ -106,15 +106,15 @@ function SE.render()
 
 end
 
-function SE.rofl()
+function SE.updatetile()
     local x, y = math.floor(Red.wram.wXCoord/2), math.floor(Red.wram.wYCoord/2)
     local i = Red.zram.mapwidth*y + x
     SE.tile = Red.customtiles[Red.zram.tileset][Red.zram.mapblocks[i]] or Red.tiles[Red.zram.tileset][Red.zram.mapblocks[i]]
     return SE.tile
 end
 
-function SE.yeah(override)
-    if (not override and SE.tile == SE.rofl()) or not SE.tile then return end
+function SE.refresh(override)
+    if (not override and SE.tile == SE.updatetile()) or not SE.tile then return end
 
     SE.colors = SE.colors or {}
     for y=0,16-1 do
