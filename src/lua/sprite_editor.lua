@@ -202,7 +202,6 @@ function SE.paint()
         Screen.bottom:line(x + s, y + s, x, y + s)
     end
     local i = 0
-    SE.colorz = {}
     for color,_ in pairs(SE.colors) do
         local x = i % 5
         local y = math.floor(i / 5)
