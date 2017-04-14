@@ -36,22 +36,18 @@ local function init()
         SE.yeah(true)
     end))
 
+    header = UI.View:new(0, 0, controls_width, 25)
 
-    back = UI.Button(UI.View:new(0, 0, controls_width, 25), function()
+    back = UI.Button(UI.View:new(0, 0, controls_width/2, 25), function()
         DISPLAY[2] = DebugMenu
-    end)
-    back.background_color = false
+    end, 'Back')
+    header:add_subview(back)
 
-
-    local label = UI.Label:new('< Back')
-    label.font = Font.Default
-    label.fontsize = 12
-    label.background_color = back.background_color
-    label:paint()
-    label.x = (back.width - label.width)/2
-    label.y = (back.height - label.height)/2
-    back.label = label
-    back:add_subview(label)
+    clear = UI.Button(UI.View:new(controls_width/2, 0, controls_width/2, 25), function()
+        SE.colors = nil
+        SE.yeah(true)
+    end, 'Clear')
+    header:add_subview(clear)
 
     for i=0,canvas.width*canvas.height-1 do
         canvas.pix[i*3 + 0] = i % 0x100
@@ -92,7 +88,7 @@ function SE.render()
         local y = math.floor(Mouse.y/15)
         local i = y*16 + x
 
-        local color = SE.colorz[SE.pick]
+        local color = SE.colorpick
         local r, g, b = math.floor(color / 0x10000) % 0x100, math.floor(color / 0x100) % 0x100, color % 0x100
         if canvas.pix[i*3 + 0] == r and canvas.pix[i*3 + 1] == g and canvas.pix[i*3 + 2] == b then
         else
@@ -104,7 +100,7 @@ function SE.render()
         end
     end
 
-    back:render(Screen.bottom)
+    header:render(Screen.bottom)
     tile:render(Screen.bottom)
     SE.color:render(Screen.bottom)
 
@@ -120,7 +116,7 @@ end
 function SE.yeah(override)
     if not override and SE.tile == SE.rofl() then return end
 
-    SE.colors = {}
+    SE.colors = SE.colors or {}
     for y=0,16-1 do
         for x=0,16-1 do
             local ii = canvas.width*y + x
@@ -144,6 +140,18 @@ function SE.yeah(override)
             SE.colors[r*0x10000 + g*0x100 + b] = true
         end
     end
+
+    local i = 0
+    SE.pick = nil
+    for color,_ in pairs(SE.colors) do
+        i = i + 1
+        if color == SE.colorpick then
+            SE.pick = i
+            break
+        end
+    end
+
+
     SE.paint()
 
 end
@@ -173,32 +181,35 @@ end
 function SE.paint()
     SE.color = UI.View:new(0, back.height)
     function SE.color:postdraw(scr, x, y)
-        if not SE.pick or not SE.colorz[SE.pick] then return end
+        if not SE.pick then return end
 
+        local siz = 16
+        local pad = 2
         local i = SE.pick - 1
-        local x = x + 8*(i % 10) + 2
-        local y = y + 8*math.floor(i / 10) + 2
-        local color = SE.colorz[SE.pick]
+        local x = x + siz*(i % (controls_width/siz)) + pad
+        local y = y + siz*math.floor(i / (controls_width/siz)) + pad
+        local color = SE.colorpick
         color = {math.floor(color / 0x10000) % 0x100, math.floor(color / 0x100) % 0x100, color % 0x100}
         if color[1] + color[2] + color[3] > 3*0x55 then
             C.draw_set_color(0x00, 0x00, 0x00)
         else
             C.draw_set_color(0xff, 0xff, 0xff)
         end
-        Screen.bottom:line(x, y, x + 4, y)
-        Screen.bottom:line(x, y, x, y + 4)
-        Screen.bottom:line(x + 4, y + 4, x + 4, y)
-        Screen.bottom:line(x + 4, y + 4, x, y + 4)
+        local s = 16 - pad*2
+        Screen.bottom:line(x, y, x + s, y)
+        Screen.bottom:line(x, y, x, y + s)
+        Screen.bottom:line(x + s, y + s, x + s, y)
+        Screen.bottom:line(x + s, y + s, x, y + s)
     end
     local i = 0
     SE.colorz = {}
     for color,_ in pairs(SE.colors) do
-        local x = i % 10
-        local y = math.floor(i / 10)
+        local x = i % 5
+        local y = math.floor(i / 5)
         local pick = i + 1
-        SE.colorz[pick] = color
-        local v = UI.Button(UI.View:new(x*8,y*8, 8, 8), function()
+        local v = UI.Button(UI.View:new(x*16,y*16, 16, 16), function()
             SE.pick = pick
+            SE.colorpick = color
         end)
         if PLATFORM == '3ds' then
             v.background_color =  {color % 0x100, math.floor(color / 0x100) % 0x100, math.floor(color / 0x10000) % 0x100}
