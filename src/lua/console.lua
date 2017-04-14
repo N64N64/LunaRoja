@@ -120,7 +120,7 @@ if PLATFORM == 'love' then
         elseif key == 'backspace' then
             Console.key('\b')
         elseif key == 'escape' then
-            DISPLAY(Game)
+            DISPLAY(Game, DebugScreen)
             love.keyboard.setKeyRepeat(false)
         elseif dirs[key] then
             Console[key](Console)
@@ -211,7 +211,7 @@ function Console:render()
 
     if PLATFORM == '3ds' then
         if Button.isdown(Button.b) then
-            DISPLAY(Game)
+            DISPLAY(Game, DebugScreen)
         end
         if Button.isdown(Button.dleft) then
             self:left()

@@ -21,7 +21,7 @@ end
 ServerBrowser = {}
 function ServerBrowser:render()
     if Button.isdown(Button.b) then
-        DISPLAY(Game)
+        DISPLAY(Game, DebugScreen)
     end
     cancel:draw(Screen.top, 0, 0)
     ip:draw(Screen.top, (Screen.top.width - ip.width)/2, (Screen.top.height - ip.height)/2)
@@ -32,7 +32,7 @@ function ServerBrowser.key(key)
         table.insert(options, closure(input))
         startclient(input)
         DEBUG_TEXT = 'Connected to '..input
-        DISPLAY(Game)
+        DISPLAY(Game, DebugScreen)
         local found = false
         for i,v in ipairs(saved_ips) do
             if v == input then

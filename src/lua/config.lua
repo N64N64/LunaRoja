@@ -1,12 +1,3 @@
-ROOT = {}
-ROOT.console = function()
-    DISPLAY(Console)
-end
-ROOT.quit = function()
-    wants_to_exit = true
-end
-
-
 cheats = {}
 cheats.all_badges = false
 cheats.instawarp = true

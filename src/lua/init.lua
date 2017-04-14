@@ -9,10 +9,18 @@ for _,v in pairs(ls(PATH..'/rom') or {}) do
     end
 end
 
+ROOT.console = function()
+    DISPLAY(Console)
+end
+ROOT.quit = function()
+    wants_to_exit = true
+end
+
 Screen.init()
 
 require 'game'
-DISPLAY(Game)
+require 'debug_screen'
+DISPLAY(Game, DebugScreen)
 
 local quit_label = UI.Label:new()
 quit_label.text = 'Press A to quit'
@@ -57,7 +65,7 @@ function MAIN_LOOP()
     end
 
     Screen.startframe()
-    DISPLAY():render()
+    DISPLAY.render()
 
     if wants_to_exit then
         C.draw_set_color(0x00, 0x00, 0x00)

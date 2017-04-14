@@ -1,3 +1,4 @@
+ROOT = {}
 local path = LUAPATH..'/config/preautorun.lua'
 local f = io.open(path, 'r')
 if f then
