@@ -26,21 +26,15 @@ function Font:new(name)
     self.bin = io.readbin(self.path)
     self.face = self.ft:new_memory_face(self.bin, ffi.sizeof(self.bin))
 
-    local proxy = newproxy(true)
-    local mt = getmetatable(proxy)
-
-    mt.__gc = function()
+    self = SETGC(self, function()
         self.face:free()
         self.ft:free()
         self.face = nil
         self.ft = nil
-    end
-    mt.__index = self
-    mt.__newindex = self
+    end)
 
-    created[name] = proxy
-
-    return proxy
+    created[name] = self
+    return self
 end
 
 function Font:paint(text, size)

@@ -38,23 +38,25 @@ local function map(t, k)
     rawset(DISPLAY, k, result)
     return result
 end
+local function index(t, k)
+    if type(k) == 'number' then
+        return current[k]
+    else
+        return map(t, k)
+    end
+end
 
+local function newindex(t, k, v)
+    if type(k) == 'number' then
+        current[k] = v
+        swap(current)
+    else
+        error('not allowed')
+    end
+end
 
 return setmetatable(DISPLAY, {
     __call = call,
-    __index = function(t, k)
-        if type(k) == 'number' then
-            return current[k]
-        else
-            return map(t, k)
-        end
-    end,
-    __newindex = function(t, k, v)
-        if type(k) == 'number' then
-            current[k] = v
-            swap(current)
-        else
-            error('not allowed')
-        end
-    end,
+    __index = index,
+    __newindex = newindex,
 })

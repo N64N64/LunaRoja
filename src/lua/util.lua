@@ -14,6 +14,16 @@ function HOOK(tbl, fname, f)
     return oldf
 end
 
+-- garbage collector metamethod hax
+function SETGC(t, f)
+    local proxy = newproxy(true)
+    local mt = getmetatable(proxy)
+    mt.__gc = f
+    mt.__index = t
+    mt.__newindex = t
+    return proxy
+end
+
 function io.readbin(path)
     local f = C.fopen(path, 'rb')
     if f == ffi.NULL then

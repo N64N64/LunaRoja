@@ -38,18 +38,6 @@ function Net.Server:close()
     end
 end
 
-local function runcode(s)
-    local f, err = load(s) -- TODO sandbox this
-    if not f then
-        return 'err: '..err
-    end
-    local success, result = pcall(f)
-    if not success then
-        return 'err: '..result
-    end
-    return result
-end
-
 function Net.Server.onnewclient()
 end
 

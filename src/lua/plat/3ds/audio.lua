@@ -5,18 +5,18 @@ local NDSP = true
 
 local Audio = {}
 
-local AUDIO_SAMPLES = 384
-local AUDIO_SAMPLE_BUFFER = AUDIO_SAMPLES * 16
-local DSP_BUFFERS = 4
+AUDIO_SAMPLES = 384
+AUDIO_SAMPLE_BUFFER = AUDIO_SAMPLES * 16
+DSP_BUFFERS = 4
 local linearData
 
-local SOUND_REPEAT = C.SOUND_LOOPMODE_WRAPPER(C.CSND_LOOPMODE_NORMAL)
-local SOUND_FORMAT_16BIT = C.SOUND_FORMAT_WRAPPER(C.CSND_ENCODING_PCM16) --> PCM16
-local SOUND_ENABLE = bit.lshift(1, 14)
-local SOUND_ONE_SHOT = C.SOUND_LOOPMODE_WRAPPER(C.CSND_LOOPMODE_ONESHOT) --> Play the sound once.
+SOUND_REPEAT = C.SOUND_LOOPMODE_WRAPPER(C.CSND_LOOPMODE_NORMAL)
+SOUND_FORMAT_16BIT = C.SOUND_FORMAT_WRAPPER(C.CSND_ENCODING_PCM16) --> PCM16
+SOUND_ENABLE = bit.lshift(1, 14)
+SOUND_ONE_SHOT = C.SOUND_LOOPMODE_WRAPPER(C.CSND_LOOPMODE_ONESHOT) --> Play the sound once.
 
-local dspBuffer = ffi.new('ndspWaveBuf[?]', DSP_BUFFERS)
-local bufferId = 0
+dspBuffer = ffi.new('ndspWaveBuf[?]', DSP_BUFFERS)
+bufferId = 0
 
 local function BIT(n)
     return bit.lshift(1, n)
@@ -30,19 +30,19 @@ local function NDSP_ENCODING(n)
     return bit.lshift(bit.band(n, 3), 2)
 end
 
-local NDSP_FORMAT_MONO_PCM8    = bit.bor(NDSP_CHANNELS(1),  NDSP_ENCODING(C.NDSP_ENCODING_PCM8))  --> Buffer contains Mono   PCM8.
-local NDSP_FORMAT_MONO_PCM16   = bit.bor(NDSP_CHANNELS(1),  NDSP_ENCODING(C.NDSP_ENCODING_PCM16)) --> Buffer contains Mono   PCM16.
-local NDSP_FORMAT_MONO_ADPCM   = bit.bor(NDSP_CHANNELS(1),  NDSP_ENCODING(C.NDSP_ENCODING_ADPCM)) --> Buffer contains Mono   ADPCM.
-local NDSP_FORMAT_STEREO_PCM8  = bit.bor(NDSP_CHANNELS(2),  NDSP_ENCODING(C.NDSP_ENCODING_PCM8))  --> Buffer contains Stereo PCM8.
-local NDSP_FORMAT_STEREO_PCM16 = bit.bor(NDSP_CHANNELS(2),  NDSP_ENCODING(C.NDSP_ENCODING_PCM16)) --> Buffer contains Stereo PCM16.
+NDSP_FORMAT_MONO_PCM8    = bit.bor(NDSP_CHANNELS(1),  NDSP_ENCODING(C.NDSP_ENCODING_PCM8))  --> Buffer contains Mono   PCM8.
+NDSP_FORMAT_MONO_PCM16   = bit.bor(NDSP_CHANNELS(1),  NDSP_ENCODING(C.NDSP_ENCODING_PCM16)) --> Buffer contains Mono   PCM16.
+NDSP_FORMAT_MONO_ADPCM   = bit.bor(NDSP_CHANNELS(1),  NDSP_ENCODING(C.NDSP_ENCODING_ADPCM)) --> Buffer contains Mono   ADPCM.
+NDSP_FORMAT_STEREO_PCM8  = bit.bor(NDSP_CHANNELS(2),  NDSP_ENCODING(C.NDSP_ENCODING_PCM8))  --> Buffer contains Stereo PCM8.
+NDSP_FORMAT_STEREO_PCM16 = bit.bor(NDSP_CHANNELS(2),  NDSP_ENCODING(C.NDSP_ENCODING_PCM16)) --> Buffer contains Stereo PCM16.
 
-local NDSP_FORMAT_PCM8  = NDSP_FORMAT_MONO_PCM8  --> (Alias) Buffer contains Mono PCM8.
-local NDSP_FORMAT_PCM16 = NDSP_FORMAT_MONO_PCM16 --> (Alias) Buffer contains Mono PCM16.
-local NDSP_FORMAT_ADPCM = NDSP_FORMAT_MONO_ADPCM --> (Alias) Buffer contains Mono ADPCM.
+NDSP_FORMAT_PCM8  = NDSP_FORMAT_MONO_PCM8  --> (Alias) Buffer contains Mono PCM8.
+NDSP_FORMAT_PCM16 = NDSP_FORMAT_MONO_PCM16 --> (Alias) Buffer contains Mono PCM16.
+NDSP_FORMAT_ADPCM = NDSP_FORMAT_MONO_ADPCM --> (Alias) Buffer contains Mono ADPCM.
 
 -- Flags
-local NDSP_FRONT_BYPASS             = BIT(4) --> Front bypass.
-local NDSP_3D_SURROUND_PREPROCESSED = BIT(6) --> (?) Unknown, under research
+NDSP_FRONT_BYPASS             = BIT(4) --> Front bypass.
+NDSP_3D_SURROUND_PREPROCESSED = BIT(6) --> (?) Unknown, under research
 
 function Audio.gameLoaded(emu)
     emu = emu or _G.emu
@@ -83,6 +83,7 @@ function Audio.setup(emu)
     end
     SET_POSTAUDIOBUFFER(function (stream, left, right)
         local success, err = xpcall(function()
+            if PLAYING_SOUND then return end
             local startId = bufferId
             while dspBuffer[bufferId].status == C.NDSP_WBUF_QUEUED or dspBuffer[bufferId].status == C.NDSP_WBUF_PLAYING do
                 bufferId = bit.band(bufferId + 1, DSP_BUFFERS - 1)
