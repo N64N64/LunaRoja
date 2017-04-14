@@ -3,9 +3,16 @@
 if love then
     dofile(love.filesystem.getSource()..'/src/lua/plat/love/init.lua')
 else
-    if arg[1] == nil then
-        print('Usage: '..arg[0]..' rom.gb')
-        return
+    ROMPATH = arg[1]
+    if ROMPATH == nil then
+        local f = io.open('src/lua/config/cmd_rom.lua')
+        if f then
+            f:close()
+            ROMPATH = dofile('src/lua/config/cmd_rom.lua')
+        else
+            print('Usage: '..arg[0]..' rom.gb')
+            return
+        end
     end
     local function runcmd(cmd)
         local f = io.popen(cmd, 'r')

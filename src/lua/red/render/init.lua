@@ -106,9 +106,8 @@ ROOT.colors.cycle(true)
 
 ROOT.colors.save = function()
     rainbows[#rainbows + 1] = Rainbow
-    local f = io.open(PATH..'/lua/config/rainbows.lua', 'w')
-    f:write('return ')
-    serialize(f, rainbows)
+    local f = io.open(LUAPATH..'/config/rainbows.lua', 'w')
+    f:write('return '..serialize(rainbows))
     f:close()
 end
 

@@ -12,9 +12,9 @@ local function call(_, ...)
     if not ... then return current[1] end
 
     swap{...}
-    Keyboard.callbacks.display = function()
+    Keyboard.callbacks.display = function(...)
         for _,v in ipairs(current) do
-            v()
+            v.key(...)
         end
     end
 

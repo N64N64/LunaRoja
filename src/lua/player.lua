@@ -32,10 +32,10 @@ function Player:update()
     return true
 end
 
-function Player:encode()
+function Player:serialize()
     local t = {__class = 'Player'}
     populate(t, self, Player.Attrs)
-    return encode(t)
+    return serialize(t)
 end
 
 function Player.Decode(t)

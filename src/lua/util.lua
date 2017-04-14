@@ -112,13 +112,16 @@ local function sugar(t)
     return t
 end
 
+local gsub = string.gsub
+
 function decode(s, raw)
-    local f = setfenv(load('return '..s), Env.Empty())
-    local t = f()
+    s = string.gsub(s, '\\n', '\n')
+    s = string.gsub(s, '\\\\', '\\')
+    local f = setfenv(load(s), Env.Empty())
     if raw then
-        return t
+        return f()
     else
-        return sugar(t)
+        return sugar(f())
     end
 end
 
@@ -128,18 +131,18 @@ local function strescape(s)
     return s
 end
 
-function encode(t)
+function serialize(t, indent)
     if type(t) == 'string' then
         return '"'..strescape(t)..'"'
     elseif t == nil or type(t) == 'number' or type(t) == 'boolean' then
         return tostring(t)
     elseif type(t) == 'table' then
-        if t.encode then
-            return t:encode()
+        if t.serialize then
+            return t:serialize()
         else
             local s = {}
             for k,v in pairs(t) do
-                s[#s + 1] = '['..encode(k)..'] = '..encode(v)
+                s[#s + 1] = '['..serialize(k)..'] = '..serialize(v)
             end
             return '{'..table.concat(s, ',')..'}'
         end
@@ -148,52 +151,12 @@ function encode(t)
     end
 end
 
-function serialize(f, t, lvl)
-    lvl = lvl or 0
-    f:write('{\n')
-    local is_numbers = true
-    local i = 0
-    for k,v in pairs(t) do
-        i = i + 1
-        if not(i == k) then
-            is_numbers = false
-            break
-        end
-    end
-
-    for k, v in pairs(t) do
-        for i=0,lvl do
-            f:write('    ')
-        end
-        if not is_numbers then
-            if type(k) == 'number' then
-                f:write('['..k..']')
-            else
-                f:write(k)
-            end
-            f:write(' = ')
-        end
-        local type = type(v)
-        if type == 'table' then
-            serialize(f, v, lvl + 1)
-        elseif type == 'number' or type == 'boolean' or type == 'nil' then
-            f:write(tostring(v))
-        elseif type == 'string' then
-            f:write('[['..v..']]')
-        else
-            error(type..' is invalid type')
-        end
-        f:write(',\n')
-    end
-
-    for i=0,lvl-1 do
-        f:write('    ')
-    end
-
-    f:write('}')
-
-    if lvl == 0 then
-        f:write('\n')
-    end
+function encode(t, raw)
+    local pre = serialize(t)
+    local s = 'return '..pre
+    if raw then return s end
+    s = string.dump(load(s), true)
+    s = string.gsub(s, '\\', '\\\\')
+    s = string.gsub(s, '\n', '\\n')
+    return s
 end
-

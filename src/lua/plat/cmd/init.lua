@@ -14,7 +14,7 @@ end
 
 MAIN_LOOP()
 
-emu = Gameboy:new(arg[1])
+emu = Gameboy:new(ROMPATH)
 Red:reset()
 
 MAIN_LOOP()

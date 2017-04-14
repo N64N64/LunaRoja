@@ -1,38 +1,30 @@
 local last_client_count
 local function getpos()
     local update = {}
-    update[1] = encode(sendposstr() or false)
-    local should_send = not(last_client_count == #server.clients and update[1] == 'false')
+    update[1] = PLAYER:update() and PLAYER or false
+    local should_send = not(last_client_count == #server.clients and update[1] == false)
     for i,client in ipairs(server.clients) do
-        update[i + 1] = encode(false)
+        update[i + 1] = false
 
         if client.backlog then
             local s = client.backlog[#client.backlog]
             local player = decode(s)
             if player then
-                print('got: '..encode(player))
+                print('got: '..serialize(player))
                 client.player = player
-                update[i + 1] = encode(player)
+                update[i + 1] = player
                 should_send = true
             end
             client.backlog = nil
         end
     end
     if should_send then
-        server:send('{'..table.concat(update, ',')..'}\n')
+        server:send(encode(update)..'\n')
     end
     last_client_count = #server.clients
 end
 
 PLAYER = Player:new()
-function sendposstr()
-    if server then
-        PLAYER.id = -1
-    end
-    if PLAYER:update() then
-        return encode(PLAYER)
-    end
-end
 
 local orig, peers
 local function hook(...)
@@ -54,6 +46,7 @@ end
 function startserver()
     if orig then error('already running') end
     print('starting server')
+    PLAYER.id = -1
     server = Net.Server:new(27716)
     server:listen()
     local id = 0
@@ -100,11 +93,8 @@ function startclient(ip, port)
 
         if not PLAYER.id then return end
 
-        if Red then
-            local str = sendposstr()
-            if str then
-                client:send(str..'\n')
-            end
+        if Red and PLAYER:update() then
+            client:send(encode(PLAYER, true)..'\n')
         end
 
         if client.backlog then
