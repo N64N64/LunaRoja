@@ -8,15 +8,10 @@ local function swap(new)
         DISPLAY[k] = nil
     end
 end
-local function call(_, t, ...)
-    if not t then return current end
-    if not ... then
-        swap(t)
-        Keyboard.callbacks.display = current.key or function() end
-        return
-    end
+local function call(_, ...)
+    if not ... then return current[1] end
 
-    swap{t, ...}
+    swap{...}
     Keyboard.callbacks.display = function()
         for _,v in ipairs(current) do
             v()
@@ -26,9 +21,6 @@ local function call(_, t, ...)
 end
 
 local function map(t, k)
-    if not current[1] then
-        return current[k]
-    end
     local result
     local typ = type(current[1][k])
     if typ == 'function' then
