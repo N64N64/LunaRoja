@@ -15,6 +15,14 @@ function Game.render()
         Red:run()
         Red:render()
     end
+    if not firstrun and not emu then
+
+        if ROMFILE then
+            emu = Gameboy:new(ROMFILE)
+            Red:reset()
+            RENDER_CALLBACKS.lua_logo = nil
+        end
+    end
     firstrun = false
 
     for k,v in pairs(RENDER_CALLBACKS) do

@@ -9,6 +9,7 @@ for _,v in pairs(ls(PATH..'/rom') or {}) do
     end
 end
 
+
 ROOT['sprite editor'] = function()
     DISPLAY[2] = SpriteEditor
 end

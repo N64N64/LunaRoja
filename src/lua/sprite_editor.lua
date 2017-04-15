@@ -1,14 +1,21 @@
 SE = {}
 
-local canvas, scale, scaled_canvas, controls_width, tile
+local canvas, controls_width, tile
 
 local function init()
     init = function() end
     canvas = {}
     canvas.master = Bitmap:new(16, 16)
-    scale = math.floor(Screen.bottom.height / canvas.master.height)
+
+    local scale = math.floor(Screen.bottom.height / canvas.master.height)
     canvas.draw = Bitmap:new(canvas.master.width*scale, canvas.master.height*scale)
+    canvas.draw.scale = scale
     controls_width = Screen.bottom.width - canvas.draw.width
+
+    local scale = math.floor(controls_width / canvas.master.height)
+    canvas.bigref = Bitmap:new(canvas.master.width*scale, canvas.master.height*scale)
+    canvas.bigref.scale = scale
+
 
     tile = UI.View:new()
     function tile:draw(scr, x, y)
@@ -17,7 +24,7 @@ local function init()
         local pad = (controls_width - SE.tile.width)/2
         self.x = pad
         self.y = Screen.bottom.height - pad - SE.tile.height
-        SE.tile:fastdraw(Screen.bottom, self.x, self.y)
+        --SE.tile:fastdraw(Screen.bottom, self.x, self.y)
 
     end
     tile:add_subview(UI.Button(UI.View:new(0, 0, 16, 16), function()
@@ -83,6 +90,7 @@ function SE.render()
     local canvasx = Screen.bottom.width - canvas.draw.width
     local canvasy = (Screen.bottom.height - canvas.draw.height)/2
     canvas.draw:fastdraw(Screen.bottom, canvasx, canvasy)
+    canvas.bigref:fastdraw(Screen.bottom, (controls_width - canvas.bigref.width)/2, Screen.bottom.height - canvas.bigref.height)
 
     if Mouse.isheld and Mouse.x >= canvasx then
         local x = math.floor((Mouse.x - canvasx)/15)
@@ -232,13 +240,18 @@ function SE.paint()
     SE.paintcanvas()
 end
 function SE.paintcanvas()
-    ffi.fill(canvas.draw.pix, ffi.sizeof(canvas.draw.pix), 0x66)
-    ffi.luared.scalecopy(
-        canvas.draw.pix, canvas.master.pix,
-        canvas.master.width, canvas.master.height,
-        scale
-    )
-    canvas.draw:prerotate()
+    for k,v in pairs(canvas) do
+        if k == 'master' then
+        else
+            ffi.fill(v.pix, ffi.sizeof(v.pix), 0x66)
+            ffi.luared.scalecopy(
+                v.pix, canvas.master.pix,
+                canvas.master.width, canvas.master.height,
+                v.scale
+            )
+            v:prerotate()
+        end
+    end
 end
 
 
