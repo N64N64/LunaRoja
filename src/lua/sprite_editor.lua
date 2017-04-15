@@ -4,10 +4,11 @@ local canvas, scale, scaled_canvas, controls_width, tile
 
 local function init()
     init = function() end
-    canvas = Bitmap:new(16, 16)
-    scale = math.floor(Screen.bottom.height / canvas.height)
-    scaled_canvas = Bitmap:new(canvas.width*scale, canvas.height*scale)
-    controls_width = Screen.bottom.width - scaled_canvas.width
+    canvas = {}
+    canvas.master = Bitmap:new(16, 16)
+    scale = math.floor(Screen.bottom.height / canvas.master.height)
+    canvas.draw = Bitmap:new(canvas.master.width*scale, canvas.master.height*scale)
+    controls_width = Screen.bottom.width - canvas.draw.width
 
     tile = UI.View:new()
     function tile:draw(scr, x, y)
@@ -49,10 +50,10 @@ local function init()
     end, 'Clear')
     header:add_subview(clear)
 
-    for i=0,canvas.width*canvas.height-1 do
-        canvas.pix[i*3 + 0] = i % 0x100
-        canvas.pix[i*3 + 1] = (i*2) % 0x100
-        canvas.pix[i*3 + 2] = (i + 50) % 0x100
+    for i=0,canvas.master.width*canvas.master.height-1 do
+        canvas.master.pix[i*3 + 0] = i % 0x100
+        canvas.master.pix[i*3 + 1] = (i*2) % 0x100
+        canvas.master.pix[i*3 + 2] = (i + 50) % 0x100
     end
 end
 
@@ -79,9 +80,9 @@ function SE.render()
     C.draw_set_color(r(), g(), b())
     Screen.bottom:rect(0, 0, Screen.bottom.width, Screen.bottom.height)
     SE.refresh()
-    local canvasx = Screen.bottom.width - scaled_canvas.width
-    local canvasy = (Screen.bottom.height - scaled_canvas.height)/2
-    scaled_canvas:fastdraw(Screen.bottom, canvasx, canvasy)
+    local canvasx = Screen.bottom.width - canvas.draw.width
+    local canvasy = (Screen.bottom.height - canvas.draw.height)/2
+    canvas.draw:fastdraw(Screen.bottom, canvasx, canvasy)
 
     if Mouse.isheld and Mouse.x >= canvasx then
         local x = math.floor((Mouse.x - canvasx)/15)
@@ -89,14 +90,17 @@ function SE.render()
         local i = y*16 + x
 
         local color = SE.colorpick
-        local r, g, b = math.floor(color / 0x10000) % 0x100, math.floor(color / 0x100) % 0x100, color % 0x100
-        if canvas.pix[i*3 + 0] == r and canvas.pix[i*3 + 1] == g and canvas.pix[i*3 + 2] == b then
-        else
-            canvas.pix[i*3 + 0] = r
-            canvas.pix[i*3 + 1] = g
-            canvas.pix[i*3 + 2] = b
-            SE.painttile()
-            SE.paintcanvas()
+        if color then
+            local r, g, b = math.floor(color / 0x10000) % 0x100, math.floor(color / 0x100) % 0x100, color % 0x100
+            local pix = canvas.master.pix + i*3
+            if pix[0] == r and pix[1] == g and pix[2] == b then
+            else
+                pix[0] = r
+                pix[1] = g
+                pix[2] = b
+                SE.painttile()
+                SE.paintcanvas()
+            end
         end
     end
 
@@ -106,20 +110,26 @@ function SE.render()
 
 end
 
+local lasttile, lastquadrant
 function SE.updatetile()
+    lasttile, lastquadrant = SE.tile, quadrant
+
     local x, y = math.floor(Red.wram.wXCoord/2), math.floor(Red.wram.wYCoord/2)
     local i = Red.zram.mapwidth*y + x
     SE.tile = Red.customtiles[Red.zram.tileset][Red.zram.mapblocks[i]] or Red.tiles[Red.zram.tileset][Red.zram.mapblocks[i]]
-    return SE.tile
+    local vert =  Red.wram.wYCoord % 2 == 0 and 'n' or 's'
+    local horiz = Red.wram.wXCoord % 2 == 0 and 'w' or 'e'
+    quadrant = vert..horiz
+    return not(lasttile == SE.tile and lastquadrant == quadrant)
 end
 
 function SE.refresh(override)
-    if (not override and SE.tile == SE.updatetile()) or not SE.tile then return end
+    if (not override and not SE.updatetile()) or not SE.tile then return end
 
     SE.colors = SE.colors or {}
     for y=0,16-1 do
         for x=0,16-1 do
-            local ii = canvas.width*y + x
+            local opix = canvas.master.pix + 3*(canvas.master.width*y + x)
             local x, y = x, y
             if quadrant == 'nw' then
             elseif quadrant == 'ne' then
@@ -130,13 +140,13 @@ function SE.refresh(override)
                 x = x + 16
                 y = y + 16
             end
-            local oi = SE.tile.width*(x + 1) - (y + 1)
-            local r = SE.tile.pix[oi*3 + 0]
-            local g = SE.tile.pix[oi*3 + 1]
-            local b = SE.tile.pix[oi*3 + 2]
-            canvas.pix[ii*3 + 0] = r
-            canvas.pix[ii*3 + 1] = g
-            canvas.pix[ii*3 + 2] = b
+            local ipix = SE.tile.pix + 3*(SE.tile.width*(x + 1) - (y + 1))
+            local r = ipix[0]
+            local g = ipix[1]
+            local b = ipix[2]
+            opix[0] = r
+            opix[1] = g
+            opix[2] = b
             SE.colors[r*0x10000 + g*0x100 + b] = true
         end
     end
@@ -159,7 +169,7 @@ end
 function SE.painttile()
     for y=0,16-1 do
         for x=0,16-1 do
-            local ii = canvas.width*y + x
+            local ii = canvas.master.width*y + x
             local x, y = x, y
             if quadrant == 'nw' then
             elseif quadrant == 'ne' then
@@ -171,9 +181,9 @@ function SE.painttile()
                 y = y + 16
             end
             local oi = SE.tile.width*(x + 1) - (y + 1)
-            SE.tile.pix[oi*3 + 0] = canvas.pix[ii*3 + 0]
-            SE.tile.pix[oi*3 + 1] = canvas.pix[ii*3 + 1]
-            SE.tile.pix[oi*3 + 2] = canvas.pix[ii*3 + 2]
+            SE.tile.pix[oi*3 + 0] = canvas.master.pix[ii*3 + 0]
+            SE.tile.pix[oi*3 + 1] = canvas.master.pix[ii*3 + 1]
+            SE.tile.pix[oi*3 + 2] = canvas.master.pix[ii*3 + 2]
         end
     end
 end
@@ -222,13 +232,13 @@ function SE.paint()
     SE.paintcanvas()
 end
 function SE.paintcanvas()
-    ffi.fill(scaled_canvas.pix, ffi.sizeof(scaled_canvas.pix), 0x66)
+    ffi.fill(canvas.draw.pix, ffi.sizeof(canvas.draw.pix), 0x66)
     ffi.luared.scalecopy(
-        scaled_canvas.pix, canvas.pix,
-        canvas.width, canvas.height,
+        canvas.draw.pix, canvas.master.pix,
+        canvas.master.width, canvas.master.height,
         scale
     )
-    scaled_canvas:prerotate()
+    canvas.draw:prerotate()
 end
 
 
