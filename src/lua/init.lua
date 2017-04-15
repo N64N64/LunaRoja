@@ -10,8 +10,8 @@ for _,v in pairs(ls(PATH..'/rom') or {}) do
 end
 
 
-ROOT['sprite editor'] = function()
-    DISPLAY[2] = SpriteEditor
+ROOT['tile editor'] = function()
+    DISPLAY[2] = TileEditor
 end
 
 ROOT.console = function()

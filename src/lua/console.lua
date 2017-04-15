@@ -120,7 +120,7 @@ if PLATFORM == 'love' then
         elseif key == 'backspace' then
             Console.key('\b')
         elseif key == 'escape' then
-            DISPLAY(Game, SpriteEditor)
+            DISPLAY(Game, TileEditor)
             love.keyboard.setKeyRepeat(false)
         elseif dirs[key] then
             Console[key](Console)

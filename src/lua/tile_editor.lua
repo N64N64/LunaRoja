@@ -1,4 +1,4 @@
-SE = {}
+TE = {}
 
 local canvas, controls_width, tile, botscr
 
@@ -25,8 +25,8 @@ local function init()
     header:add_subview(back)
 
     clear = UI.Button(UI.View:new(controls_width/2, 0, controls_width/2, 25), function()
-        SE.colors = nil
-        SE.refresh(true)
+        TE.colors = nil
+        TE.refresh(true)
     end, 'Clear')
     header:add_subview(clear)
 
@@ -57,7 +57,7 @@ local b = gen()
 
 local lastx, lasty
 
-function SE.render()
+function TE.render()
     init()
     C.draw_set_color(r(), g(), b())
     Screen.bottom:rect(0, 0, Screen.bottom.width, Screen.bottom.height)
@@ -65,7 +65,7 @@ function SE.render()
     --local xplayer, yplayer = get_player_coords()
     --Red:render_map(Screen.bottom, Red.wram.wCurMap, X or math.floor(Red.wram.wXCoord/2), Y or math.floor(Red.wram.wYCoord/2), W or xplayer, H or yplayer, true)
 
-    SE.refresh()
+    TE.refresh()
     local canvasx = Screen.bottom.width - canvas.draw.width
     local canvasy = (Screen.bottom.height - canvas.draw.height)/2
     canvas.draw:fastdraw(Screen.bottom, canvasx, canvasy)
@@ -76,7 +76,7 @@ function SE.render()
         local y = math.floor(Mouse.y/15)
         local i = y*16 + x
 
-        local color = SE.colorpick
+        local color = TE.colorpick
         if color and not(lastx == x and lasty == y) then
             local r, g, b = math.floor(color / 0x10000) % 0x100, math.floor(color / 0x100) % 0x100, color % 0x100
             if lastx and lasty then
@@ -87,8 +87,8 @@ function SE.render()
                 pix[1] = g
                 pix[2] = b
             end
-            SE.painttile()
-            SE.paintcanvas()
+            TE.painttile()
+            TE.paintcanvas()
         end
         lastx, lasty = x, y
     elseif Mouse.isup then
@@ -96,27 +96,27 @@ function SE.render()
     end
 
     header:render(Screen.bottom)
-    SE.color:render(Screen.bottom)
+    TE.color:render(Screen.bottom)
 
 end
 
 local lasttile, lastquadrant
-function SE.updatetile()
-    lasttile, lastquadrant = SE.tile, quadrant
+function TE.updatetile()
+    lasttile, lastquadrant = TE.tile, quadrant
 
     local x, y = math.floor(Red.wram.wXCoord/2), math.floor(Red.wram.wYCoord/2)
     local i = Red.zram.mapwidth*y + x
-    SE.tile = Red.customtiles[Red.zram.tileset][Red.zram.mapblocks[i]] or Red.tiles[Red.zram.tileset][Red.zram.mapblocks[i]]
+    TE.tile = Red.customtiles[Red.zram.tileset][Red.zram.mapblocks[i]] or Red.tiles[Red.zram.tileset][Red.zram.mapblocks[i]]
     local vert =  Red.wram.wYCoord % 2 == 0 and 'n' or 's'
     local horiz = Red.wram.wXCoord % 2 == 0 and 'w' or 'e'
     quadrant = vert..horiz
-    return not(lasttile == SE.tile and lastquadrant == quadrant)
+    return not(lasttile == TE.tile and lastquadrant == quadrant)
 end
 
-function SE.refresh(override)
-    if (not override and not SE.updatetile()) or not SE.tile then return end
+function TE.refresh(override)
+    if (not override and not TE.updatetile()) or not TE.tile then return end
 
-    SE.colors = SE.colors or {}
+    TE.colors = TE.colors or {}
     for y=0,16-1 do
         for x=0,16-1 do
             local opix = canvas.master.pix + 3*(canvas.master.width*y + x)
@@ -130,33 +130,33 @@ function SE.refresh(override)
                 x = x + 16
                 y = y + 16
             end
-            local ipix = SE.tile.pix + 3*(SE.tile.width*(x + 1) - (y + 1))
+            local ipix = TE.tile.pix + 3*(TE.tile.width*(x + 1) - (y + 1))
             local r = ipix[0]
             local g = ipix[1]
             local b = ipix[2]
             opix[0] = r
             opix[1] = g
             opix[2] = b
-            SE.colors[r*0x10000 + g*0x100 + b] = true
+            TE.colors[r*0x10000 + g*0x100 + b] = true
         end
     end
 
     local i = 0
-    SE.pick = nil
-    for color,_ in pairs(SE.colors) do
+    TE.pick = nil
+    for color,_ in pairs(TE.colors) do
         i = i + 1
-        if color == SE.colorpick then
-            SE.pick = i
+        if color == TE.colorpick then
+            TE.pick = i
             break
         end
     end
 
 
-    SE.paint()
+    TE.paint()
 
 end
 
-function SE.painttile()
+function TE.painttile()
     for y=0,16-1 do
         for x=0,16-1 do
             local ii = canvas.master.width*y + x
@@ -170,25 +170,25 @@ function SE.painttile()
                 x = x + 16
                 y = y + 16
             end
-            local oi = SE.tile.width*(x + 1) - (y + 1)
-            SE.tile.pix[oi*3 + 0] = canvas.master.pix[ii*3 + 0]
-            SE.tile.pix[oi*3 + 1] = canvas.master.pix[ii*3 + 1]
-            SE.tile.pix[oi*3 + 2] = canvas.master.pix[ii*3 + 2]
+            local oi = TE.tile.width*(x + 1) - (y + 1)
+            TE.tile.pix[oi*3 + 0] = canvas.master.pix[ii*3 + 0]
+            TE.tile.pix[oi*3 + 1] = canvas.master.pix[ii*3 + 1]
+            TE.tile.pix[oi*3 + 2] = canvas.master.pix[ii*3 + 2]
         end
     end
 end
 
-function SE.paint()
-    SE.color = UI.View:new(0, back.height)
-    function SE.color:postdraw(scr, x, y)
-        if not SE.pick then return end
+function TE.paint()
+    TE.color = UI.View:new(0, back.height)
+    function TE.color:postdraw(scr, x, y)
+        if not TE.pick then return end
 
         local siz = 16
         local pad = 2
-        local i = SE.pick - 1
+        local i = TE.pick - 1
         local x = x + siz*(i % (controls_width/siz)) + pad
         local y = y + siz*math.floor(i / (controls_width/siz)) + pad
-        local color = SE.colorpick
+        local color = TE.colorpick
         color = {math.floor(color / 0x10000) % 0x100, math.floor(color / 0x100) % 0x100, color % 0x100}
         if color[1] + color[2] + color[3] > 3*0x55 then
             C.draw_set_color(0x00, 0x00, 0x00)
@@ -202,26 +202,26 @@ function SE.paint()
         Screen.bottom:line(x + s, y + s, x, y + s)
     end
     local i = 0
-    for color,_ in pairs(SE.colors) do
+    for color,_ in pairs(TE.colors) do
         local x = i % 5
         local y = math.floor(i / 5)
         local pick = i + 1
         local v = UI.Button(UI.View:new(x*16,y*16, 16, 16), function()
-            SE.pick = pick
-            SE.colorpick = color
+            TE.pick = pick
+            TE.colorpick = color
         end)
         if PLATFORM == '3ds' then
             v.background_color =  {color % 0x100, math.floor(color / 0x100) % 0x100, math.floor(color / 0x10000) % 0x100}
         else
             v.background_color =  {math.floor(color / 0x10000) % 0x100, math.floor(color / 0x100) % 0x100, color % 0x100}
         end
-        SE.color:add_subview(v)
+        TE.color:add_subview(v)
         i = i + 1
     end
 
-    SE.paintcanvas()
+    TE.paintcanvas()
 end
-function SE.paintcanvas()
+function TE.paintcanvas()
     for k,v in pairs(canvas) do
         if k == 'master' then
         else
@@ -237,5 +237,5 @@ function SE.paintcanvas()
 end
 
 
-SpriteEditor = SE
-return SE
+TileEditor = TE
+return TE
