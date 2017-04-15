@@ -69,7 +69,7 @@ function SE.render()
     local canvasx = Screen.bottom.width - canvas.draw.width
     local canvasy = (Screen.bottom.height - canvas.draw.height)/2
     canvas.draw:fastdraw(Screen.bottom, canvasx, canvasy)
-    canvas.bigref:fastdraw(Screen.bottom, (controls_width - canvas.bigref.width)/2, Screen.bottom.height - canvas.bigref.height)
+    --canvas.bigref:fastdraw(Screen.bottom, (controls_width - canvas.bigref.width)/2, Screen.bottom.height - canvas.bigref.height)
 
     if Mouse.isheld and Mouse.x >= canvasx then
         local x = math.floor((Mouse.x - canvasx)/15)

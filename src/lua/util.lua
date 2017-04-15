@@ -125,7 +125,7 @@ end
 local gsub = string.gsub
 
 function decode(s, raw)
-    s = string.gsub(s, '\\n', '\n')
+    s = string.gsub(s, '\\NEWLINE', '\n') -- TODO figure out something better
     s = string.gsub(s, '\\\\', '\\')
     local f = setfenv(load(s), Env.Empty())
     if raw then
@@ -167,6 +167,6 @@ function encode(t, raw)
     if raw then return s end
     s = string.dump(load(s), true)
     s = string.gsub(s, '\\', '\\\\')
-    s = string.gsub(s, '\n', '\\n')
+    s = string.gsub(s, '\n', '\\NEWLINE') -- TODO figure out something better
     return s
 end
