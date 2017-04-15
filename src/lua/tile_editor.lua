@@ -100,17 +100,17 @@ function TE.render()
 
 end
 
-local lasttile, lastquadrant
+local lasttile
 function TE.updatetile()
-    lasttile, lastquadrant = TE.tile, quadrant
+    lasttile = TE.tile
 
     local x, y = math.floor(Red.wram.wXCoord/2), math.floor(Red.wram.wYCoord/2)
     local i = Red.zram.mapwidth*y + x
-    TE.tile = Red.customtiles[Red.zram.tileset][Red.zram.mapblocks[i]] or Red.tiles[Red.zram.tileset][Red.zram.mapblocks[i]]
+    TE.tile = gettilefromrom(Red.zram.tileset, Red.zram.mapblocks[i])
     local vert =  Red.wram.wYCoord % 2 == 0 and 'n' or 's'
     local horiz = Red.wram.wXCoord % 2 == 0 and 'w' or 'e'
-    quadrant = vert..horiz
-    return not(lasttile == TE.tile and lastquadrant == quadrant)
+    TE.tile = TE.tile[vert..horiz]
+    return not(lasttile == TE.tile)
 end
 
 function TE.refresh(override)
@@ -119,25 +119,12 @@ function TE.refresh(override)
     TE.colors = TE.colors or {}
     for y=0,16-1 do
         for x=0,16-1 do
-            local opix = canvas.master.pix + 3*(canvas.master.width*y + x)
-            local x, y = x, y
-            if quadrant == 'nw' then
-            elseif quadrant == 'ne' then
-                x = x + 16
-            elseif quadrant == 'sw' then
-                y = y + 16
-            elseif quadrant == 'se' then
-                x = x + 16
-                y = y + 16
-            end
-            local ipix = TE.tile.pix + 3*(TE.tile.width*(x + 1) - (y + 1))
-            local r = ipix[0]
-            local g = ipix[1]
-            local b = ipix[2]
-            opix[0] = r
-            opix[1] = g
-            opix[2] = b
-            TE.colors[r*0x10000 + g*0x100 + b] = true
+            local o = canvas.master.pix + 3*(canvas.master.width*y + x)
+            local i = TE.tile.pix + 3*(TE.tile.width*(x + 1) - (y + 1))
+            o[0] = i[0]
+            o[1] = i[1]
+            o[2] = i[2]
+            TE.colors[i[0]*0x10000 + i[1]*0x100 + i[2]] = true
         end
     end
 
@@ -159,21 +146,11 @@ end
 function TE.painttile()
     for y=0,16-1 do
         for x=0,16-1 do
-            local ii = canvas.master.width*y + x
-            local x, y = x, y
-            if quadrant == 'nw' then
-            elseif quadrant == 'ne' then
-                x = x + 16
-            elseif quadrant == 'sw' then
-                y = y + 16
-            elseif quadrant == 'se' then
-                x = x + 16
-                y = y + 16
-            end
-            local oi = TE.tile.width*(x + 1) - (y + 1)
-            TE.tile.pix[oi*3 + 0] = canvas.master.pix[ii*3 + 0]
-            TE.tile.pix[oi*3 + 1] = canvas.master.pix[ii*3 + 1]
-            TE.tile.pix[oi*3 + 2] = canvas.master.pix[ii*3 + 2]
+            local i = canvas.master.pix + 3*(canvas.master.width*y + x)
+            local o = TE.tile.pix + 3*(TE.tile.width*(x + 1) - (y + 1))
+            o[0] = i[0]
+            o[1] = i[1]
+            o[2] = i[2]
         end
     end
 end

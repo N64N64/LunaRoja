@@ -73,7 +73,7 @@ end
 ROOT.colors = {}
 ROOT.colors.randomize = function()
     randomizerainbow()
-    cleartiles(Red.tiles)
+    Red.tiles = {}
     if Red then
         Red.sprites = {}
     end
@@ -98,7 +98,7 @@ ROOT.colors.cycle = function(first)
 
     Rainbow = rainbows[current_rainbow]
     if not first then
-        cleartiles(Red.tiles)
+        Red.tiles = {}
         Red.sprites = {}
     end
 end
@@ -119,9 +119,6 @@ local function init(self)
     init = function() end -- make sure this is only run the first frame
 
     self.sprites = {}
-
-    self.tiles = cleartiles()
-    self.customtiles = cleartiles()
 end
 
 function Red:render()
