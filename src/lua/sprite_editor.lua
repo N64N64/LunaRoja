@@ -17,34 +17,6 @@ local function init()
     canvas.bigref = Bitmap:new(canvas.master.width*scale, canvas.master.height*scale)
     canvas.bigref.scale = scale
 
-
-    tile = UI.View:new()
-    function tile:draw(scr, x, y)
-        if not SE.tile then return end
-
-        local pad = (controls_width - SE.tile.width)/2
-        self.x = pad
-        self.y = Screen.bottom.height - pad - SE.tile.height
-        --SE.tile:fastdraw(Screen.bottom, self.x, self.y)
-
-    end
-    tile:add_subview(UI.Button(UI.View:new(0, 0, 16, 16), function()
-        quadrant = 'nw'
-        SE.refresh(true)
-    end))
-    tile:add_subview(UI.Button(UI.View:new(16, 0, 16, 16), function()
-        quadrant = 'ne'
-        SE.refresh(true)
-    end))
-    tile:add_subview(UI.Button(UI.View:new(0, 16, 16, 16), function()
-        quadrant = 'sw'
-        SE.refresh(true)
-    end))
-    tile:add_subview(UI.Button(UI.View:new(16, 16, 16, 16), function()
-        quadrant = 'se'
-        SE.refresh(true)
-    end))
-
     header = UI.View:new(0, 0, controls_width, 25)
 
     back = UI.Button(UI.View:new(0, 0, controls_width/2, 25), function()
@@ -83,6 +55,8 @@ local r = gen()
 local g = gen()
 local b = gen()
 
+local lastx, lasty
+
 function SE.render()
     init()
     C.draw_set_color(r(), g(), b())
@@ -103,22 +77,25 @@ function SE.render()
         local i = y*16 + x
 
         local color = SE.colorpick
-        if color then
+        if color and not(lastx == x and lasty == y) then
             local r, g, b = math.floor(color / 0x10000) % 0x100, math.floor(color / 0x100) % 0x100, color % 0x100
-            local pix = canvas.master.pix + i*3
-            if pix[0] == r and pix[1] == g and pix[2] == b then
+            if lastx and lasty then
+                Screen.line(canvas.master, lastx, lasty, x, y, r, g, b, nil, true)
             else
+                local pix = canvas.master.pix + i*3
                 pix[0] = r
                 pix[1] = g
                 pix[2] = b
-                SE.painttile()
-                SE.paintcanvas()
             end
+            SE.painttile()
+            SE.paintcanvas()
         end
+        lastx, lasty = x, y
+    elseif Mouse.isup then
+        lastx, lasty = nil, nil
     end
 
     header:render(Screen.bottom)
-    tile:render(Screen.bottom)
     SE.color:render(Screen.bottom)
 
 end

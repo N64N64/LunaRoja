@@ -34,8 +34,29 @@ function Screen:pixel(x, y, r, g, b, a)
     end
 end
 
-function Screen:line(x1, y1, x2, y2, r, g, b, a)
-    if not USE_LUA_FALLBACK then
+local function pixel(pix, width, height, x, y, r, g, b, a)
+    x = math.floor(x + 0.5)
+    y = math.floor(y + 0.5)
+
+    if x < 0 or x >= width or
+       y < 0 or y >= height
+    then
+        return
+    end
+    pix = pix + 3*(width*y + x)
+    if not a then
+        pix[0] = r
+        pix[1] = g
+        pix[2] = b
+    else
+        pix[0] = pix[0]*(1-a) + r*a
+        pix[1] = pix[1]*(1-a) + g*a
+        pix[2] = pix[2]*(1-a) + b*a
+    end
+end
+
+function Screen:line(x1, y1, x2, y2, r, g, b, a, POOP)
+    if not POOP and not USE_LUA_FALLBACK then
         ffi.luared.draw_line(self.pix, self.width, self.height, x1, y1, x2, y2)
         return
     end
@@ -50,11 +71,19 @@ function Screen:line(x1, y1, x2, y2, r, g, b, a)
     local x = x1
     local y = y1
     for i=1,steps do
-        self:pixel(x, y, r, g, b, a)
+        if POOP then
+            pixel(self.pix, self.width, self.height, x, y, r, g, b, a)
+        else
+            self:pixel(x, y, r, g, b, a)
+        end
         x = x + dx
         y = y + dy
     end
-    self:pixel(x2, y2, r, g, b, a)
+    if POOP then
+        pixel(self.pix, self.width, self.height, x2, y2, r, g, b, a)
+    else
+        self:pixel(x2, y2, r, g, b, a)
+    end
 end
 
 function Screen:circle(x, y, r, should_outline)
