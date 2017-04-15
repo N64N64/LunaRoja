@@ -21,7 +21,7 @@ function getmapheader(map)
 end
 
 local hooked = Red.render_map or function() end -- tmp.lua
-function Red:render_map(map, mapx, mapy, xplayer, yplayer, first_call)
+function Red:render_map(scr, map, mapx, mapy, xplayer, yplayer, first_call)
     if first_call then
         already_rendered = {}
     end
@@ -56,8 +56,6 @@ function Red:render_map(map, mapx, mapy, xplayer, yplayer, first_call)
         Red.zram.mapblocks = mapblocks
     end
 
-    local bufpix, bufheight, bufwidth = Screen.top.pix, Screen.top.height, Screen.top.width
-
     local lowy = math.max(0, mapy-scrblockheight)
     local highy = math.min(mapy+scrblockheight, height-1)
     local lowx = math.max(0, mapx-scrblockwidth)
@@ -78,7 +76,7 @@ function Red:render_map(map, mapx, mapy, xplayer, yplayer, first_call)
             end
 
             if tile then
-                tile:fastdraw(Screen.top, x*tile.width - xplayer + Red.Camera.x, y*tile.height - yplayer + Red.Camera.y)
+                tile:fastdraw(scr, x*tile.width - xplayer + Red.Camera.x, y*tile.height - yplayer + Red.Camera.y)
             end
         end
     end
@@ -101,7 +99,7 @@ function Red:render_map(map, mapx, mapy, xplayer, yplayer, first_call)
     if bit.band(connection_flag, bit.lshift(1, 3)) ~= 0 then
         if yplayer < Red.Camera.y then
             local map, xoff, mapwidth, mapheight = getoff(8)
-            self:render_map(map, mapx - xoff, mapy + mapheight, xplayer - xoff*32, yplayer + mapheight*32)
+            self:render_map(scr, map, mapx - xoff, mapy + mapheight, xplayer - xoff*32, yplayer + mapheight*32)
         end
         addr = addr + 11
     end
@@ -109,7 +107,7 @@ function Red:render_map(map, mapx, mapy, xplayer, yplayer, first_call)
     if bit.band(connection_flag, bit.lshift(1, 2)) ~= 0 then
         if height*32 - yplayer < Red.Camera.y + 16 then
             local map, xoff, mapwidth, mapheight = getoff(8)
-            self:render_map(map, mapx - xoff, -(height - mapy), xplayer - xoff*32, -(height*32 - yplayer))
+            self:render_map(scr, map, mapx - xoff, -(height - mapy), xplayer - xoff*32, -(height*32 - yplayer))
         end
         addr = addr + 11
     end
@@ -117,7 +115,7 @@ function Red:render_map(map, mapx, mapy, xplayer, yplayer, first_call)
     if bit.band(connection_flag, bit.lshift(1, 1)) ~= 0 then
         if xplayer < Red.Camera.x then
             local map, yoff, mapwidth, mapheight = getoff(7)
-            self:render_map(map, mapx + mapwidth, mapy - yoff, xplayer + mapwidth*32, yplayer - yoff*32)
+            self:render_map(scr, map, mapx + mapwidth, mapy - yoff, xplayer + mapwidth*32, yplayer - yoff*32)
         end
         addr = addr + 11
     end
@@ -125,7 +123,7 @@ function Red:render_map(map, mapx, mapy, xplayer, yplayer, first_call)
     if bit.band(connection_flag, bit.lshift(1, 0)) ~= 0 then
         if width*32 - xplayer < Red.Camera.x + 16 then
             local map, yoff, mapwidth, mapheight = getoff(7)
-            self:render_map(map, -(width - mapx), mapy - yoff, -(width*32 - xplayer), yplayer - yoff*32)
+            self:render_map(scr, map, -(width - mapx), mapy - yoff, -(width*32 - xplayer), yplayer - yoff*32)
         end
         addr = addr + 11
     end

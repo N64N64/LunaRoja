@@ -29,7 +29,7 @@ PLAYER = Player:new()
 local orig, peers
 local function hook(...)
     orig(...)
-    local _, map, mapx, mapy, xplayer, yplayer = ...
+    local _, scr, map, mapx, mapy, xplayer, yplayer = ...
     for _,player in pairs(Player.Peers) do
         if player.map == map then
             if client and client.id == player.id then

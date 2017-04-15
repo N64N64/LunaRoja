@@ -1,9 +1,10 @@
 SE = {}
 
-local canvas, controls_width, tile
+local canvas, controls_width, tile, botscr
 
 local function init()
     init = function() end
+
     canvas = {}
     canvas.master = Bitmap:new(16, 16)
 
@@ -86,6 +87,10 @@ function SE.render()
     init()
     C.draw_set_color(r(), g(), b())
     Screen.bottom:rect(0, 0, Screen.bottom.width, Screen.bottom.height)
+
+    local xplayer, yplayer = get_player_coords()
+    Red:render_map(Screen.bottom, Red.wram.wCurMap, X or math.floor(Red.wram.wXCoord/2), Y or math.floor(Red.wram.wYCoord/2), W or xplayer, H or yplayer, true)
+
     SE.refresh()
     local canvasx = Screen.bottom.width - canvas.draw.width
     local canvasy = (Screen.bottom.height - canvas.draw.height)/2

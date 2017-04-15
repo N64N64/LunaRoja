@@ -15,7 +15,7 @@ Red.Camera.y = Screen.top.height/2 - 8
 
 local lastwalkcount
 local sevencount = 0
-local function get_player_coords()
+function get_player_coords()
     local self = Red
 
     local walkcount = self.wram.wWalkCounter
@@ -130,7 +130,7 @@ function Red:render()
     if self.wram.wIsInBattle == 0 then
         local xplayer, yplayer = get_player_coords()
         if config.render_map then
-            self:render_map(self.wram.wCurMap, math.floor(self.wram.wXCoord/2), math.floor(self.wram.wYCoord/2), xplayer, yplayer, true)
+            self:render_map(Screen.top, self.wram.wCurMap, math.floor(self.wram.wXCoord/2), math.floor(self.wram.wYCoord/2), xplayer, yplayer, true)
             self:render_sprites(xplayer, yplayer)
         end
         RENDER_DIALOGUE()
