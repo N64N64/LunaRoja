@@ -77,7 +77,7 @@ bool alphacopy(uint8_t *out, int outw, int outh, int outx, int outy,
                uint8_t *in, int  inw, int inh);
 bool purealphacopy(uint8_t *out, int outw, int outh, int outx, int outy,
                uint8_t *in, int  inw, int inh);
-bool scalecopy(uint8_t *out, uint8_t *in, int width, int height, float scale);
+bool scalecopy(uint8_t *out, uint8_t *in, int width, int height, int scale);
 bool mgbacopy(uint8_t *out, int outw, int outh, int outx, int outy,
               uint8_t *in,  int inw,  int inh,  int  inx, int  iny);
 

@@ -124,11 +124,13 @@ local function init(self)
 end
 
 function Red:render()
+    if true then return end
     init(self)
 
     if self.wram.wIsInBattle == 0 then
         local xplayer, yplayer = get_player_coords()
         if config.render_map then
+            print(Screen.top.pix)
             self:render_map(Screen.top, self.wram.wCurMap, math.floor(self.wram.wXCoord/2), math.floor(self.wram.wYCoord/2), xplayer, yplayer, true)
             self:render_sprites(xplayer, yplayer)
         end

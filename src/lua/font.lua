@@ -27,10 +27,12 @@ function Font:new(name)
     self.face = self.ft:new_memory_face(self.bin, ffi.sizeof(self.bin))
 
     self = SETGC(self, function()
+        --[[
         self.face:free()
         self.ft:free()
         self.face = nil
         self.ft = nil
+        ]]
     end)
 
     created[name] = self

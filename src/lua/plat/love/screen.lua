@@ -13,7 +13,7 @@ function Screen.init()
     Screen.bottom.love = love.graphics.newImage(Screen.bottom.lovedata)
     Screen.bottom.love:setFilter('linear', 'nearest')
 
-    pix = ffi.new('uint8_t[?]', ffi.sizeof(Screen.bottom.pix))
+    pix = ffi.new('uint8_t[?]', 1000*1000*3)
 end
 
 function Screen.endframe()

@@ -28,8 +28,8 @@ local intptr = ffi.new('int[2]')
 function UI.Label:paint()
     if not self.text then error('text not set') end
 
-    local font = Font:new(self.font) -- TODO cache this?
-    local pix, width, height = font:paint(self.text, self.fontsize)
+    self.cfont = Font:new(self.font)
+    local pix, width, height = self.cfont:paint(self.text, self.fontsize)
     self.width = width
     self.height = height
 
