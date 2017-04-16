@@ -81,6 +81,7 @@ function Console.key(key)
                 local result = UI.Label:new(tostring(result), Console.lineheight)
                 result.font = Font.Monospace
                 result.color = success and {0x00, 0xff, 0x00} or {0xff, 0x00, 0x00}
+                result.background_color = false
                 result:paint()
                 table.insert(self.backlog, result)
             end
@@ -90,6 +91,7 @@ function Console.key(key)
         end
         self.input = UI.Label:new('', Console.lineheight)
         self.input.font = Font.Monospace
+        self.input.background_color = false
         self.input:paint()
         self.blinker.pos = 0
         self.history_idx = nil

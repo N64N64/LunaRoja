@@ -121,6 +121,14 @@ end
 Red.tiles = {}
 Red.blocks = {}
 
+function savetiles()
+    for k,v in pairs(Red.tiles) do
+        local tileset = math.floor(k / 0x100000000)
+        local path = string.format('tile/%.2x-%.8x.png', tileset, k % 0x100000000)
+        C.stbi_write_png(PATH..'/'..path, v.width, v.height, 3, v.pix, v.width*3)
+    end
+end
+
 local function closure(bpp, bst, x, y, tileinfo)
     local ts = 16 / Red.Tilesize
     local bs = 32 / Red.Tilesize
