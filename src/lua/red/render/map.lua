@@ -151,17 +151,25 @@ function gettilefromrom(tileset, tile)
     local sw = tileset*0x100000000 + bst[08]*0x1000000 + bst[09]*0x10000 + bst[12]*0x100 + bst[13]
     local se = tileset*0x100000000 + bst[10]*0x1000000 + bst[11]*0x10000 + bst[14]*0x100 + bst[15]
 
-    local block = {
-        nw = Red.tiles[nw] or closure(bpp, bst, 0, 0, nw),
-        ne = Red.tiles[ne] or closure(bpp, bst, 2, 0, ne),
-        sw = Red.tiles[sw] or closure(bpp, bst, 0, 2, sw),
-        se = Red.tiles[se] or closure(bpp, bst, 2, 2, se),
-    }
+    if not Red.tiles[nw] then
+        Red.tiles[nw] = closure(bpp, bst, 0, 0, nw)
+    end
+    if not Red.tiles[ne] then
+        Red.tiles[ne] = closure(bpp, bst, 2, 0, ne)
+    end
+    if not Red.tiles[sw] then
+        Red.tiles[sw] = closure(bpp, bst, 0, 2, sw)
+    end
+    if not Red.tiles[se] then
+        Red.tiles[se] = closure(bpp, bst, 2, 2, se)
+    end
 
-    Red.tiles[nw] = block.nw
-    Red.tiles[ne] = block.ne
-    Red.tiles[sw] = block.sw
-    Red.tiles[se] = block.se
+    local block = {
+        nw = Red.tiles[nw],
+        ne = Red.tiles[ne],
+        sw = Red.tiles[sw],
+        se = Red.tiles[se],
+    }
 
     Red.blocks[tileset * 0x100 + tile] = block
     return block
