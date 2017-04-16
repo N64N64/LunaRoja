@@ -208,7 +208,6 @@ function TE.paintcanvas()
                 canvas.master.width, canvas.master.height,
                 v.scale
             )
-            v:prerotate()
         end
     end
 end

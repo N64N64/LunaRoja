@@ -43,8 +43,6 @@ function BPP(getbpp, width, height, ...)
         height = height,
         channels = 3,
     }
-    bmap:prerotate()
-    bmap:makebgr()
     return bmap
 end
 

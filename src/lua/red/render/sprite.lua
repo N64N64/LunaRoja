@@ -47,8 +47,6 @@ function getspritefromrom(id, raw)
         -- custom fields
         spriteheight = spriteheight,
     }
-    --bmap:prerotate()
-    bmap:makebgr()
     Red.sprites[id] = bmap
 
     return bmap

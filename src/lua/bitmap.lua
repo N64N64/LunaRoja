@@ -30,16 +30,10 @@ function Bitmap:new(arg1, arg2, arg3, arg4)
         self.width, self.height, self.channels = ptr[0], ptr[1], ptr[2]
 
         -- copy external C data into something garbage collectable
-        if arg3 == 'prerotate' then
-            self.pix = cpix
-            self:prerotate()
-        else
-            self.pix = ffi.new('uint8_t[?]', self.width*self.height*self.channels)
-            ffi.copy(self.pix, cpix, ffi.sizeof(self.pix))
-        end
+        self.pix = ffi.new('uint8_t[?]', self.width*self.height*self.channels)
+        ffi.copy(self.pix, cpix, ffi.sizeof(self.pix))
         C.free(cpix)
 
-        self:makebgr()
         self.path = path
     elseif type(arg1) == 'table' and not arg2 then
         self = arg1
@@ -106,15 +100,6 @@ function Bitmap:force3channels()
         self.pix[i*3 + 0] = self.pix[i*4 + 0]
         self.pix[i*3 + 1] = self.pix[i*4 + 1]
         self.pix[i*3 + 2] = self.pix[i*4 + 2]
-    end
-end
-
-function Bitmap:prerotate()
-end
-
-function Bitmap:makebgr()
-    if PLATFORM == '3ds' then
-        ffi.luared.makebgr(self.pix, self.width, self.height, self.channels)
     end
 end
 

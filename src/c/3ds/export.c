@@ -38,19 +38,24 @@ void font_dimensions(void *font, const char *text, int size, int *outwidth, int 
 uint8_t * font_render(void *font, const char *text, int size, int *outwidth, int *outheight);
 
 // draw.c
-bool fastcopy(uint8_t *out, int outw, int outh, int outx, int outy,
-               uint8_t *in, int  inw, int  inh);
+
+
+
+
+bool lovecopy(uint8_t *out, uint8_t *in, int size);
+void lastcopy(uint8_t *out, uint8_t *in, int w, int h);
 bool dumbcopy(uint8_t *out, int outw, int outh, int outx, int outy,
                uint8_t *in, int  inw, int inh, int stride);
-bool fastcopyaf(uint8_t *out, int outw, int outh, int outx, int outy,
-               uint8_t *in, int  inw, int  inh, uint8_t invis);
+bool dumbcopyaf(uint8_t *out, int outw, int outh, int outx, int outy,
+               uint8_t *in, int  inw, int inh, uint8_t invis, bool flip);
+bool alphacopy(uint8_t *out, int outw, int outh, int outx, int outy,
+               uint8_t *in, int  inw, int inh);
+bool purealphacopy(uint8_t *out, int outw, int outh, int outx, int outy,
+               uint8_t *in, int  inw, int inh);
+bool scalecopy(uint8_t *out, uint8_t *in, int width, int height, int scale);
 bool mgbacopy(uint8_t *out, int outw, int outh, int outx, int outy,
-              uint8_t *in,  int inw,  int inh,  int  inx, int  iny);
-int minstride_override;
-bool rotatecopy(uint8_t *out, int outw, int outh, int outstride, int outx, int outy,
-                uint8_t *in,  int inw,  int inh,  int instride,  int inx,  int iny);
-bool scalecopy(uint8_t *out, uint8_t *in, int width, int height, float scale);
-void makebgr(uint8_t *pix, int width, int height, int channels);
+              uint8_t *in,  int inw,  int inh);
+
 void draw_set_color(uint8_t r, uint8_t g, uint8_t b);
 bool draw_pixel(uint8_t *fb, int fbwidth, int fbheight, float fx, float fy);
 void draw_circle(uint8_t *fb, int fbwidth, int fbheight, float x0, float y0, float radius, bool should_outline);
@@ -299,19 +304,18 @@ void export_symbols(lua_State *L)
 
     // my stuff
 
+    export(lastcopy);
     export(dumbcopy);
-    export(fastcopy);
-    export(fastcopyaf);
+    export(dumbcopyaf);
+    export(alphacopy);
+    export(purealphacopy);
     export(mgbacopy);
-    export(rotatecopy);
     export(scalecopy);
-    export(makebgr);
     export(draw_set_color);
     export(draw_pixel);
     export(draw_circle);
     export(draw_line);
     export(draw_rect);
-    export(minstride_override);
 
     export(lua_initted_gfx);
 
