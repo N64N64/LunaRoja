@@ -51,15 +51,12 @@ function Red:render_map(scr, map, mapx, mapy, xplayer, yplayer, first_call)
     local highy = math.min(mapy+scrblockheight, height-1)
     local lowx = math.max(0, mapx-scrblockwidth)
     local highx = math.min(mapx+scrblockwidth, width-1)
-    local gettilefromrom = gettilefromrom
-    local poopx = Red.Camera.x - xplayer
-    local poopy = Red.Camera.y - yplayer
     for y=lowy,highy do
         for x=lowx, highx do
             local tileno = mapblocks[y*width + x]
             local tile = gettilefromrom(tileset, tileno)
-            local x = x*32 + poopx
-            local y = y*32 + poopy
+            local x = x*32 + Red.Camera.x - xplayer
+            local y = y*32 + Red.Camera.y - yplayer
 
             tile.nw:fastdraw(scr, x, y)
             tile.ne:fastdraw(scr, x + 16, y)
@@ -115,7 +112,7 @@ function Red:render_map(scr, map, mapx, mapy, xplayer, yplayer, first_call)
         addr = addr + 11
     end
 
-    hooked(self, map, mapx, mapy, xplayer, yplayer, first_call) -- tmp.lua
+    hooked(self, scr, map, mapx, mapy, xplayer, yplayer, first_call) -- tmp.lua
 end
 
 Red.tiles = {}
