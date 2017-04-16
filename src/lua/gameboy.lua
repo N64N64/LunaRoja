@@ -91,12 +91,12 @@ end
 function Gameboy:render(scr, x, y)
     if not scr then
         scr = Screen.top
-        x = (Screen.top.width - emu.width)/2 + 8
-        y = (Screen.top.height - emu.height)/2
+        x = (Screen.top.width - self.width)/2 + 8
+        y = (Screen.top.height - self.height)/2
     end
     ffi.luared.mgbacopy(
-        scr.pix, scr.height, scr.width, x, y,
-        self.pix, self.width, self.height, 0, 0
+        scr.pix, scr.width, scr.height, x, y,
+        self.pix, self.width, self.height
     )
 end
 

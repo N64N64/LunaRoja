@@ -58,7 +58,6 @@ function Red:render_map(scr, map, mapx, mapy, xplayer, yplayer, first_call)
             local x = x*32 + Red.Camera.x - xplayer
             local y = y*32 + Red.Camera.y - yplayer
 
-            print('x: '..x..', y: '..y)
             tile.nw:fastdraw(scr, x, y)
             tile.ne:fastdraw(scr, x + 16, y)
             tile.sw:fastdraw(scr, x, y + 16)

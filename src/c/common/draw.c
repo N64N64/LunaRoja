@@ -134,9 +134,9 @@ bool scalecopy(uint8_t *out, uint8_t *in, int width, int height, int scale)
             for(int yy = 0; yy < scale; yy++) {
                 for(int xx = 0; xx < scale; xx++) {
                     uint8_t *o = &out[3*((yy+scale*y)*width*scale + xx+scale*x)];
-                    o[0] = in[0];
-                    o[1] = in[1];
-                    o[2] = in[2];
+                    o[0] = i[0];
+                    o[1] = i[1];
+                    o[2] = i[2];
                 }
             }
         }
@@ -154,12 +154,12 @@ bool scalecopy(uint8_t *out, uint8_t *in, int width, int height, int scale)
 #endif
 
 bool mgbacopy(uint8_t *out, int outw, int outh, int outx, int outy,
-              uint8_t *in,  int inw,  int inh,  int  inx, int  iny)
+              uint8_t *in,  int inw,  int inh)
 {
     for(int y = 0; y < inh; y++) {
         for(int x = 0; x < inw; x++) {
-            uint8_t *o = &out[3*((y + outy)*outw - (x + outx))];
-            int v = in[WTF*((y + iny)*inw + x + inx) + 1];
+            uint8_t *o = &out[3*((y + outy)*outw + (x + outx))];
+            int v = in[WTF*(y*inw + x) + 1];
                                  //                    ^
                                  // need to get the 2nd pixel because
                                  // the first pixel is wrong

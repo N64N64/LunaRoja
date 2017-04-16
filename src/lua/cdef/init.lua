@@ -13,6 +13,7 @@ ffi.cdef[[
 
 // std
 
+void *malloc(size_t);
 int usleep(unsigned int usec);
 size_t clock();
 void printf(const char *fmt, ...);
@@ -79,7 +80,7 @@ bool purealphacopy(uint8_t *out, int outw, int outh, int outx, int outy,
                uint8_t *in, int  inw, int inh);
 bool scalecopy(uint8_t *out, uint8_t *in, int width, int height, int scale);
 bool mgbacopy(uint8_t *out, int outw, int outh, int outx, int outy,
-              uint8_t *in,  int inw,  int inh,  int  inx, int  iny);
+              uint8_t *in,  int inw,  int inh);
 
 void lastcopy(uint8_t *out, uint8_t *in, int w, int h);
 void draw_set_color(uint8_t r, uint8_t g, uint8_t b);

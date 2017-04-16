@@ -105,7 +105,7 @@ function Red:render_sprite(bmap, x, y, xplayer, yplayer, dir, anim)
 
     y = y - 4 + (16 - bmap.spriteheight)
 
-    ffi.luared.dumpcopyaf(
+    ffi.luared.dumbcopyaf(
         Screen.top.pix, Screen.top.width, Screen.top.height, x - xplayer + Red.Camera.x, y - yplayer + Red.Camera.y,
         bmap.pix + offset*bmap.width*bmap.spriteheight*3, bmap.width, bmap.spriteheight, SPRITE_INVIS_COLOR, should_flip
     )

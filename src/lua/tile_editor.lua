@@ -120,7 +120,7 @@ function TE.refresh(override)
     for y=0,16-1 do
         for x=0,16-1 do
             local o = canvas.master.pix + 3*(canvas.master.width*y + x)
-            local i = TE.tile.pix + 3*(TE.tile.width*(x + 1) - (y + 1))
+            local i = TE.tile.pix + 3*(TE.tile.width*y + x)
             o[0] = i[0]
             o[1] = i[1]
             o[2] = i[2]
@@ -147,7 +147,7 @@ function TE.painttile()
     for y=0,16-1 do
         for x=0,16-1 do
             local i = canvas.master.pix + 3*(canvas.master.width*y + x)
-            local o = TE.tile.pix + 3*(TE.tile.width*(x + 1) - (y + 1))
+            local o = TE.tile.pix + 3*(TE.tile.width*y + x)
             o[0] = i[0]
             o[1] = i[1]
             o[2] = i[2]
