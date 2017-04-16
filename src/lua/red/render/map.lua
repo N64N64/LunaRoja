@@ -55,11 +55,13 @@ function Red:render_map(scr, map, mapx, mapy, xplayer, yplayer, first_call)
         for x=lowx, highx do
             local tileno = mapblocks[y*width + x]
             local tile = gettilefromrom(tileset, tileno)
+            local x = x*tile.nw.width*2 - xplayer + Red.Camera.x
+            local y = y*tile.nw.height*2 - yplayer + Red.Camera.y
 
-            tile.nw:fastdraw(scr, x*tile.nw.width*2 - xplayer + Red.Camera.x, y*tile.nw.height*2 - yplayer + Red.Camera.y)
-            tile.ne:fastdraw(scr, x*tile.ne.width*2 + 16 - xplayer + Red.Camera.x, y*tile.ne.height*2 - yplayer + Red.Camera.y)
-            tile.sw:fastdraw(scr, x*tile.sw.width*2 - xplayer + Red.Camera.x, y*tile.sw.height*2 + 16 - yplayer + Red.Camera.y)
-            tile.se:fastdraw(scr, x*tile.se.width*2 + 16 - xplayer + Red.Camera.x, y*tile.se.height*2 + 16 - yplayer + Red.Camera.y)
+            tile.nw:fastdraw(scr, x, y)
+            tile.ne:fastdraw(scr, x + 16, y)
+            tile.sw:fastdraw(scr, x, y + 16)
+            tile.se:fastdraw(scr, x + 16, y + 16)
         end
     end
 
@@ -115,6 +117,17 @@ end
 
 Red.tiles = {}
 
+local function closure(bpp, bst, x, y, tileinfo)
+    local ts = 16 / Red.Tilesize
+    local bs = 32 / Red.Tilesize
+    local bmap = BPP(function(i)
+        local x = i % ts + x
+        local y = math.floor(i / ts) + y
+        return bpp + bst[y*bs + x]*16
+    end, 16, 16)
+    bmap.tileinfo = tileinfo
+    return bmap
+end
 function gettilefromrom(tileset, tile)
     local self = Red
 
@@ -124,28 +137,16 @@ function gettilefromrom(tileset, tile)
     -- ptr to .2bpp
     local bpp = emu:rom(header[0], header[3] + header[4] * 0x100)
 
-    local function closure(x, y, tileinfo)
-        local ts = 16 / Red.Tilesize
-        local bs = 32 / Red.Tilesize
-        local bmap = BPP(function(i)
-            local x = i % ts + x
-            local y = math.floor(i / ts) + y
-            return bpp + bst[y*bs + x]*16
-        end, 16, 16)
-        bmap.tileinfo = tileinfo
-        return bmap
-    end
-
     local nw = tileset*0x100000000 + bst[00]*0x1000000 + bst[01]*0x10000 + bst[04]*0x100 + bst[05]
     local ne = tileset*0x100000000 + bst[02]*0x1000000 + bst[03]*0x10000 + bst[06]*0x100 + bst[07]
     local sw = tileset*0x100000000 + bst[08]*0x1000000 + bst[09]*0x10000 + bst[12]*0x100 + bst[13]
     local se = tileset*0x100000000 + bst[10]*0x1000000 + bst[11]*0x10000 + bst[14]*0x100 + bst[15]
 
     local result = {
-        nw = Red.tiles[nw] or closure(0, 0, nw),
-        ne = Red.tiles[ne] or closure(2, 0, ne),
-        sw = Red.tiles[sw] or closure(0, 2, sw),
-        se = Red.tiles[se] or closure(2, 2, se),
+        nw = Red.tiles[nw] or closure(bpp, bst, 0, 0, nw),
+        ne = Red.tiles[ne] or closure(bpp, bst, 2, 0, ne),
+        sw = Red.tiles[sw] or closure(bpp, bst, 0, 2, sw),
+        se = Red.tiles[se] or closure(bpp, bst, 2, 2, se),
     }
 
     Red.tiles[nw] = result.nw
