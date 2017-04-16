@@ -42,13 +42,14 @@ function UI.Label:paint()
             channels = 1,
         }
     else
-        local bmap = Bitmap:new(self.height, self.width)
+        local w,h = self.width,self.height
+        local bmap = Bitmap:new(w, h)
         ffi.luared.draw_set_color(unpack(self.background_color))
-        ffi.luared.draw_rect(bmap.pix, bmap.height, bmap.width, 0, 0, self.width, self.height)
+        ffi.luared.draw_rect(bmap.pix, w, h, 0, 0, w, h)
         ffi.luared.draw_set_color(unpack(self.color))
-        ffi.luared.rotatecopy(
-            bmap.pix, bmap.width, bmap.height, 3, 0, 0,
-            pix, self.width, self.height, 1, 0, 0
+        ffi.luared.purealphacopy(
+            bmap.pix, w, h, 0, 0,
+            pix, w, h
         )
         self.bmap = bmap
     end
@@ -63,7 +64,10 @@ function UI.Label:draw(scr, x, y)
 
     if self.background_color == false then
         C.draw_set_color(unpack(self.color))
-        self.bmap:draw(scr, x, y)
+        ffi.luared.purealphacopy(
+            scr.pix, scr.width, scr.height, x, y,
+            self.bmap.pix, self.bmap.width, self.bmap.height
+        )
     else
         self.bmap:fastdraw(scr, x, y)
     end

@@ -37,14 +37,6 @@ function getspritefromrom(id, raw)
 
     if raw then return pix end
 
-    local finalpix = ffi.new('uint8_t[?]', ffi.sizeof(pix))
-    for i=0,height/spriteheight-1 do
-        ffi.luared.rotatecopy(
-            finalpix + i*width*spriteheight*3, spriteheight, width, 3, 0, 0,
-            pix + i*width*spriteheight*3, width, spriteheight, 3, 0, 0
-        )
-    end
-    pix = finalpix
     collectgarbage()
     local bmap = Bitmap:new{
         -- bitmap stuff
@@ -113,9 +105,9 @@ function Red:render_sprite(bmap, x, y, xplayer, yplayer, dir, anim)
 
     y = y - 4 + (16 - bmap.spriteheight)
 
-    ffi.luared.fastcopyaf(
-        Screen.top.pix, Screen.top.height, Screen.top.width, x - xplayer + Red.Camera.x, y - yplayer + Red.Camera.y,
-        bmap.pix + offset*bmap.width*bmap.spriteheight*3, bmap.spriteheight, bmap.width, SPRITE_INVIS_COLOR, should_flip
+    ffi.luared.dumpcopyaf(
+        Screen.top.pix, Screen.top.width, Screen.top.height, x - xplayer + Red.Camera.x, y - yplayer + Red.Camera.y,
+        bmap.pix + offset*bmap.width*bmap.spriteheight*3, bmap.width, bmap.spriteheight, SPRITE_INVIS_COLOR, should_flip
     )
 end
 

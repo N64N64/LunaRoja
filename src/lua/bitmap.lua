@@ -65,15 +65,15 @@ function Bitmap:draw(scr, x, y, tx, ty, width, height)
     width = width or self.width
     height = height or self.height
 
-    ffi.luared.rotatecopy(
-        scr.pix, scr.height, scr.width, 3, x, y,
-        self.pix, width, height, self.channels or 3, tx, ty
+    ffi.luared.dumbcopy(
+        scr.pix, scr.width, scr.height, 3, x, y,
+        self.pix, width, height, self.channels or 3
     )
 end
 
 function Bitmap:fastdraw(scr, x, y)
-    ffi.luared.fastcopy(
-        scr.pix, scr.height, scr.width, x, y,
+    ffi.luared.dumbcopy(
+        scr.pix, scr.width, scr.height, x, y,
         self.pix, self.width, self.height, 3
     )
 end
@@ -110,13 +110,6 @@ function Bitmap:force3channels()
 end
 
 function Bitmap:prerotate()
-    local pix = ffi.new('uint8_t[?]', self.width*self.height*3)
-    ffi.luared.rotatecopy(
-        pix, self.height, self.width, 3, 0, 0,
-        self.pix, self.width, self.height, 3, 0, 0
-    )
-    self.pix = pix
-    --self.width, self.height = self.height, self.width
 end
 
 function Bitmap:makebgr()

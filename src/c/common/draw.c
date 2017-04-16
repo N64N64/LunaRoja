@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <math.h>
 
+static uint8_t _color[3];
+
 bool lovecopy(uint8_t *out, uint8_t *in, int size)
 {
     for(int i = 0; i < size; i++) {
@@ -16,74 +18,30 @@ bool lovecopy(uint8_t *out, uint8_t *in, int size)
     return true;
 }
 
+void lastcopy(uint8_t *out, uint8_t *in, int w, int h)
+{
+    for(int y = 0; y < h; y++) {
+        for(int x = 0; x < w; x++) {
+            uint8_t *i = &in[3*(w*y + x)];
+            uint8_t *o = &out[3*(h*(x+1) - (y+1))];
+#ifdef _3DS
+            o[0] = i[2];
+            o[1] = i[1];
+            o[2] = i[0];
+#else
+            o[0] = i[0];
+            o[1] = i[1];
+            o[2] = i[2];
+#endif
+        }
+    }
+}
+
 #define CHECK(i, s) do{\
     if(i < 0 || i >= s) {\
         return false;\
     }\
 } while(0)
-
-bool fastcopyaf(uint8_t *out, int outw, int outh, int outx, int outy,
-               uint8_t *in, int  inw, int inh, uint8_t invis, bool flip)
-{
-    int startx = 0;
-    int endx = inh;
-
-    if(outx < 0) {
-        startx = -outx;
-    }
-    if(outx + endx > outh) {
-        endx = outh - outx - 1;
-    }
-
-    int outadd = 0;
-    int inadd = 0;
-    int inlen = inw;
-#if 0
-    if(outy < 0) {
-        inadd = outy;
-        outadd = outy;
-        inlen += inadd;
-    }
-#endif
-    if(outy < 0) {
-        inlen += outy;
-    }
-    if(outy + inw > outw) {
-        int diff = outy + inw - outw;
-        inadd += diff;
-        outadd += diff;
-        inlen -= diff;
-    }
-
-    if(inlen <= 0) {
-        return true;
-    }
-
-    for(int x = startx; x < endx; x++) {
-        int outidx = (x + outx + 1)*outw - outy - inw + outadd;
-        int inidx;
-        if(flip) {
-            inidx = endx - 1 - x + startx;
-        } else {
-            inidx = x;
-        }
-        inidx = inidx*inw + inadd;
-        for(int i = 0; i < inlen; i++) {
-            CHECK(i + inidx, inw*inh);
-            uint8_t b = in[(i + inidx)*3 + 0];
-            uint8_t g = in[(i + inidx)*3 + 1];
-            uint8_t r = in[(i + inidx)*3 + 2];
-            if(b == invis && g == invis && r == invis) {
-                continue;
-            }
-            CHECK(i + outidx, outw*outh);
-            out[(i + outidx)*3 + 0] = b;
-            out[(i + outidx)*3 + 1] = g;
-            out[(i + outidx)*3 + 2] = r;
-        }
-    }
-    return true;
-}
 
 bool dumbcopy(uint8_t *out, int outw, int outh, int outx, int outy,
                uint8_t *in, int  inw, int inh, int stride)
@@ -102,53 +60,72 @@ bool dumbcopy(uint8_t *out, int outw, int outh, int outx, int outy,
     return true;
 }
 
-bool fastcopy(uint8_t *out, int outw, int outh, int outx, int outy,
-               uint8_t *in, int  inw, int inh, int stride)
+bool dumbcopyaf(uint8_t *out, int outw, int outh, int outx, int outy,
+               uint8_t *in, int  inw, int inh, uint8_t invis, bool flip)
 {
-    int startx = 0;
-    int endx = inh;
+    for(int y = 0; y < inh; y++) {
+        int outidx = (outy + y)*outw + outx;
+        int inidx = y*inw;
 
-    if(outx < 0) {
-        startx = -outx;
-    }
-    if(outx + endx > outh) {
-        endx = outh - outx - 1;
-    }
+        CHECK(outidx + inw, outw*outh);
+        CHECK(inidx + inw, outw*outh);
 
-    int outadd = 0;
-    int inadd = 0;
-    int inlen = inw;
-#if 0
-    if(outy < 0) {
-        inadd = outy;
-        outadd = outy;
-        inlen += inadd;
+        for(int x = 0; x < inw; x++) {
+            int ix = flip ? inw-x-1 : x;
+            uint8_t *i = &in[3*(y*inw + ix)];
+            uint8_t *o = &out[3*((outy+y)*outw + outx+x)];
+            if(i[0] == invis && i[1] == invis && i[2] == invis) {
+                // pass
+            } else {
+                o[0] = i[0];
+                o[1] = i[1];
+                o[2] = i[2];
+            }
+        }
     }
-#endif
-    if(outy < 0) {
-        inlen += outy;
+    return true;
+}
+
+bool alphacopy(uint8_t *out, int outw, int outh, int outx, int outy,
+               uint8_t *in, int  inw, int inh)
+{
+    for(int y = 0; y < inh; y++) {
+        int outidx = (outy + y)*outw + outx;
+        int inidx = y*inw;
+
+        CHECK(outidx + inw, outw*outh);
+        CHECK(inidx + inw, outw*outh);
+
+        for(int x = 0; x < inw; x++) {
+            uint8_t *i = &in[4*(y*inw + x)];
+            uint8_t *o = &out[3*((outy+y)*outw + outx+x)];
+            uint8_t a = i[3];
+            o[0] = (o[0]*(0xff-a) + i[0]*a) / 0xff;
+            o[1] = (o[1]*(0xff-a) + i[1]*a) / 0xff;
+            o[2] = (o[2]*(0xff-a) + i[2]*a) / 0xff;
+        }
     }
-    if(outy + inw > outw) {
-        int diff = outy + inw - outw;
-        inadd += diff;
-        outadd += diff;
-        inlen -= diff;
-    }
+    return true;
+}
 
-    if(inlen <= 0) {
-        return true;
-    }
+bool purealphacopy(uint8_t *out, int outw, int outh, int outx, int outy,
+               uint8_t *in, int  inw, int inh)
+{
+    for(int y = 0; y < inh; y++) {
+        int outidx = (outy + y)*outw + outx;
+        int inidx = y*inw;
 
-    for(int x = startx; x < endx; x++) {
-        int outidx = (x + outx + 1)*outw - outy - inw + outadd;
-        int inidx  = x*inw + inadd;
+        CHECK(outidx + inw, outw*outh);
+        CHECK(inidx + inw, outw*outh);
 
-        CHECK(outidx, outw*outh);
-        CHECK(inidx, inw*inh);
-        CHECK(outidx + inlen - 1, outw*outh);
-        CHECK(inidx + inlen - 1, inw*inh);
-
-        memcpy(out + outidx*stride, in + inidx*stride, inlen*stride);
+        for(int x = 0; x < inw; x++) {
+            uint8_t a = in[y*inw + x];
+            uint8_t *i = _color;
+            uint8_t *o = &out[3*((outy+y)*outw + outx+x)];
+            o[0] = (o[0]*(0xff-a) + i[0]*a) / 0xff;
+            o[1] = (o[1]*(0xff-a) + i[1]*a) / 0xff;
+            o[2] = (o[2]*(0xff-a) + i[2]*a) / 0xff;
+        }
     }
     return true;
 }
@@ -185,7 +162,7 @@ bool mgbacopy(uint8_t *out, int outw, int outh, int outx, int outy,
 {
     for(int y = 0; y < inh; y++) {
         for(int x = 0; x < inw; x++) {
-            int outi = 3*((x + outx + 1)*outw - (y + outy + 1));
+            int outi = 3*((y + outy)*outw - (x + outx));
             int ini = WTF*((y + iny)*inw + x + inx);
             int v = in[ini + 1]; // need to get the 2nd pixel because
                                  // the first pixel is wrong
@@ -198,89 +175,11 @@ bool mgbacopy(uint8_t *out, int outw, int outh, int outx, int outy,
     return true;
 }
 
-int minstride_override = 0;
-static uint8_t _color[3];
-bool rotatecopy(uint8_t *out, int outw, int outh, int outstride, int outx, int outy,
-                uint8_t *in,  int inw,  int inh,  int instride,  int inx,  int iny)
-{
-    if(instride == 3) {
-        for(int y = 0; y < inh; y++) {
-            if(y + outy < 0 || y + outy >= outw) {
-                continue;
-            }
-            for(int x = 0; x < inw; x++) {
-                if(x + outx < 0 || x + outx >= outh) {
-                    continue;
-                }
-                int outi = 3*((x + outx + 1)*outw - (y + outy + 1));
-                int ini  = 3*((y + iny)*inw + x + inx);
-                CHECK(outi, 9*outw*outh);
-                CHECK(ini, 9*inw*inh);
-                out[outi + 0] = in[ini + 0];
-                out[outi + 1] = in[ini + 1];
-                out[outi + 2] = in[ini + 2];
-            }
-        }
-    } else if(instride == 1) {
-        for(int y = 0; y < inh; y++) {
-            for(int x = 0; x < inw; x++) {
-                if(x + outx < 0 || y + outy < 0 || x + outx >= outh || y + outy >= outw) {
-                    continue;
-                }
-                int outi = 3*((x + outx + 1)*outw - (y + outy + 1));
-                int ini  = instride*((y + iny)*inw + x + inx);
-                unsigned int alpha = in[ini];
-                CHECK(outi, 9*outw*outh);
-                CHECK(ini, instride*instride*inw*inh);
-                out[outi + 0] = (out[outi + 0]*(0xff - alpha) + _color[0] * alpha) / 0xff;
-                out[outi + 1] = (out[outi + 1]*(0xff - alpha) + _color[1] * alpha) / 0xff;
-                out[outi + 2] = (out[outi + 2]*(0xff - alpha) + _color[2] * alpha) / 0xff;
-            }
-        }
-    } else /*if(instride == 4)*/ {
-        for(int y = 0; y < inh; y++) {
-            for(int x = 0; x < inw; x++) {
-                if(x + outx < 0 || y + outy < 0 || x + outx >= outh || y + outy >= outw) {
-                    continue;
-                }
-                int outi = 3*((x + outx + 1)*outw - (y + outy + 1));
-                int ini  = instride*((y + iny)*inw + x + inx);
-                uint8_t alpha = in[ini + 3];
-                CHECK(outi, 9*outw*outh);
-                CHECK(ini, instride*instride*inw*inh);
-                out[outi + 0] = (out[outi + 0]*(0xff - alpha) + in[ini + 0] * alpha) / 0xff;
-                out[outi + 1] = (out[outi + 1]*(0xff - alpha) + in[ini + 1] * alpha) / 0xff;
-                out[outi + 2] = (out[outi + 2]*(0xff - alpha) + in[ini + 2] * alpha) / 0xff;
-            }
-        }
-    }
-    return true;
-}
-
-void makebgr(uint8_t *pix, int width, int height, int channels)
-{
-    for(int i = 0; i < width*height; i++) {
-        uint8_t r = pix[i*channels + 0];
-        uint8_t g = pix[i*channels + 1];
-        uint8_t b = pix[i*channels + 2];
-
-        pix[i*channels + 0] = b;
-        pix[i*channels + 1] = g;
-        pix[i*channels + 2] = r;
-    }
-}
-
 void draw_set_color(uint8_t r, uint8_t g, uint8_t b)
 {
-#ifdef _3DS
-    _color[0] = b;
-    _color[1] = g;
-    _color[2] = r;
-#else
     _color[0] = r;
     _color[1] = g;
     _color[2] = b;
-#endif
 }
 
 bool draw_pixel(uint8_t *fb, int fbwidth, int fbheight, float fx, float fy)
@@ -291,7 +190,7 @@ bool draw_pixel(uint8_t *fb, int fbwidth, int fbheight, float fx, float fy)
         return false;
     }
 
-    int s = 3*(fbheight*(x + 1) - (y + 1));
+    int s = 3*(fbwidth*y + x);
     for(int i = 0; i < 3; i++) {
         fb[s + i] = _color[i];
     }
@@ -300,32 +199,17 @@ bool draw_pixel(uint8_t *fb, int fbwidth, int fbheight, float fx, float fy)
 
 void draw_rect(uint8_t *fb, int fbwidth, int fbheight, float fx, float fy, float fwidth, float fheight)
 {
-    if(fx + fwidth > fbwidth) {
-        fwidth = fbwidth - fx;
-    }
-    if(fy + fheight > fbheight) {
-        fheight = fbheight - fy;
-    }
-    if(fx < 0) {
-        fwidth += fx;
-        fx = 0;
-    }
-    if(fy < 0) {
-        fheight += fy;
-        fy = 0;
-    }
-
-    int px = (int)(fx + 1);
-    int py = (int)(fy + 1);
-    int width = (int)fwidth;
-    int height = (int)fheight;
+    int px = (int)(fx + 0.5);
+    int py = (int)(fy + 0.5);
+    int width = (int)(fwidth + 0.5);
+    int height = (int)(fheight + 0.5);
 
     for(int y = 0; y < height; y++) {
         for(int x = 0; x < width; x++) {
-            int s = 3*(fbheight*(x + px) - (y + py));
-            for(int i = 0; i < 3; i++) {
-                fb[s + i] = _color[i];
-            }
+            uint8_t *o = &fb[3*(fbwidth*py + px)];
+            o[0] = _color[0];
+            o[1] = _color[1];
+            o[2] = _color[2];
         }
     }
 }

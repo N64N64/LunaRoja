@@ -71,17 +71,17 @@ int gethostname(const char *, size_t);
 bool lovecopy(uint8_t *out, uint8_t *in, int size);
 bool dumbcopy(uint8_t *out, int outw, int outh, int outx, int outy,
                uint8_t *in, int  inw, int inh, int stride);
-bool fastcopy(uint8_t *out, int outw, int outh, int outx, int outy,
-               uint8_t *in, int  inw, int  inh, int stride);
-bool fastcopyaf(uint8_t *out, int outw, int outh, int outx, int outy,
+bool dumbcopyaf(uint8_t *out, int outw, int outh, int outx, int outy,
                uint8_t *in, int  inw, int inh, uint8_t invis, bool flip);
-int minstride_override;
+bool alphacopy(uint8_t *out, int outw, int outh, int outx, int outy,
+               uint8_t *in, int  inw, int inh);
+bool purealphacopy(uint8_t *out, int outw, int outh, int outx, int outy,
+               uint8_t *in, int  inw, int inh);
 bool scalecopy(uint8_t *out, uint8_t *in, int width, int height, float scale);
 bool mgbacopy(uint8_t *out, int outw, int outh, int outx, int outy,
               uint8_t *in,  int inw,  int inh,  int  inx, int  iny);
-bool rotatecopy(uint8_t *out, int outw, int outh, int outstride, int outx, int outy,
-                uint8_t *in,  int inw,  int inh,  int instride,  int inx,  int iny);
-void makebgr(uint8_t *pix, int width, int height, int channels);
+
+void lastcopy(uint8_t *out, uint8_t *in, int w, int h);
 void draw_set_color(uint8_t r, uint8_t g, uint8_t b);
 void draw_circle(uint8_t *fb, int fbwidth, int fbheight, float x0, float y0, float radius, bool should_outline);
 void draw_rect(uint8_t *fb, int fbwidth, int fbheight, float fx, float fy, float fwidth, float fheight);
