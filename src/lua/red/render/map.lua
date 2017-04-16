@@ -51,12 +51,15 @@ function Red:render_map(scr, map, mapx, mapy, xplayer, yplayer, first_call)
     local highy = math.min(mapy+scrblockheight, height-1)
     local lowx = math.max(0, mapx-scrblockwidth)
     local highx = math.min(mapx+scrblockwidth, width-1)
+    local gettilefromrom = gettilefromrom
+    local poopx = Red.Camera.x - xplayer
+    local poopy = Red.Camera.y - yplayer
     for y=lowy,highy do
         for x=lowx, highx do
             local tileno = mapblocks[y*width + x]
             local tile = gettilefromrom(tileset, tileno)
-            local x = x*tile.nw.width*2 - xplayer + Red.Camera.x
-            local y = y*tile.nw.height*2 - yplayer + Red.Camera.y
+            local x = x*32 + poopx
+            local y = y*32 + poopy
 
             tile.nw:fastdraw(scr, x, y)
             tile.ne:fastdraw(scr, x + 16, y)
@@ -116,6 +119,7 @@ function Red:render_map(scr, map, mapx, mapy, xplayer, yplayer, first_call)
 end
 
 Red.tiles = {}
+Red.blocks = {}
 
 local function closure(bpp, bst, x, y, tileinfo)
     local ts = 16 / Red.Tilesize
@@ -131,6 +135,11 @@ end
 function gettilefromrom(tileset, tile)
     local self = Red
 
+    local block = Red.blocks[tileset * 0x100 + tile]
+    if block then
+        return block
+    end
+
     local header = self.rom.Tilesets + tileset*12
     -- ptr to .bst
     local bst = emu:rom(header[0], tile*16 + header[1] + header[2] * 0x100)
@@ -142,17 +151,18 @@ function gettilefromrom(tileset, tile)
     local sw = tileset*0x100000000 + bst[08]*0x1000000 + bst[09]*0x10000 + bst[12]*0x100 + bst[13]
     local se = tileset*0x100000000 + bst[10]*0x1000000 + bst[11]*0x10000 + bst[14]*0x100 + bst[15]
 
-    local result = {
+    local block = {
         nw = Red.tiles[nw] or closure(bpp, bst, 0, 0, nw),
         ne = Red.tiles[ne] or closure(bpp, bst, 2, 0, ne),
         sw = Red.tiles[sw] or closure(bpp, bst, 0, 2, sw),
         se = Red.tiles[se] or closure(bpp, bst, 2, 2, se),
     }
 
-    Red.tiles[nw] = result.nw
-    Red.tiles[ne] = result.ne
-    Red.tiles[sw] = result.sw
-    Red.tiles[se] = result.se
+    Red.tiles[nw] = block.nw
+    Red.tiles[ne] = block.ne
+    Red.tiles[sw] = block.sw
+    Red.tiles[se] = block.se
 
-    return result
+    Red.blocks[tileset * 0x100 + tile] = block
+    return block
 end

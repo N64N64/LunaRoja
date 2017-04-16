@@ -74,6 +74,7 @@ ROOT.colors = {}
 ROOT.colors.randomize = function()
     randomizerainbow()
     Red.tiles = {}
+    Red.blocks = {}
     if Red then
         Red.sprites = {}
     end
@@ -99,6 +100,7 @@ ROOT.colors.cycle = function(first)
     Rainbow = rainbows[current_rainbow]
     if not first then
         Red.tiles = {}
+        Red.blocks = {}
         Red.sprites = {}
     end
 end
