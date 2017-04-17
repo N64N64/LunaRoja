@@ -24,11 +24,11 @@ function getmapheader(map)
 end
 
 customtiles = {}
-function customtile(x, y, v)
+function customtile(map, x, y, v)
     if not v then
-        return customtiles[Red.wram.wCurMap*0x10000 + x*0x100 + y]
+        return customtiles[map*0x10000 + x*0x100 + y]
     else
-        customtiles[Red.wram.wCurMap*0x10000 + x*0x100 + y] = v
+        customtiles[map*0x10000 + x*0x100 + y] = v
     end
 end
 
@@ -40,13 +40,13 @@ end
 
 ROOT['new custom tile'] = function()
     local x,y = coord()
-    customtile(x, y, Block())
+    customtile(Red.wram.wCurMap, x, y, Block())
 end
 
 local pickup = nil
 ROOT['drop'] = function()
     local x, y = coord()
-    customtile(x, y, pickup)
+    customtile(Red.wram.wCurMap, x, y, pickup)
 end
 
 local function getit(x, y)
@@ -59,7 +59,7 @@ end
 
 ROOT['pickup'] = function()
     local x, y = coord()
-    pickup = customtile(x, y) or getit(x, y)
+    pickup = customtile(Red.wram.wCurMap, x, y) or getit(x, y)
 end
 
 local hooked = Red.render_map or function() end -- tmp.lua
@@ -100,7 +100,7 @@ function Red:render_map(scr, map, mapx, mapy, xplayer, yplayer, first_call)
     for y=lowy,highy do
         for x=lowx, highx do
             local tileno = mapblocks[y*width + x]
-            local tile = customtile(x, y) or gettilefromrom(tileset, tileno)
+            local tile = customtile(map, x, y) or gettilefromrom(tileset, tileno)
             local x = x*32 + dx
             local y = y*32 + dy
 
