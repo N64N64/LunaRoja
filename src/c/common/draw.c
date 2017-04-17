@@ -61,12 +61,11 @@ bool dumbcopy(uint8_t *out, int outw, int outh, int outx, int outy,
     }
 
     for(int y = starty; y <= endy; y++) {
-        for(int x = startx; x <= endx; x++) {
-            uint8_t *i = &in[stride*(inw*y + x)];
-            uint8_t *o = &out[stride*(outw*(outy+y) + outx+x)];
-            for(int s = 0; s < stride; s++) {
-                o[s] = i[s];
-            }
+        uint8_t *i = &in[stride*(inw*y + startx)];
+        uint8_t *o = &out[stride*(outw*(outy+y) + outx+startx)];
+        int s = stride*(endx + 1 - startx);
+        if(s > 0) {
+            memcpy(o, i, s);
         }
     }
     return true;
