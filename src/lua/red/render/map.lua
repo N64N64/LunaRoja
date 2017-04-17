@@ -1,7 +1,7 @@
 local intptr = ffi.new('int[2]')
 if PLATFORM == '3ds' then
     scrblockwidth = 4
-    scrblockheight = 3
+    scrblockheight = 2
 else
     scrblockwidth = 7
     scrblockheight = 4
