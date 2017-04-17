@@ -1,6 +1,11 @@
 local intptr = ffi.new('int[2]')
-local scrblockwidth = 7
-local scrblockheight = 4
+if PLATFORM == '3ds' then
+    scrblockwidth = 4
+    scrblockheight = 3
+else
+    scrblockwidth = 7
+    scrblockheight = 4
+end
 local lasttileset
 local already_rendered = {}
 
@@ -16,6 +21,45 @@ function getmapheader(map)
     local mapblocksaddr = rom[0] + rom[1] * 0x100
 
     return emu:rom(mapbank, mapheaderaddr), emu:rom(mapbank, mapblocksaddr)
+end
+
+customtiles = {}
+function customtile(x, y, v)
+    if not v then
+        return customtiles[Red.wram.wCurMap*0x10000 + x*0x100 + y]
+    else
+        customtiles[Red.wram.wCurMap*0x10000 + x*0x100 + y] = v
+    end
+end
+
+local function coord()
+    local x = math.floor(Red.wram.wXCoord/2)
+    local y = math.floor(Red.wram.wYCoord/2)
+    return x, y
+end
+
+ROOT['new custom tile'] = function()
+    local x,y = coord()
+    customtile(x, y, Block())
+end
+
+local pickup = nil
+ROOT['drop'] = function()
+    local x, y = coord()
+    customtile(x, y, pickup)
+end
+
+local function getit(x, y)
+    local mapheader, mapblocks = getmapheader(Red.wram.wCurMap)
+    local width = mapheader[2]
+    local tileset = mapheader[0]
+    local tileno = mapblocks[y*width + x]
+    return gettilefromrom(tileset, tileno)
+end
+
+ROOT['pickup'] = function()
+    local x, y = coord()
+    pickup = customtile(x, y) or getit(x, y)
 end
 
 local hooked = Red.render_map or function() end -- tmp.lua
@@ -56,7 +100,7 @@ function Red:render_map(scr, map, mapx, mapy, xplayer, yplayer, first_call)
     for y=lowy,highy do
         for x=lowx, highx do
             local tileno = mapblocks[y*width + x]
-            local tile = gettilefromrom(tileset, tileno)
+            local tile = customtile(x, y) or gettilefromrom(tileset, tileno)
             local x = x*32 + dx
             local y = y*32 + dy
 
@@ -139,6 +183,21 @@ local function closure(bpp, bst, x, y, tileinfo)
     bmap.tileinfo = tileinfo
     return bmap
 end
+
+function Block(nw, ne, sw, se)
+    if not nw then
+        return {
+            nw = Bitmap:new(16, 16),
+            ne = Bitmap:new(16, 16),
+            sw = Bitmap:new(16, 16),
+            se = Bitmap:new(16, 16),
+        }
+    end
+    return {
+        nw=nw,ne=ne,sw=sw,se=se,
+    }
+end
+
 function gettilefromrom(tileset, tile)
     local self = Red
 
@@ -171,12 +230,7 @@ function gettilefromrom(tileset, tile)
         Red.tiles[se] = closure(bpp, bst, 2, 2, se)
     end
 
-    local block = {
-        nw = Red.tiles[nw],
-        ne = Red.tiles[ne],
-        sw = Red.tiles[sw],
-        se = Red.tiles[se],
-    }
+    local block = Block(Red.tiles[nw], Red.tiles[ne], Red.tiles[sw], Red.tiles[se])
 
     Red.blocks[tileset * 0x100 + tile] = block
     return block

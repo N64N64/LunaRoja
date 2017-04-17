@@ -21,6 +21,12 @@ local function init()
 
     back = UI.Button(UI.View:new(0, 0, controls_width/2, 25), function()
         DISPLAY[2] = DebugMenu
+        if R and G and B then
+            coler(R, G, B)
+            R = nil
+            G = nil
+            B = nil
+        end
     end, 'Back')
     header:add_subview(back)
 
@@ -37,6 +43,10 @@ local function init()
     end
 end
 
+function coler(r, g, b)
+    TE.colors[r*0x10000 + g*0x100 + b] = true
+    TE.paint()
+end
 
 
 local function gen()
@@ -106,7 +116,7 @@ function TE.updatetile()
 
     local x, y = math.floor(Red.wram.wXCoord/2), math.floor(Red.wram.wYCoord/2)
     local i = Red.zram.mapwidth*y + x
-    TE.tile = gettilefromrom(Red.zram.tileset, Red.zram.mapblocks[i])
+    TE.tile = customtile(x, y) or gettilefromrom(Red.zram.tileset, Red.zram.mapblocks[i])
     local vert =  Red.wram.wYCoord % 2 == 0 and 'n' or 's'
     local horiz = Red.wram.wXCoord % 2 == 0 and 'w' or 'e'
     TE.tile = TE.tile[vert..horiz]
