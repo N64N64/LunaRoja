@@ -51,12 +51,14 @@ function Red:render_map(scr, map, mapx, mapy, xplayer, yplayer, first_call)
     local highy = math.min(mapy+scrblockheight, height-1)
     local lowx = math.max(0, mapx-scrblockwidth)
     local highx = math.min(mapx+scrblockwidth, width-1)
+    local dx = Red.Camera.x - xplayer
+    local dy = Red.Camera.y - yplayer
     for y=lowy,highy do
         for x=lowx, highx do
             local tileno = mapblocks[y*width + x]
             local tile = gettilefromrom(tileset, tileno)
-            local x = x*32 + Red.Camera.x - xplayer
-            local y = y*32 + Red.Camera.y - yplayer
+            local x = x*32 + dx
+            local y = y*32 + dy
 
             tile.nw:fastdraw(scr, x, y)
             tile.ne:fastdraw(scr, x + 16, y)

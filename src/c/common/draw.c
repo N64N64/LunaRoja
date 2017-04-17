@@ -7,6 +7,9 @@
 
 static uint8_t _color[3];
 
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+
 bool lovecopy(uint8_t *out, uint8_t *in, int size)
 {
     for(int i = 0; i < size; i++) {
@@ -37,21 +40,28 @@ void lastcopy(uint8_t *out, uint8_t *in, int w, int h)
     }
 }
 
-#define CHECK(i, s) do{\
-    if(i < 0 || i > s) {\
-        return false;\
-    }\
-} while(0)
-
 bool dumbcopy(uint8_t *out, int outw, int outh, int outx, int outy,
                uint8_t *in, int  inw, int inh, int stride)
 {
-    for(int y = 0; y < inh; y++) {
-        if(outy + y < 0) continue;
-        if(outy + y >= outh) break;
-        for(int x = 0; x < inw; x++) {
-            if(outx + x < 0) continue;
-            if(outx + x >= outw) break;
+    int startx = 0;
+    int endx = inw - 1;
+    int starty = 0;
+    int endy = inh - 1;
+    if(outx < 0) {
+        startx = -outx;
+    }
+    if(outy < 0) {
+        starty = -outy;
+    }
+    if(outx + endx >= outw) {
+        endx = outw - outx - 1;
+    }
+    if(outy + endy >= outh) {
+        endy = outh - outy - 1;
+    }
+
+    for(int y = starty; y <= endy; y++) {
+        for(int x = startx; x <= endx; x++) {
             uint8_t *i = &in[stride*(inw*y + x)];
             uint8_t *o = &out[stride*(outw*(outy+y) + outx+x)];
             for(int s = 0; s < stride; s++) {
@@ -65,12 +75,25 @@ bool dumbcopy(uint8_t *out, int outw, int outh, int outx, int outy,
 bool dumbcopyaf(uint8_t *out, int outw, int outh, int outx, int outy,
                uint8_t *in, int  inw, int inh, uint8_t invis, bool flip)
 {
-    for(int y = 0; y < inh; y++) {
-        if(outy + y < 0) continue;
-        if(outy + y >= outh) break;
-        for(int x = 0; x < inw; x++) {
-            if(outx + x < 0) continue;
-            if(outx + x >= outw) break;
+    int startx = 0;
+    int endx = inw - 1;
+    int starty = 0;
+    int endy = inh - 1;
+    if(outx < 0) {
+        startx = -outx;
+    }
+    if(outy < 0) {
+        starty = -outy;
+    }
+    if(outx + endx >= outw) {
+        endx = outw - outx - 1;
+    }
+    if(outy + endy >= outh) {
+        endy = outh - outy - 1;
+    }
+
+    for(int y = starty; y <= endy; y++) {
+        for(int x = startx; x <= endx; x++) {
             int ix = flip ? inw-x-1 : x;
             uint8_t *i = &in[3*(y*inw + ix)];
             uint8_t *o = &out[3*((outy+y)*outw + outx+x)];
