@@ -29,6 +29,9 @@ function io.readbin(path)
     if f == ffi.NULL then
         error('file '..path..' not found')
     end
+    if ffi.os == 'Windows' then
+        error('fseek_wrapper doesnt work on windows')
+    end
     ffi.luared.fseek_wrapper(f, 0, SEEK_END)
     local siz = C.ftell(f)
     ffi.luared.fseek_wrapper(f, 0, SEEK_SET) -- same as rewind(f)

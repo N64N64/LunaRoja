@@ -15,21 +15,21 @@ function Net.Client:connect(ip, port)
     end
     self.remote_ip = ip
     self.remote_port = port
-    local fd = C.client_start(ip, tostring(port))
+    local fd = ffi.luared.client_start(ip, tostring(port))
     if fd == -1 then
-        error('could not connect: '..ffi.string(C.lr_net_error))
+        error('could not connect: '..ffi.string(ffi.luared.lr_net_error))
     end
     self.fd = fd
 end
 
 function Net.Client:is_connected()
-    return self.fd and (PLATFORM == '3ds' or not self.remote_ip or C.client_is_connected(self.fd))
+    return self.fd and (PLATFORM == '3ds' or not self.remote_ip or ffi.luared.client_is_connected(self.fd))
 end
 
 function Net.Client:close()
     if not self.fd then return end
 
-    C.closesocket(self.fd)
+    ffi.luared.closesocket(self.fd)
     self.fd = nil
 end
 

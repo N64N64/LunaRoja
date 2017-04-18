@@ -2,22 +2,41 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+#include <fcntl.h>
+#include <errno.h>
+
+#ifdef _WIN32
+#include <winsock2.h>
+#else
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
 #include <arpa/inet.h>
-#include <fcntl.h>
-#include <errno.h>
+#endif
 
 #ifdef _3DS
 #include <3ds.h>
 #include <malloc.h>
 #endif
 
+void net_init()
+{
+#ifdef _WIN32
+	WSADATA data;
+	WSAStartup(MAKEWORD(2, 0), &data);
+#else
+#endif
+}
+
 static void set_nonblocking(int fd)
 {
+#ifdef _WIN32
+	u_long iMode = 1;
+	ioctlsocket(fd, FIONBIO, &iMode);
+#else
     int flags = fcntl(fd, F_GETFL, 0);
     fcntl(fd, F_SETFL, flags | O_NONBLOCK);
+#endif
 }
 
 int server_start(int port)
@@ -60,7 +79,7 @@ const char *lr_net_error = NULL;
 int client_start(const char *ip, const char *port)
 {
     struct sockaddr_in addr;
-    socklen_t addrlen = sizeof(addr);
+    size_t addrlen = sizeof(addr);
 
     int connfd = socket(AF_INET, SOCK_STREAM, 0);
     if(connfd < 0) {
@@ -71,12 +90,20 @@ int client_start(const char *ip, const char *port)
     memset(&addr, 0, sizeof(addr));
     addr.sin_family = AF_INET;
     addr.sin_port = htons(atoi(port));
+#ifdef _WIN32
+	addr.sin_addr.s_addr = inet_addr(ip);
+#else
     inet_aton(ip, &addr.sin_addr);
+#endif
 
     int rc = connect(connfd, (struct sockaddr*)&addr, addrlen);
 
     if(rc > 0) {
+#ifdef _WIN32
+		lr_net_error = "cant get error cuz windows sucks";
+#else
         lr_net_error = gai_strerror(rc);
+#endif
         return -1;
     } else if(rc == -1) {
         lr_net_error = strerror(errno);
@@ -91,13 +118,17 @@ bool client_is_connected(int fd)
 {
     // http://stackoverflow.com/questions/2597608/c-socket-connection-timeout
     // apparently this doesnt work in windows
-
+#ifdef _WIN32
+#warning nyi
+	return true;
+#else
     int status;
-    socklen_t len = sizeof(status);
+    size_t len = sizeof(status);
 
     getsockopt(fd, SOL_SOCKET, SO_ERROR, &status, &len);
 
     return status == 0;
+#endif
 }
 
 int server_listen(int listenfd)

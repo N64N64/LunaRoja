@@ -23,8 +23,13 @@ function Font:new(name)
     if NO_FREETYPE then return self end
 
     self.ft = freetype.new()
-    self.bin = io.readbin(self.path)
-    self.face = self.ft:new_memory_face(self.bin, ffi.sizeof(self.bin))
+    if ffi.os == 'Windows' then
+        -- TODO figure out why io.readbin doesnt work on windows
+        self.face = self.ft:new_face(self.path)
+    else
+        self.bin = io.readbin(self.path)
+        self.face = self.ft:new_memory_face(self.bin, ffi.sizeof(self.bin))
+    end
 
     self = SETGC(self, function()
         --[[

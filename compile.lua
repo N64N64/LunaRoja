@@ -132,6 +132,9 @@ function love()
     b.libraries = {
         'z',
     }
+    if ffi.os == 'Windows' then
+        table.insert(b.libraries, 'ws2_32')
+    end
     b.defines = {
         '_GNU_SOURCE',
     }
