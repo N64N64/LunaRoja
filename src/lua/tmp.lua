@@ -66,6 +66,10 @@ function startserver()
     return server.hostname
 end
 
+ROOT['start server'] = function()
+    DEBUG_TEXT = 'Your ip: '..startserver()
+end
+
 function startclient(ip, port)
     if orig then error('already running') end
     peers = {}

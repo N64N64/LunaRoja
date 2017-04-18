@@ -289,3 +289,47 @@ void draw_circle(uint8_t *fb, int fbwidth, int fbheight, float x0, float y0, flo
         }
     }
 }
+
+typedef struct {
+    uint8_t r;       // ∈ [0, 1]
+    uint8_t g;       // ∈ [0, 1]
+    uint8_t b;       // ∈ [0, 1]
+} rgb;
+
+typedef struct {
+    uint8_t h;       // ∈ [0, 360]
+    uint8_t s;       // ∈ [0, 1]
+    uint8_t v;       // ∈ [0, 1]
+} hsv;
+
+rgb hsv2rgb(hsv HSV)
+{
+    double H = HSV.h;
+    double fract;
+    uint8_t S = HSV.s, V = HSV.v,
+            P, Q, T;
+
+    (H == 360.)?(H = 0.):(H /= 60.);
+    fract = H - floor(H);
+
+    P = V*(0xff - S)/0xff;
+    Q = V*(0xff - S*fract)/0xff;
+    T = V*(0xff - S*(1. - fract))/0xff;
+
+    if(H >= 0) {
+        if(H < 1) {
+            return (rgb){V, T, P};
+        } else if(H < 2) {
+            return (rgb){Q, V, P};
+        } else if(H < 3) {
+            return (rgb){P, V, T};
+        } else if(H < 4) {
+            return (rgb){P, Q, V};
+        } else if(H < 5) {
+            return (rgb){T, P, V};
+        } else if(H < 6) {
+            return (rgb){V, P, Q};
+        }
+    }
+    return (rgb){0, 0, 0};
+}

@@ -6,11 +6,13 @@ Console.backlog = {}
 
 Console.input = UI.Label:new('', Console.lineheight)
 Console.input.font = Font.Monospace
+Console.input.background_color = false
 Console.input:paint()
 
 local button = PLATFORM == '3ds' and 'B' or 'ESC'
 local header = UI.Label:new('Lua console! Press '..button..' to return to game', Console.lineheight, {0x86, 0x86, 0xff})
 header.font = Font.Monospace
+header.background_color = false
 header:paint()
 
 local override = {}
@@ -18,6 +20,7 @@ override.help = function(self)
     local msg = UI.Label:new('Type some Lua code. Here\'s an example: 2 + 2', Console.lineheight)
     msg.font = Font.Monospace
     msg.color = header.color
+    msg.background_color = false
     msg:paint()
     table.insert(self.history, self.input.text)
     table.insert(self.backlog, self.input)

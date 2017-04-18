@@ -28,19 +28,23 @@ local intptr = ffi.new('int[2]')
 function UI.Label:paint()
     if not self.text then error('text not set') end
 
-    self.cfont = Font:new(self.font)
-    local pix, width, height = self.cfont:paint(self.text, self.fontsize)
-    self.width = width
-    self.height = height
+    if not(self.lasttext == self.text) then
+        self.cfont = Font:new(self.font)
+        local pix, width, height = self.cfont:paint(self.text, self.fontsize)
+        self.width = width
+        self.height = height
 
-    if pix == ffi.NULL then error('wtf') end
-    if self.background_color == false then
-        self.bmap = Bitmap:new{
+        if pix == ffi.NULL then error('wtf') end
+        self.rawbmap = Bitmap:new{
             pix = pix,
             width = width,
             height = height,
             channels = 1,
         }
+    end
+
+    if self.background_color == false then
+        self.bmap = self.rawbmap
     else
         local w,h = self.width,self.height
         local bmap = Bitmap:new(w, h)
@@ -49,10 +53,11 @@ function UI.Label:paint()
         ffi.luared.draw_set_color(unpack(self.color))
         ffi.luared.purealphacopy(
             bmap.pix, w, h, 0, 0,
-            pix, w, h
+            self.rawbmap.pix, w, h
         )
         self.bmap = bmap
     end
+    self.lasttext = self.text
 end
 
 function UI.Label:unpaint()

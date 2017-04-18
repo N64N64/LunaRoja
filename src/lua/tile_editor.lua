@@ -101,13 +101,16 @@ function TE.render()
             TE.paintcanvas()
         end
         lastx, lasty = x, y
+        C.draw_set_color(0xff, 0x44, 0x44)
+        Screen.bottom:line(Mouse.x - 5, Mouse.y - 5, Mouse.x + 5, Mouse.y + 5)
+        C.draw_set_color(0x0a, 0xaa, 0xaa)
+        Screen.bottom:line(Mouse.x + 5, Mouse.y - 5, Mouse.x - 5, Mouse.y + 5)
     elseif Mouse.isup then
         lastx, lasty = nil, nil
     end
 
     header:render(Screen.bottom)
     TE.color:render(Screen.bottom)
-
 end
 
 local lasttile
