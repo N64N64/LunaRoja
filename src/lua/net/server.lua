@@ -2,6 +2,7 @@ local super = Object
 Net.Server = Object.new(super)
 
 function Net.Server:new(port)
+    ffi.luared.net_init()
     local self = super.new(self)
 
     self.clients = {}

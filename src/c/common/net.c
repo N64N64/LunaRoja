@@ -19,8 +19,13 @@
 #include <malloc.h>
 #endif
 
+static bool lr_net_initted = false;
 void net_init()
 {
+    if(lr_net_initted) {
+        return;
+    }
+    lr_net_initted = true;
 #ifdef _WIN32
 	WSADATA data;
 	WSAStartup(MAKEWORD(2, 0), &data);

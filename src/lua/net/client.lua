@@ -2,6 +2,7 @@ local super = Object
 Net.Client = Object.new(super)
 
 function Net.Client:new(fd)
+    ffi.luared.net_init()
     local self = super.new(self)
 
     self.fd = fd -- optional

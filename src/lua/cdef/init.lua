@@ -64,6 +64,7 @@ void sha256_final(SHA256_CTX *ctx, unsigned char hash[]);
 const char *lr_net_error;
 int server_start(int port);
 int server_listen(int listenfd);
+void net_init();
 
 int client_start(const char *ip, const char *port);
 bool client_is_connected(int fd);
