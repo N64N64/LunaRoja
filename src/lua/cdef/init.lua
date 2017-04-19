@@ -13,6 +13,8 @@ ffi.cdef[[
 
 // std
 
+int chmod(const char *pathname, int mode);
+int mkdir(const char *path, int mode);
 void *malloc(size_t);
 int usleep(unsigned int usec);
 size_t clock();

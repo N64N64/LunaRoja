@@ -200,11 +200,7 @@ function TE.paint()
             TE.pick = pick
             TE.colorpick = color
         end)
-        if PLATFORM == '3ds' then
-            v.background_color =  {color % 0x100, math.floor(color / 0x100) % 0x100, math.floor(color / 0x10000) % 0x100}
-        else
-            v.background_color =  {math.floor(color / 0x10000) % 0x100, math.floor(color / 0x100) % 0x100, color % 0x100}
-        end
+        v.background_color =  {math.floor(color / 0x10000) % 0x100, math.floor(color / 0x100) % 0x100, color % 0x100}
         TE.color:add_subview(v)
         i = i + 1
     end

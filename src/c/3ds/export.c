@@ -224,6 +224,8 @@ void export_symbols(lua_State *L)
     export(mgba_should_print);
     export(MGBA_ACTIVE_ADDR);
 
+    export(mkdir);
+    export(chmod);
     export(closedir);
     export(opendir);
     export(readdir);
