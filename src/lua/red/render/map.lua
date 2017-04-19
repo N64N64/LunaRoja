@@ -164,11 +164,33 @@ end
 Red.tiles = {}
 Red.blocks = {}
 
-function savetiles()
+function savetiles(folder)
+    folder = PATH..'/tile/'..folder
     for k,v in pairs(Red.tiles) do
-        local tileset = math.floor(k / 0x100000000)
-        local path = string.format('tile/%.2x-%.8x.png', tileset, k % 0x100000000)
-        C.stbi_write_png(PATH..'/'..path, v.width, v.height, 3, v.pix, v.width*3)
+        v:save(folder..'/'..string.format('%.10x', k)..'.png')
+    end
+end
+
+local ptr = ffi.new('int[3]')
+function loadtiles(folder)
+    Red.tiles = {}
+    Red.blocks = {}
+    folder = PATH..'/tile/'..folder
+    for _,filename in ipairs(ls(folder)) do
+        if string.has_suffix(filename, '.png') then
+            local path = folder..'/'..filename
+            local bmap = Bitmap:new(path)
+            local idx = string.match(filename, '(%w+)%.png')
+            idx = tonumber(idx, 16)
+            Red.tiles[idx] = bmap
+        end
+    end
+end
+
+ROOT['load tileset'] = {}
+for _,v in pairs(ls(PATH..'/tile')) do
+    ROOT['load tileset'][v] = function()
+        loadtiles(v)
     end
 end
 

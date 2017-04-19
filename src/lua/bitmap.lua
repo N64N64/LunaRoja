@@ -23,9 +23,14 @@ function Bitmap:new(arg1, arg2, arg3, arg4)
         end
 
         -- init
-        local cpix = C.stbi_load(PATH..'/pic/'..path, ptr + 0, ptr + 1, ptr + 2, arg2 or 0)
+        local cpix = C.stbi_load(path, ptr + 0, ptr + 1, ptr + 2, arg2 or 0)
         if cpix == ffi.NULL then
-            error(ffi.string(C.stbi_failure_reason())..' (path: '..path..')')
+            local reason = C.stbi_failure_reason()
+            if reason == ffi.NULL then
+                error('failed: (path: '..path..')')
+            else
+                error(ffi.string(C.stbi_failure_reason())..' (path: '..path..')')
+            end
         end
         self.width, self.height, self.channels = ptr[0], ptr[1], ptr[2]
 
@@ -49,6 +54,10 @@ function Bitmap:new(arg1, arg2, arg3, arg4)
     end
 
     return self
+end
+
+function Bitmap:save(path)
+    C.stbi_write_png(path, self.width, self.height, self.channels, self.pix, self.width*self.channels)
 end
 
 function Bitmap:draw(scr, x, y, tx, ty, width, height)
