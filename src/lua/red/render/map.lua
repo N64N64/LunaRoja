@@ -187,6 +187,7 @@ local ptr = ffi.new('int[3]')
 function loadtiles(folder)
     Red.tiles = {}
     Red.blocks = {}
+    Red.Map.Clear()
     folder = PATH..'/tile/'..folder
     for _,filename in ipairs(ls(folder)) do
         if string.has_suffix(filename, '.png') then
