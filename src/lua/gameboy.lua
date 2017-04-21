@@ -85,7 +85,13 @@ function Gameboy:run()
         ffi.mgba._GBCoreClearKeys(self.core, 0xffffffff)
     end
 
-    ffi.mgba._GBCoreRunFrame(self.core)
+    if SPEED then
+        for i=1,SPEED do
+            ffi.mgba._GBCoreRunFrame(self.core)
+        end
+    else
+        ffi.mgba._GBCoreRunFrame(self.core)
+    end
 end
 
 function Gameboy:render(scr, x, y)

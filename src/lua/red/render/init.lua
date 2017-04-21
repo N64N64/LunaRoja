@@ -129,7 +129,8 @@ function Red:render()
     if self.wram.wIsInBattle == 0 then
         local xplayer, yplayer = get_player_coords()
         if config.render_map then
-            self:render_map(Screen.top, self.wram.wCurMap, math.floor(self.wram.wXCoord/2), math.floor(self.wram.wYCoord/2), xplayer, yplayer, true)
+            --self:render_map(Screen.top, self.wram.wCurMap, math.floor(self.wram.wXCoord/2), math.floor(self.wram.wYCoord/2), xplayer, yplayer, true)
+            self:drawmap(Screen.top, self.wram.wCurMap, Red.wram.wXCoord*16, Red.wram.wYCoord*16)
             self:render_sprites(xplayer, yplayer)
         end
         RENDER_DIALOGUE()

@@ -62,6 +62,13 @@ ROOT['pickup'] = function()
     pickup = customtile(Red.wram.wCurMap, x, y) or getit(x, y)
 end
 
+
+
+function Red:drawmap(scr, mapid, x, y)
+    local map = Red.Map:new(mapid)
+    map:draw(scr, x, y)
+end
+
 local hooked = Red.render_map or function() end -- tmp.lua
 function Red:render_map(scr, map, mapx, mapy, xplayer, yplayer, first_call)
     if first_call then

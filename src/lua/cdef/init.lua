@@ -72,6 +72,12 @@ bool client_is_connected(int fd);
 int closesocket(int fd);
 int gethostname(const char *, size_t);
 
+
+bool tilecopy ( uint8_t *out, int outw, int outh,
+                int outx,     int outy,
+                uint8_t **in,  int inw, int inh
+              );
+
 bool lovecopy(uint8_t *out, uint8_t *in, int size);
 bool dumbcopy(uint8_t *out, int outw, int outh, int outx, int outy,
                uint8_t *in, int  inw, int inh, int stride);
