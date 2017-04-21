@@ -18,40 +18,15 @@ bool tilecopy ( uint8_t *out, int outw, int outh,
                 uint8_t **in,  int inw, int inh
               )
 {
-    int startx, left, width;
-    if(outx < 0) {
-        startx = outx;
-        while(startx < 0) {
-            startx += 16;
-        }
-        left = -outx/16;
-        width = inw - left;
-    } else {
-        startx = outx;
-        left = 0;
-        width = inw;
-    }
-
-
-    int starty, top, height;
-    if(outy < 0) {
-        starty = outy;
-        while(starty < 0) {
-            starty += 16;
-        }
-        top = -outy/16;
-        height = inh - top;
-    } else {
-        starty = outy;
-        top = 0;
-        height = inh;
-    }
-
-    for(int y = 0; y < height; y++) {
-        for(int x = 0; x < width; x++) {
-            uint8_t *pix = in[(top + y)*inw + left + x];
+    for(int y = 0; y < inh; y++) {
+        int yy = outy + 16*y;
+        if(yy < 0 || yy + 16 > outh) continue;
+        for(int x = 0; x < inw; x++) {
+            int xx = outx + 16*x;
+            if(xx < 0 || xx + 16 > outw) continue;
+            uint8_t *pix = in[y*inw + x];
             dumbcopy(
-                out, outw, outh, startx + 16*x, starty + 16*y,
+                out, outw, outh, xx, yy,
                 pix, 16, 16, 3
             );
         }
