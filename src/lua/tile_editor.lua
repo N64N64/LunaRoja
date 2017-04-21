@@ -118,8 +118,9 @@ function TE.updatetile()
     lasttile = TE.tile
 
     local x, y = math.floor(Red.wram.wXCoord/2), math.floor(Red.wram.wYCoord/2)
-    local i = Red.zram.mapwidth*y + x
-    TE.tile = customtile(Red.wram.wCurMap, x, y) or gettilefromrom(Red.zram.tileset, Red.zram.mapblocks[i])
+    local map = Red.Map(Red.wram.wCurMap)
+    local i = map.blockwidth*y + x
+    TE.tile = customtile(Red.wram.wCurMap, x, y) or gettilefromrom(map.tileset, map.wram.blocks[i])
     local vert =  Red.wram.wYCoord % 2 == 0 and 'n' or 's'
     local horiz = Red.wram.wXCoord % 2 == 0 and 'w' or 'e'
     TE.tile = TE.tile[vert..horiz]

@@ -54,4 +54,8 @@ function Red.Map:draw(scr, x, y)
     )
 end
 
+getmetatable(Red.Map).__call = function(x, ...)
+    return Red.Map:new(...)
+end
+
 return Red.Map

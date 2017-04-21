@@ -40,9 +40,12 @@ uint8_t * font_render(void *font, const char *text, int size, int *outwidth, int
 // draw.c
 
 
+bool tilecopy ( uint8_t *out, int outw, int outh,
+                int outx,     int outy,
+                uint8_t **in,  int inw, int inh
+              );
 
 
-bool lovecopy(uint8_t *out, uint8_t *in, int size);
 void lastcopy(uint8_t *out, uint8_t *in, int w, int h);
 bool dumbcopy(uint8_t *out, int outw, int outh, int outx, int outy,
                uint8_t *in, int  inw, int inh, int stride);
@@ -306,6 +309,7 @@ void export_symbols(lua_State *L)
 
     // my stuff
 
+    export(tilecopy);
     export(lastcopy);
     export(dumbcopy);
     export(dumbcopyaf);
