@@ -168,11 +168,9 @@ function savetiles(folder)
     if not(PLATFORM == '3ds') then
         print('WARNING: YOU MUST CREATE THE DIRECTORY TODO TODO TODO')
     end
-    C.mkdir(PATH..'/tile', 777)
-    C.chmod(PATH..'/tile', 700)
+    C.mkdir(PATH..'/tile', tonumber(700, 8))
     folder = PATH..'/tile/'..folder
-    C.mkdir(folder, 777)
-    C.chmod(folder, 700)
+    C.mkdir(folder, tonumber(700, 8))
     for k,v in pairs(Red.tiles) do
         v:save(folder..'/'..string.format('%.10x', k)..'.png')
     end
