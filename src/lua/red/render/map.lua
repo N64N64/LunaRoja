@@ -65,7 +65,8 @@ end
 
 
 function Red:drawmap(scr, mapid, x, y)
-    Red.Map(mapid):draw(scr, x, y)
+    local map = Red.Map(mapid)
+    map:draw(scr, X or Red.Camera.x - x, Y or Red.Camera.y - y)
 end
 
 local hooked = Red.render_map or function() end -- tmp.lua

@@ -23,7 +23,7 @@ function Red.Map:new(map)
     self.tilewidth = 2*self.blockwidth
     self.tileheight = 2*self.blockheight
     self.width = 16*self.tilewidth
-    self.tileheight = 16*self.tileheight
+    self.height = 16*self.tileheight
 
     self.pix = ffi.new('uint8_t *[?]', self.tilewidth*self.tileheight)
 
