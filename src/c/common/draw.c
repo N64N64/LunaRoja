@@ -22,10 +22,10 @@ bool tilecopy ( uint8_t *out, int outw, int outh,
     int startx = MAX(-outx/16, 0);
     for(int y = starty; y < inh; y++) {
         int yy = outy + 16*y;
-        if(yy + 16 > outh) break;
+        if(yy > outh) break;
         for(int x = startx; x < inw; x++) {
             int xx = outx + 16*x;
-            if(xx + 16 > outw) break;
+            if(xx > outw) break;
             uint8_t *pix = in[y*inw + x];
             dumbcopy(
                 out, outw, outh, xx, yy,

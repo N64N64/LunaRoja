@@ -29,9 +29,10 @@ PLAYER = Player:new()
 local orig, peers
 local function hook(...)
     orig(...)
-    local _, scr, map, mapx, mapy, xplayer, yplayer = ...
+    local _, scr, mapid, x, y = ...
+    local xplayer, yplayer = get_player_coords()
     for _,player in pairs(Player.Peers) do
-        if player.map == map then
+        if player.map == mapid then
             if client and client.id == player.id then
             else
                 local x = player.x*16
@@ -62,7 +63,7 @@ function startserver()
             getpos()
         end
     end
-    orig = HOOK(Red, 'render_map', hook)
+    orig = HOOK(Red, 'drawmap', hook)
     return server.hostname
 end
 
@@ -108,5 +109,5 @@ function startclient(ip, port)
         end
     end
 
-    orig = HOOK(Red, 'render_map', hook)
+    orig = HOOK(Red, 'drawmap', hook)
 end
