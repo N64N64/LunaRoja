@@ -90,7 +90,8 @@ function TE.render()
         if color and not(lastx == x and lasty == y) then
             local r, g, b = math.floor(color / 0x10000) % 0x100, math.floor(color / 0x100) % 0x100, color % 0x100
             if lastx and lasty then
-                Screen.line(canvas.master, lastx, lasty, x, y, r, g, b, nil, true)
+                ffi.luared.draw_set_color(r, g, b)
+                Screen.line(canvas.master, lastx, lasty, x, y)
             else
                 local pix = canvas.master.pix + i*3
                 pix[0] = r

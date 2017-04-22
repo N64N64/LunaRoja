@@ -15,6 +15,7 @@ static uint8_t _color[3];
 
 bool tilecopy ( uint8_t *out, int outw, int outh,
                 int outx,     int outy,
+              // V array to 16x16 rgb tiles, inw=# of tiles across, inh=# of tiles down
                 uint8_t **in,  int inw, int inh
               )
 {
@@ -33,29 +34,6 @@ bool tilecopy ( uint8_t *out, int outw, int outh,
             );
         }
     }
-
-#if 0
-    int tx = outx/16;
-    int ty = outy/16;
-    int tw = MIN(inw, outw/16);
-    int th = MIN(inh, outh/16);
-
-    int offx = outx - tx*16;
-    int offy = outy - ty*16;
-
-    for(int y = ty; y < ty + th; y++) {
-        for(int x = tx; x < tx + tw; x++) {
-            uint8_t *pix = in[y*inw + x];
-            if(pix != NULL) {
-                dumbcopy(
-                    out, outw, outh, (x-tx)*16 + offx, (y-ty)*16 + offy,
-                    pix, 16, 16, 3
-                );
-            }
-        }
-    }
-#endif
-
     return false;
 }
 

@@ -75,6 +75,7 @@ ROOT.colors.randomize = function()
     randomizerainbow()
     Red.tiles = {}
     Red.blocks = {}
+    Red.Map.Clear()
     if Red then
         Red.sprites = {}
     end
@@ -102,6 +103,7 @@ ROOT.colors.cycle = function(first)
         Red.tiles = {}
         Red.blocks = {}
         Red.sprites = {}
+        Red.Map.Clear()
     end
 end
 ROOT.colors.cycle(true)
