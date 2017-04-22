@@ -18,6 +18,7 @@ require 'env'
 
 require 'font'
 require 'bitmap'
+require 'gif'
 
 Net = {}
 require 'net.server'
