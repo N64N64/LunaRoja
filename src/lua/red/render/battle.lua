@@ -66,11 +66,11 @@ function Red:render_battlesprites()
     end
 
     if friendbmap then
-        friendbmap:fastdraw(Screen.top, 0, Screen.top.height - friendbmap.height)
+        friendbmap:draw(Screen.top, 0, Screen.top.height - friendbmap.height)
     end
 
     if enemybmap then
-        enemybmap:fastdraw(Screen.top, Screen.top.width - enemybmap.width, 0)
+        enemybmap:draw(Screen.top, Screen.top.width - enemybmap.width, 0)
     end
 end
 

@@ -1,6 +1,5 @@
 local super = Object
 Bitmap = Object.new(super)
-local mt = {__index = Bitmap}
 
 local loaded_bitmaps
 function Bitmap.ResetCache()
@@ -39,7 +38,7 @@ function Bitmap:new(arg1, arg2, arg3, arg4)
         self.path = path
     elseif type(arg1) == 'table' and not arg2 then
         self = arg1
-        setmetatable(self, mt)
+        setmetatable(self, {__index = Bitmap})
     elseif type(arg1) == 'number' and type(arg2) == 'number' and not arg4 then
         arg3 = arg3 or 3
         self.width, self.height, self.channels = arg1, arg2, arg3
@@ -57,12 +56,18 @@ function Bitmap:save(path)
     C.stbi_write_png(path, self.width, self.height, self.channels, self.pix, self.width*self.channels)
 end
 
-function Bitmap:fastdraw(scr, x, y)
+function Bitmap:draw(scr, x, y)
     ffi.luared.dumbcopy(
         scr.pix, scr.width, scr.height, x, y,
         self.pix, self.width, self.height, 3
     )
 end
-Bitmap.draw = Bitmap.fastdraw
+
+function Bitmap:drawaf(scr, x, y, should_flip)
+    ffi.luared.dumbcopyaf(
+        scr.pix, scr.width, scr.height, x, y,
+        self.pix, self.width, self.height, SPRITE_INVIS_COLOR, should_flip and true or false
+    )
+end
 
 return Bitmap

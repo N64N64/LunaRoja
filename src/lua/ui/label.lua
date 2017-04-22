@@ -74,7 +74,7 @@ function UI.Label:draw(scr, x, y)
             self.bmap.pix, self.bmap.width, self.bmap.height
         )
     else
-        self.bmap:fastdraw(scr, x, y)
+        self.bmap:draw(scr, x, y)
     end
 end
 

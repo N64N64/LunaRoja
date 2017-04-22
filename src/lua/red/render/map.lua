@@ -110,10 +110,10 @@ function Red:render_map(scr, map, mapx, mapy, xplayer, yplayer, first_call)
             local x = x*32 + dx
             local y = y*32 + dy
 
-            tile.nw:fastdraw(scr, x, y)
-            tile.ne:fastdraw(scr, x + 16, y)
-            tile.sw:fastdraw(scr, x, y + 16)
-            tile.se:fastdraw(scr, x + 16, y + 16)
+            tile.nw:draw(scr, x, y)
+            tile.ne:draw(scr, x + 16, y)
+            tile.sw:draw(scr, x, y + 16)
+            tile.se:draw(scr, x + 16, y + 16)
         end
     end
 

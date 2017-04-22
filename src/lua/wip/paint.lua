@@ -19,7 +19,7 @@ end
 function Paint.render()
     if not self.bitmap then return end
 
-    self.canvas:fastdraw(Screen.bottom, 0, 0)
+    self.canvas:draw(Screen.bottom, 0, 0)
 end
 
 Paint.mode = {

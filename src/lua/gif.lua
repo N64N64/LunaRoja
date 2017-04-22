@@ -5,6 +5,7 @@ function Gif.new(_, self, frames)
     if not(getmetatable(self).__index == Bitmap) then
         error('must be a bitmap')
     end
+    assert(math.floor(frames) == frames)
     getmetatable(self).__index = Gif
     self.frames = frames or 1
     self.height = self.height / frames
@@ -18,13 +19,21 @@ function Gif:set_frames(frames)
     self.frames = frames
 end
 
-function Gif:draw(frame, ...)
+function Gif:draw(frame, scr, x, y)
     local off = frame*self.width*self.height*self.channels
-    self.pix = self.pix + off
-    super.draw(self, ...)
-    self.pix = self.pix - off
+    ffi.luared.dumbcopy(
+        scr.pix, scr.width, scr.height, x, y,
+        self.pix + off, self.width, self.height, 3
+    )
 end
-Gif.fastdraw = Gif.draw
+
+function Gif:drawaf(frame, scr, x, y, should_flip)
+    local off = frame*self.width*self.height*self.channels
+    ffi.luared.dumbcopyaf(
+        scr.pix, scr.width, scr.height, x, y,
+        self.pix + off, self.width, self.height, SPRITE_INVIS_COLOR, should_flip and true or false
+    )
+end
 
 getmetatable(Gif).__call = Gif.new
 return Gif

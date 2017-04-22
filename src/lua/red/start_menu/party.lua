@@ -46,7 +46,7 @@ function show_party_hax(idx)
         Screen.top:rect(0, 0, Screen.top.width, Screen.top.height)
         local y = 0
         for i,v in ipairs(party) do
-            v.bmap:fastdraw(Screen.top, 0, y)
+            v.bmap:draw(Screen.top, 0, y)
             for i,label in ipairs(v.labels) do
                 local y = y + label.fontsize*(i-1)
                 label:draw(Screen.top, v.bmap.width, y)

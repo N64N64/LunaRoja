@@ -6,15 +6,17 @@ if f then
     dofile(path)
 end
 
+
+
 ffi = require 'ffi'
 bit = require 'bit'
-
-require 'object'
 
 require 'config'
 require 'cdef'
 require 'util'
 require 'env'
+
+require 'object'
 
 require 'font'
 require 'bitmap'

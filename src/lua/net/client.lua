@@ -78,3 +78,5 @@ function Net.Client:send(data)
         error('unsupportred type '..type(data))
     end
 end
+
+return Net.Client

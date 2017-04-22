@@ -47,12 +47,14 @@ function getspritefromrom(id, raw)
         -- custom fields
         spriteheight = spriteheight,
     }
-    Red.sprites[id] = bmap
+    local gif = Gif(bmap, height/spriteheight)
+    Red.sprites[id] = gif
 
-    return bmap
+    return gif
 end
 
 function Red:render_sprite(bmap, x, y, xplayer, yplayer, dir, anim)
+    assert(getmetatable(bmap).__index == Gif)
     dir = dir or 0
     anim = anim or 0
 
@@ -94,19 +96,16 @@ function Red:render_sprite(bmap, x, y, xplayer, yplayer, dir, anim)
     -- this should be the right way to do it
     -- but ball/omanyte/clipboard/etc overflows
     -- when it "turns"
-    offset = math.min(offset, bmap.height/16 - 1)
+    offset = math.min(offset, bmap.frames - 1)
     -- so this hack becomes necessary
-    if 2*bmap.height == 0x40 then
+    if 2*bmap.height*bmap.frames == 0x40 then
         offset = 0
         should_flip = false
     end
 
-    y = y - 4 + (16 - bmap.spriteheight)
+    y = y - 4 + (16 - bmap.height)
 
-    ffi.luared.dumbcopyaf(
-        Screen.top.pix, Screen.top.width, Screen.top.height, x - xplayer + Red.Camera.x, y - yplayer + Red.Camera.y,
-        bmap.pix + offset*bmap.width*bmap.spriteheight*3, bmap.width, bmap.spriteheight, SPRITE_INVIS_COLOR, should_flip
-    )
+    bmap:drawaf(offset, Screen.top, x - xplayer + Red.Camera.x, y - yplayer + Red.Camera.y, should_flip)
 end
 
 local spritex = {}
