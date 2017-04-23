@@ -11,7 +11,7 @@ function love.load()
     require 'preinit'
     require 'plat.love.util'
     require 'init'
-    love.window.setMode(Screen.top.width*2, Screen.top.height*2 + Screen.bottom.height)
+    love.window.setMode(Screen.top.width, Screen.top.height + Screen.bottom.height)
     love.window.setTitle('3DS Simulator')
 end
 
@@ -29,6 +29,6 @@ end
 function love.draw()
     love.graphics.setBackgroundColor(90, 30, 30)
     love.graphics.setColor(255, 255, 255)
-    love.graphics.draw(Screen.top.love, 0, Screen.top.height*2, -math.pi/2, 2, 2)
-    love.graphics.draw(Screen.bottom.love, (Screen.top.width - Screen.bottom.width)/2, Screen.top.height*3, -math.pi/2)
+    love.graphics.draw(Screen.top.love, 0, Screen.top.height, -math.pi/2)
+    love.graphics.draw(Screen.bottom.love, Screen.bottom.width/4, Screen.top.height + Screen.bottom.height, -math.pi/2)
 end

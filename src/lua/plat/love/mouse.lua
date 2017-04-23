@@ -4,8 +4,8 @@ function Mouse.Scan()
     local isheld = love.mouse.isDown(1)
 
     if isheld then
-        local xpad = (Screen.top.width - Screen.bottom.width)/2
-        local ypad = Screen.top.height*2
+        local xpad = Screen.bottom.width/4
+        local ypad = Screen.top.height
 
         Mouse.x = love.mouse.getX() - xpad
         Mouse.y = love.mouse.getY() - ypad
