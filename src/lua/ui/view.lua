@@ -49,7 +49,7 @@ end
 
 function UI.View:draw(scr, x, y)
     if self.background_color then
-        C.draw_set_color(unpack(self.background_color))
+        ffi.luared.draw_set_color(unpack(self.background_color))
         scr:rect(x, y, self.width, self.height)
     end
 end

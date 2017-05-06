@@ -68,7 +68,7 @@ function UI.Label:draw(scr, x, y)
     if not self.bmap then error('label not painted') end
 
     if self.background_color == false then
-        C.draw_set_color(unpack(self.color))
+        ffi.luared.draw_set_color(unpack(self.color))
         ffi.luared.purealphacopy(
             scr.pix, scr.width, scr.height, x, y,
             self.bmap.pix, self.bmap.width, self.bmap.height

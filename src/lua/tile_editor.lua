@@ -69,7 +69,7 @@ local lastx, lasty
 
 function TE.render()
     init()
-    C.draw_set_color(r(), g(), b())
+    ffi.luared.draw_set_color(r(), g(), b())
     Screen.bottom:rect(0, 0, Screen.bottom.width, Screen.bottom.height)
 
     --local xplayer, yplayer = get_player_coords()
@@ -102,9 +102,9 @@ function TE.render()
             TE.paintcanvas()
         end
         lastx, lasty = x, y
-        C.draw_set_color(0xff, 0x44, 0x44)
+        ffi.luared.draw_set_color(0xff, 0x44, 0x44)
         Screen.bottom:line(Mouse.x - 5, Mouse.y - 5, Mouse.x + 5, Mouse.y + 5)
-        C.draw_set_color(0x0a, 0xaa, 0xaa)
+        ffi.luared.draw_set_color(0x0a, 0xaa, 0xaa)
         Screen.bottom:line(Mouse.x + 5, Mouse.y - 5, Mouse.x - 5, Mouse.y + 5)
     elseif Mouse.isup then
         lastx, lasty = nil, nil
@@ -183,9 +183,9 @@ function TE.paint()
         local color = TE.colorpick
         color = {math.floor(color / 0x10000) % 0x100, math.floor(color / 0x100) % 0x100, color % 0x100}
         if color[1] + color[2] + color[3] > 3*0x55 then
-            C.draw_set_color(0x00, 0x00, 0x00)
+            ffi.luared.draw_set_color(0x00, 0x00, 0x00)
         else
-            C.draw_set_color(0xff, 0xff, 0xff)
+            ffi.luared.draw_set_color(0xff, 0xff, 0xff)
         end
         local s = 16 - pad*2
         Screen.bottom:line(x, y, x + s, y)
